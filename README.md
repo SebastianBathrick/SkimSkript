@@ -15,7 +15,7 @@ Meanwhile, the **explicit** form would add the "*set*"  keyword before the varia
 set myVar to 3					
 ````
 
-And if neither style suits your preferences, you can **mix and match**, writing assignments like ````myVar to 3				```` or ````set myVar = 3````. The choice is yours!
+And if neither style suits your preferences, you can **mix and match**, writing assignments like ````myVar to 3```` or ````set myVar = 3````. The choice is yours!
 
 ## Whitespace Freedom
 While keywords and numeric literals must be separated by at least one space or ignored character (we discuss those in the next section), beyond that, the way code is spaced and how line breaks are used is up to the programmer. 
