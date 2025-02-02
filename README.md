@@ -143,3 +143,46 @@ The syntax allows combining explicit and shorthand elements.
 declare int num = 10
 float num2 as 2.71
 ```
+## <u>Variable Assignments
+
+Both styles allow assigning a value to an existing variable. The assignment must follow data type rules; however, SkimSkript supports type coercion if the data types are compatible.
+
+### Explicit Variable Assignment
+
+Explicit assignments use the keyword `set` and the phrase `to`.
+
+```
+# Explicit example:
+set num to 42
+```
+
+### Shorthand Variable Assignment
+
+Shorthand assignments directly use `=`.
+
+```
+# Shorthand example:
+num = 42
+```
+
+### Mix & Match Assignments
+
+Assignments can mix the explicit and shorthand styles.
+
+```
+# Mixed examples:
+set num = 24
+num to 36
+```
+
+### Type Coercion Behavior
+
+If an expression's type can be coerced to match the variable's type, the assignment will succeed. For example:
+
+```
+# Type coercion examples:
+float num = 42  # Integer 42 is coerced to float 42.0
+int num2 = false # Boolean false is coerced to 0
+```
+
+If coercion is not possible, SkimSkript raises a runtime error. More detailed documentation regarding coercion will be coming soon.
