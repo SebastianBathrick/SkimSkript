@@ -23,7 +23,6 @@ print("Hello World") # Inline comment after code
 # Each line must start with a `#`
 # to continue the comment.
 ```
-___
 # 3. Data Types
 
 ## A. `int` (Integer)
@@ -88,8 +87,6 @@ ___
     -   Equals (`==` or `is`)
     -   Not equals (`!=` or `is not`)
 -   **Type Coercion in Expressions:** Automatically coerced to `int`, `float`, or `string` when combined with those types in expressions.
-
-----------
 
 ## D. `string` (String)
 
