@@ -26,7 +26,6 @@ print("Hello World") # Inline comment after code
 ```
  
 # 3. Data Types
-</br>
 ## A. `int` (Integer)
 
 -   **Size**: 4 bytes
