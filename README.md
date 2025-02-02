@@ -1,4 +1,5 @@
 # 2. Lexical Structure
+<br>
 ## A. Ignored Characters
 One unique feature of SkimSkript is that the interpreter treats most characters other than alphabetic, operators, or numeric as whitespace (aside from string literals or comments). This leeway gives programmers more freedom to format their code in ways that make sense to them or aid new programmers in moving to more advanced languages.
 
