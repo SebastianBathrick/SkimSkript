@@ -108,7 +108,7 @@ print("Hello World") # Inline comment after code
 -   **Type Coercion in Expressions**:
     -   Does not automatically coerce to other types in expressions.
 # 4. Variables
-## Variable Declarations
+## A. Variable Declarations
 
 Variables in SkimSkript are statically typed, and the data type cannot change after declaration. Both explicit and shorthand styles are supported.
 
@@ -143,7 +143,7 @@ The syntax allows combining explicit and shorthand elements.
 declare int num = 10
 float num2 as 2.71
 ```
-## <u>Variable Assignments
+## B. <u>Variable Assignments
 
 Both styles allow assigning a value to an existing variable. The assignment must follow data type rules; however, SkimSkript supports type coercion if the data types are compatible.
 
