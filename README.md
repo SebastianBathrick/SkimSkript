@@ -11,7 +11,7 @@ Let's say you're already familiar with programming but enjoy Python's syntax; Sk
 ```
 Put FizzBuzz sample resembling Python.
 ```
-
+</br>
 ## B. Comments
 
 Comments in SkimSkript are inline. They start with the `#` symbol, and everything following it on the same line is ignored by the interpreter.
@@ -24,8 +24,9 @@ print("Hello World") # Inline comment after code
 # Each line must start with a `#`
 # to continue the comment.
 ```
+</br>
 # 3. Data Types
-
+</br>
 ## A. `int` (Integer)
 
 -   **Size**: 4 bytes
@@ -49,7 +50,7 @@ print("Hello World") # Inline comment after code
     -   Less than or equal (`<=` or `is at most`)
 -   **Type Coercion in Expressions**:
     -   Automatically coerced to `float` or `string` when combined with those types in expressions.
- 
+ </br>
 ## B. `float` (Floating-Point Number)
 
 -   **Size**: 4 bytes
@@ -74,7 +75,7 @@ print("Hello World") # Inline comment after code
 -   **Type Coercion in Expressions**:
     -   Automatically coerced to `string` when combined with `string` in expressions.
 
-
+</br>
 ## C. `bool` (Boolean)
 
 -   **Size:** 1 byte
@@ -88,7 +89,7 @@ print("Hello World") # Inline comment after code
     -   Equals (`==` or `is`)
     -   Not equals (`!=` or `is not`)
 -   **Type Coercion in Expressions:** Automatically coerced to `int`, `float`, or `string` when combined with those types in expressions.
-
+</br>
 ## D. `string` (String)
 
 -   **Size**: Variable; each character is 1 byte.
@@ -108,7 +109,9 @@ print("Hello World") # Inline comment after code
     -   Less than or equal (`<=` or `is at most`): Checks if the left string is lexicographically less than or equal to the right.
 -   **Type Coercion in Expressions**:
     -   Does not automatically coerce to other types in expressions.
+</br>
 # 4. Variables
+</br>
 ## A. Variable Declarations
 
 Variables in SkimSkript are statically typed, and the data type cannot change after declaration. Both explicit and shorthand styles are supported.
@@ -144,8 +147,9 @@ The syntax allows combining explicit and shorthand elements.
 declare int num = 10
 float num2 as 2.71
 ```
+</br>
 ## B. <u>Variable Assignments
-
+</br>
 Both styles allow assigning a value to an existing variable. The assignment must follow data type rules; however, SkimSkript supports type coercion if the data types are compatible.
 
 ### Explicit Variable Assignment
