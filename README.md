@@ -1,48 +1,26 @@
-# What's SkimSkript?
+# Lexical Structure
+## Ignored Characters
+One unique feature of SkimSkript is that the interpreter treats most characters other than alphabetic, operators, or numeric as whitespace (aside from string literals or comments). This leeway gives programmers more freedom to format their code in ways that make sense to them or aid new programmers in moving to more advanced languages.
 
-SkimSkript is a programming language that lets you write pseudocode-like code with flexible syntax designed for a broad audience. Each statement in SkimSkript is available in two flavors: explicit and shorthand. Explicit statements use extra keywords or keywords instead of symbols, providing readers with additional context about what the code does, which is perfect for beginners or educators. On the other hand, shorthand statements resemble familiar coding styles, catering to experienced programmers seeking brevity.
+For example, if someone still learning programming feels confident with SkimSkript and plans on transitioning to a C-family language, SkimSkript can help. One could practice C-family language syntax in a more forgiving environment using ignored characters like semicolons and commas.
+```
+Put FizzBuzz sample resembling C
+```
+Let's say you're already familiar with programming but enjoy Python's syntax; SkimSkript can facilitate many of those conventions, creating a more comfortable programming experience. For example, you could add colons to the end of ifs and while structures to resemble Python.
+```
+Put FizzBuzz sample resembling Python.
+```
+----------
+## Comments
 
-## Shorthand vs Explicit
-You can see the difference with a simple variable assignment. Suppose we want to store the whole number '3' in a previously declared variable named 'myVar.' 
+Comments in SkimSkript are inline. They start with the `#` symbol, and everything following it on the same line is ignored by the interpreter.
 
-The **shorthand** assignment statement to represent that looks like this:
-````
-myVar = 3					
-````
+```
+# This is a single-line comment
+print("Hello World") # Inline comment after code
 
-Meanwhile, the **explicit** form would add the "*set*"  keyword before the variable identifier and replace the assignment operator with the "*as*" keyword. In practice, the example above in its explicit form would be written like this:
-````
-set myVar to 3					
-````
-
-And if neither style suits your preferences, you can **mix and match**, writing assignments like ````myVar to 3```` or ````set myVar = 3````. The choice is yours!
-
-## Whitespace Freedom
-While keywords and numeric literals must be separated by at least one space or ignored character (we discuss those in the next section), beyond that, the way code is spaced and how line breaks are used is up to the programmer. 
-
-So, a program that looks like this:
-````
-print("20! = " + Factorial(20))
-
-def int Factorial(int n)
-{
-    if n == 0
-        return 1
-
-    return n * Factorial(n - 1)
-}
-````
-Also could look like this:
-````
-print ("20! = " + Factorial (20))
-
-def int Factorial (int n)
-{
-    if n == 0 return 1 return n * Factorial(n - 1)
-}
-````
-Or even this:
-````
-print ("20! = " + Factorial(20)) def int Factorial(int n) 
-{ if n == 0 return 1        return n * Factorial(n - 1) }
-````
+# Multi-line comment example:
+# Each line must start with a `#`
+# to continue the comment.
+```
+___
