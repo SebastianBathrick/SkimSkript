@@ -107,3 +107,39 @@ print("Hello World") # Inline comment after code
     -   Less than or equal (`<=` or `is at most`): Checks if the left string is lexicographically less than or equal to the right.
 -   **Type Coercion in Expressions**:
     -   Does not automatically coerce to other types in expressions.
+# 4. Variables
+## Variable Declarations
+
+Variables in SkimSkript are statically typed, and the data type cannot change after declaration. Both explicit and shorthand styles are supported.
+
+### Explicit Variable Declaration
+
+Explicit declarations use the keyword `declare` followed by the type, identifier, and an optional initializer using `as` along with an expression. Additional rules for initializations can be found in the next section discussing variable assignments.
+
+```
+# Explicit examples:
+declare int num as 5
+declare float num2 as 3.14
+declare string greeting
+```
+
+### Shorthand Variable Declaration
+
+Shorthand declarations omit the `declare` keyword and use `=` for initialization.
+
+```
+# Shorthand examples:
+int num = 5
+float num2 = 3.14
+string greeting
+```
+
+### Mix & Match Declarations
+
+The syntax allows combining explicit and shorthand elements.
+
+```
+# Mixed examples:
+declare int num = 10
+float num2 as 2.71
+```
