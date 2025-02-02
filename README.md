@@ -10,7 +10,7 @@ Let's say you're already familiar with programming but enjoy Python's syntax; Sk
 ```
 Put FizzBuzz sample resembling Python.
 ```
-----------
+
 ## Comments
 
 Comments in SkimSkript are inline. They start with the `#` symbol, and everything following it on the same line is ignored by the interpreter.
