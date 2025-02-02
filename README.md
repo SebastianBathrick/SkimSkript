@@ -1,5 +1,5 @@
 # 2. Lexical Structure
-## 2a. Ignored Characters
+## A. Ignored Characters
 One unique feature of SkimSkript is that the interpreter treats most characters other than alphabetic, operators, or numeric as whitespace (aside from string literals or comments). This leeway gives programmers more freedom to format their code in ways that make sense to them or aid new programmers in moving to more advanced languages.
 
 For example, if someone still learning programming feels confident with SkimSkript and plans on transitioning to a C-family language, SkimSkript can help. One could practice C-family language syntax in a more forgiving environment using ignored characters like semicolons and commas.
@@ -11,7 +11,7 @@ Let's say you're already familiar with programming but enjoy Python's syntax; Sk
 Put FizzBuzz sample resembling Python.
 ```
 
-## 2b. Comments
+## B. Comments
 
 Comments in SkimSkript are inline. They start with the `#` symbol, and everything following it on the same line is ignored by the interpreter.
 
@@ -26,7 +26,7 @@ print("Hello World") # Inline comment after code
 ___
 # 3. Data Types
 
-## 3a. `int` (Integer)
+## A. `int` (Integer)
 
 -   **Size**: 4 bytes
 -   **Description**: Represents whole numbers, both positive and negative.
@@ -50,7 +50,7 @@ ___
 -   **Type Coercion in Expressions**:
     -   Automatically coerced to `float` or `string` when combined with those types in expressions.
  
-## 3b. `float` (Floating-Point Number)
+## B. `float` (Floating-Point Number)
 
 -   **Size**: 4 bytes
 -   **Description**: Represents numbers with fractional parts (decimals).
@@ -75,7 +75,7 @@ ___
     -   Automatically coerced to `string` when combined with `string` in expressions.
 
 
-## 3c. `bool` (Boolean)
+## C. `bool` (Boolean)
 
 -   **Size:** 1 byte
 -   **Description:** Represents logical values: `true` or `false`.
@@ -91,7 +91,7 @@ ___
 
 ----------
 
-## 3d. `string` (String)
+## D. `string` (String)
 
 -   **Size**: Variable; each character is 1 byte.
 -   **Description**: Represents sequences of characters.
