@@ -9,7 +9,7 @@
 > ```
 > Put FizzBuzz sample resembling Python.
 > ```
-### B. Comments
+## B. Comments
 > Comments in SkimSkript are inline. They start with the `#` symbol, and everything following it on the same line is ignored by the interpreter.
 > ```
 > # This is a single-line comment
@@ -22,7 +22,7 @@
  
 # 3. Data Types
 ## A. `int` (Integer)
-> #### Overview
+### Overview
 > - **Size**: 4 bytes
 > 
 > - **Description**: Represents whole numbers, both positive and negative.
@@ -31,7 +31,7 @@
 >   - ***Note:*** The character prior to the first digit can be a minus sign to indicate the number is negative.
 >   - ***Examples:*** `225` is a positive int literal while `-3` is a negative int literal.
 > 
-> - **Supported Mathematical Operations**:
+### Supported Mathematical Operations
 >   - Addition (`+`)
 >   - Subtraction (`-`)
 >   - Multiplication (`*`)
@@ -39,7 +39,7 @@
 >   - Modulus (`%`)
 >   - Exponentiation (`^`)
 > 
-> - **Supported Comparison Operations**:
+### Supported Comparison Operations
 >    -   Equals (`==` or `is`)
 >    -   Not equals (`!=` or `is not`)
 >    -   Greater than (`>` or `exceeds`)
@@ -50,6 +50,7 @@
 >      -   Automatically coerced to `float` or `string` when combined with those types in expressions.
 
 ## B. `float` (Floating-Point Number)
+### Overview
 > - **Size**: 4 bytes
 > 
 > - **Description**: Represents numbers with fractional parts (decimals).
@@ -58,7 +59,7 @@
 >   - ***Note:*** The character prior to the first digit (before the decimal) can be a minus sign to indicate the number is negative.
 >   - ***Examples:*** `1.25` is a positive float literal while `-5050.254` is a negative float literal.
 > 
-> - **Supported Mathematical Operations**:
+### Supported Mathematical Operations
 >   - Addition (`+`)
 >   - Subtraction (`-`)
 >   - Multiplication (`*`)
@@ -66,7 +67,7 @@
 >   - Modulus (`%`)
 >   - Exponentiation (`^`)
 > 
-> - **Supported Comparison Operations**:
+### Supported Comparison Operations
 >    -   Equals (`==` or `is`)
 >    -   Not equals (`!=` or `is not`)
 >    -   Greater than (`>` or `exceeds`)
@@ -77,25 +78,27 @@
 >      -   Automatically coerced to `string` when combined with `string` in expressions.
 
 ## C. `bool` (Boolean)
+### Overview
 > - **Size**: 1 byte
 > 
 > - **Description**: Represents logical values: `true` or `false`.
 > 
 > - **Literals**: Simply the reserved words `true` or `false`.
 > 
-> - **Supported Logical Operations**:
+### Supported Logical Operations
 >   - And (`and` or `&&`)
 >   - Or (`or` or `||`)
 >   - XOR (`or just` or `^^`)
 > 
-> - **Supported Comparison Operations**:
+### Supported Comparison Operations
 >    -   Equals (`==` or `is`)
 >    -   Not equals (`!=` or `is not`)
 > 
 > - **Type Coercion in Expressions**:
 >      -   Automatically coerced to `int`, `float`, or `string` when combined with those types in expressions.
 
-### D. `string` (String)
+## D. `string` (String)
+### Overview
 > - **Size**: Variable; each character is 1 byte.
 > 
 > - **Description**: Represents sequences of characters.
@@ -104,11 +107,11 @@
 >   - ***Note:*** The only exception for characters within the double quotes are double quotes themselves.
 >   - ***Examples:*** `"This is an example!"` would be a valid string along with `"My phone number is +1 913-258-3245"`.
 > 
-> - **Supported Mathematical Operations**:
+### Supported Mathematical Operations
 >   - Addition (`+`): Concatenates two strings.
 >   - Subtraction (`-`): Removes occurrences of the right string from the left string.
 > 
-> - **Supported Comparison Operations**:
+### Supported Comparison Operations
 >    -   Equals (`==` or `is`): Checks if two strings are identical.
 >    -   Not equals (`!=` or `is not`): Checks if two strings are different.
 >    -   Greater than (`>` or `exceeds`): Checks if the left string is lexicographically greater than the right.
