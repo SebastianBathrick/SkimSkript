@@ -223,8 +223,6 @@
 >4.  Parentheses enforce manual grouping
 >
 >This ensures that all expressions are evaluated in a logical, structured manner.
->
->By following these rules, SkimSkript maintains a consistent and intuitive approach to handling expressions, making it accessible for developers transitioning from other languages.
 # 6. Control Structures
 ### B. While Loops
 >While loops enable repeated execution while a condition is true.
