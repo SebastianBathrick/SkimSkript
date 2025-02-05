@@ -119,11 +119,11 @@
 
 
  
-## 4. Variables
+# 4. Variables
 ### A. Variable Declarations
 
 > Variables in SkimSkript are statically typed, and the data type cannot change after declaration. Both explicit and shorthand styles are supported.
-> #### Explicit Variable Declaration
+> ### Explicit Variable Declaration
 > Explicit declarations use the keyword `declare` followed by the type, identifier, and an optional initializer using `as` along with an expression. Additional rules for initializations can be found in the next section discussing variable assignments.
 >```
 ># Explicit examples:
@@ -131,7 +131,7 @@
 >declare float num2 as 3.14
 >declare string greeting
 >```
->#### Shorthand Variable Declaration
+>### Shorthand Variable Declaration
 >Shorthand declarations omit the `declare` keyword and use `=` for initialization.
 >```
 ># Shorthand examples:
@@ -139,7 +139,7 @@
 >float num2 = 3.14
 >string greeting
 >```
->#### Mix & Match Declarations
+>### Mix & Match Declarations
 >The syntax allows combining explicit and shorthand elements.
 >```
 ># Mixed examples:
@@ -148,26 +148,26 @@
 >```
 ### B. <u>Variable Assignments
 >Both styles allow assigning a value to an existing variable. The assignment must follow data type rules; however, SkimSkript supports type coercion if the data types are compatible.
->#### Explicit Variable Assignment
+>### Explicit Variable Assignment
 >Explicit assignments use the keyword `set` and the phrase `to`.
 >```
 ># Explicit example:
 >set num to 42
 >```
->#### Shorthand Variable Assignment
+>### Shorthand Variable Assignment
 >Shorthand assignments directly use `=`.
 >```
 ># Shorthand example:
 >num = 42
 >```
->#### Mix & Match Assignments
+>### Mix & Match Assignments
 >Assignments can mix the explicit and shorthand styles.
 >```
 ># Mixed examples:
 >set num = 24
 >num to 36
 >```
->#### Type Coercion Behavior
+>### Type Coercion Behavior
 >If an expression's type can be coerced to match the variable's type, the assignment will succeed. For example:
 >```
 ># Type coercion examples:
@@ -175,14 +175,14 @@
 >int num2 = false # Boolean false is coerced to 0
 >```
 >If coercion is not possible, SkimSkript raises a runtime error. More detailed documentation regarding coercion will be coming soon.
-## 5. Expressions
+# 5. Expressions
 ### A. Order of Operations
 >SkimSkript respects the conventional precedence rules for arithmetic operations:
 >1.  Parentheses `()` – Expressions inside parentheses are evaluated first.
 >2.  Exponents `^` – Exponentiation is processed before multiplication and division.
 >3.  Multiplication `*`, Division `/` – Thse operations are evaluated before addition and subtracetion.
 >4.  Addition `+`, Subtraction `-` – These are evaluated last in standard arithmetic.
->#### For example:
+>### Examples:
 >```
 >result = 2 + 3 * 4  # Evaluates to 14 (multiplication happens before addition)
 >result2 = (2 + 3) * 4  # Evaluates to 20 (parentheses enforce precedence)
@@ -190,7 +190,7 @@
 >```
 ### B. Comparison Operators
 >SkimSkript also supports comparison operators, which allow expressions to be used in conditional statements.
->#### Available Comparison Operators:
+>### Available Comparison Operators:
 >-   `==` or `is` (equal to)
 >-   `!=` or `is not` (not equal to)
 >-   `>` or `exceeds` (greater than)
@@ -198,7 +198,7 @@
 >-   `>=` or `is at least` (greater than or equal to)
 >-   `<=` or `is at most` (less than or equal to)
 >These operators return a boolean value (`true` or `false`).
->#### Examples:
+>### Examples:
 >```
 >isGreater = 10 > 5  # Evaluates to true
 >isEqual = (4 + 1) == 5  # Evaluates to true
@@ -209,7 +209,7 @@
 >-   `and` or `&&` – Both conditions must be true.
 >-   `or` or `||` – At least one condition must be true.
 >-   `or just` or `^^` – One condition must be true, but not both.
->#### Examples
+>### Examples:
 >```
 >isValid = (10 > 5) and (3 < 8)  # Evaluates to true
 >shouldContinue = (isRunning or hasPermission)  # Either condition being true results in true
@@ -225,17 +225,17 @@
 >This ensures that all expressions are evaluated in a logical, structured manner.
 >
 >By following these rules, SkimSkript maintains a consistent and intuitive approach to handling expressions, making it accessible for developers transitioning from other languages.
-## 6. Control Structures
+# 6. Control Structures
 ### B. While Loops
 >While loops enable repeated execution while a condition is true.
->#### Explicit While
+>### Explicit While
 >Explicit while loops use `repeat this while` before the condition.
 >```
 ># Explicit example:
 >repeat this while isLooping
 >   print "Looping"
 >```
->#### Shorthand While
+>### Shorthand While
 >Shorthand while loops omit `repeat this while`.
 >```
 ># Shorthand example:
@@ -244,7 +244,7 @@
 >```
 ### C. Control Structure Blocks
 >Control structures support both explicit and implicit blocks. Explicit blocks are enclosed in curly braces and can contain more than one statement. Implicit blocks, on the other hand, do not require those curly braces but can contain no more than a single statement.
->#### If Statement Blocks
+>### If Statement Blocks
 >If statements using implicit blocks look like this:
 >```
 ># Implicit block example:
@@ -274,7 +274,7 @@
 >	print("Do I know you?")
 >```
 >
->#### While Loop Blocks
+>### While Loop Blocks
 >While loops using implicit blocks look like this:
 >```
 ># Implicit block example:
