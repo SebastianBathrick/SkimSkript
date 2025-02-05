@@ -224,6 +224,43 @@
 >
 >This ensures that all expressions are evaluated in a logical, structured manner.
 # 6. Control Structures
+## If Statements
+
+If statements in SkimSkript allow conditional code execution in explicit or shorthand forms.
+
+### Explicit If/ElseIf/Else
+Explicit syntax uses `if`, `but if` (for `else if`), and `otherwise` (for `else`).
+```
+# Explicit example:
+if isRunning then
+    print "Running"
+but if num == 2 then
+    print "Number is 2"
+otherwise
+    print "Stopped"
+```
+### Shorthand If/ElseIf/Else
+The shorthand syntax omits keywords like `then` and uses `else if` and `else`.
+```
+# Shorthand example:
+if isRunning
+    print "Running"
+else if num == 2
+    print "Number is 2"
+else
+    print "Stopped"
+```
+### Mix & Match If Statements
+Elements of explicit and shorthand syntax can be combined.
+```
+# Mixed example:
+if isRunning
+    print "Running"
+but if num == 2
+    print "Number is 2"
+else
+    print "Stopped"
+```
 ### B. While Loops
 >While loops enable repeated execution while a condition is true.
 >### Explicit While
