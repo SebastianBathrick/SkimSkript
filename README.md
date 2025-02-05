@@ -225,3 +225,68 @@
 >This ensures that all expressions are evaluated in a logical, structured manner.
 >
 >By following these rules, SkimSkript maintains a consistent and intuitive approach to handling expressions, making it accessible for developers transitioning from other languages.
+## 6. Control Structures
+### B. While Loops
+>While loops enable repeated execution while a condition is true.
+>#### Explicit While
+>Explicit while loops use `repeat this while` before the condition.
+>```
+># Explicit example:
+>repeat this while isLooping
+>   print "Looping"
+>```
+>#### Shorthand While
+>Shorthand while loops omit `repeat this while`.
+>```
+># Shorthand example:
+>while isLooping
+>    print "Looping"
+>```
+### C. Control Structure Blocks
+>Control structures support both explicit and implicit blocks. Explicit blocks are enclosed in curly braces and can contain more than one statement. Implicit blocks, on the other hand, do not require those curly braces but can contain no more than a single statement.
+>#### If Statement Blocks
+>If statements using implicit blocks look like this:
+>```
+># Implicit block example:
+>if userInput is 20
+>print("Your input is 20.")
+>```
+>If statements using explicit blocks can be written like the following:
+>```
+># Implicit block example:
+>if userInput is 31 or userInput is 32
+>{
+>	print("Your input is 31.")
+>	print("Or maybe it was 32?")
+>}
+>```
+>However, connected if, else if, and elses can all be using different block types.
+>```
+># Implicit & explicit mix example:
+>if name is "Greg Jr."
+>{
+>	print("Hey Junior!")
+>	print("Is dad there?")
+>}
+>else if name is "Greg"
+>	print("Hello admin!)
+>else
+>	print("Do I know you?")
+>```
+>
+>#### While Loop Blocks
+>While loops using implicit blocks look like this:
+>```
+># Implicit block example:
+>while count is not 3
+>	count = count + 1
+>```
+>While loops using explicit blocks can be written like the following:
+>```
+># Explicit block example:
+>while myScore is below 10
+>{
+>	myScore = myScore + 2
+>	print("Your score: " + myScore)
+>}
+>```
