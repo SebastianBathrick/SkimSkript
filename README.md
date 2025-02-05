@@ -123,7 +123,7 @@
 ### A. Variable Declarations
 
 > Variables in SkimSkript are statically typed, and the data type cannot change after declaration. Both explicit and shorthand styles are supported.
-> ### Explicit Variable Declaration
+> #### Explicit Variable Declaration
 > Explicit declarations use the keyword `declare` followed by the type, identifier, and an optional initializer using `as` along with an expression. Additional rules for initializations can be found in the next section discussing variable assignments.
 >```
 ># Explicit examples:
