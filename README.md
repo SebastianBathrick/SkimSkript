@@ -175,4 +175,53 @@
 >int num2 = false # Boolean false is coerced to 0
 >```
 >If coercion is not possible, SkimSkript raises a runtime error. More detailed documentation regarding coercion will be coming soon.
-
+## 5. Expressions
+### A. Order of Operations
+>SkimSkript respects the conventional precedence rules for arithmetic operations:
+>1.  Parentheses `()` – Expressions inside parentheses are evaluated first.
+>2.  Exponents `^` – Exponentiation is processed before multiplication and division.
+>3.  Multiplication `*`, Division `/` – Thse operations are evaluated before addition and subtracetion.
+>4.  Addition `+`, Subtraction `-` – These are evaluated last in standard arithmetic.
+>#### For example:
+>```
+>result = 2 + 3 * 4  # Evaluates to 14 (multiplication happens before addition)
+>result2 = (2 + 3) * 4  # Evaluates to 20 (parentheses enforce precedence)
+>result3 = 2 ^ 3 * 2  # Evaluates to 16 (exponentiation happens first: 2^3 = 8, then 8*2)
+>```
+### B. Comparison Operators
+>SkimSkript also supports comparison operators, which allow expressions to be used in conditional statements.
+>#### Available Comparison Operators:
+>-   `==` or `is` (equal to)
+>-   `!=` or `is not` (not equal to)
+>-   `>` or `exceeds` (greater than)
+>-   `<` or `is below` (less than)
+>-   `>=` or `is at least` (greater than or equal to)
+>-   `<=` or `is at most` (less than or equal to)
+>These operators return a boolean value (`true` or `false`).
+>#### Examples:
+>```
+>isGreater = 10 > 5  # Evaluates to true
+>isEqual = (4 + 1) == 5  # Evaluates to true
+>isValid = 6 <= 3  # Evaluates to false
+>```
+### C. Logical Operators
+>Logical expressions can combine boolean values using logical operators:
+>-   `and` or `&&` – Both conditions must be true.
+>-   `or` or `||` – At least one condition must be true.
+>-   `or just` or `^^` – One condition must be true, but not both.
+>#### Examples
+>```
+>isValid = (10 > 5) and (3 < 8)  # Evaluates to true
+>shouldContinue = (isRunning or hasPermission)  # Either condition being true results in true
+>exclusiveCheck = (x == 10) or just (y == 20)  # Only one of these can be true
+>```
+### D. Execution Order in Expressions
+>Internally, expressions are parsed and executed based on their precedence levels, with a maximum recursion depth of 4 for a single expression:
+>1.  Logical expressions (lowest precedence)
+>2.  Comparison expressions
+>3.  Arithmetic expressions (following PEMDAS/BODMAS order)
+>4.  Parentheses enforce manual grouping
+>
+>This ensures that all expressions are evaluated in a logical, structured manner.
+>
+>By following these rules, SkimSkript maintains a consistent and intuitive approach to handling expressions, making it accessible for developers transitioning from other languages.
