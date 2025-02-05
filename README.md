@@ -119,84 +119,60 @@
 
 
  
-# 4. Variables
-## A. Variable Declarations
+## 4. Variables
+### A. Variable Declarations
 
-Variables in SkimSkript are statically typed, and the data type cannot change after declaration. Both explicit and shorthand styles are supported.
+> Variables in SkimSkript are statically typed, and the data type cannot change after declaration. Both explicit and shorthand styles are supported.
+> ### Explicit Variable Declaration
+> Explicit declarations use the keyword `declare` followed by the type, identifier, and an optional initializer using `as` along with an expression. Additional rules for initializations can be found in the next section discussing variable assignments.
+>```
+># Explicit examples:
+>declare int num as 5
+>declare float num2 as 3.14
+>declare string greeting
+>```
+>#### Shorthand Variable Declaration
+>Shorthand declarations omit the `declare` keyword and use `=` for initialization.
+>```
+># Shorthand examples:
+>int num = 5
+>float num2 = 3.14
+>string greeting
+>```
+>#### Mix & Match Declarations
+>The syntax allows combining explicit and shorthand elements.
+>```
+># Mixed examples:
+>declare int num = 10
+>float num2 as 2.71
+>```
+### B. <u>Variable Assignments
+>Both styles allow assigning a value to an existing variable. The assignment must follow data type rules; however, SkimSkript supports type coercion if the data types are compatible.
+>#### Explicit Variable Assignment
+>Explicit assignments use the keyword `set` and the phrase `to`.
+>```
+># Explicit example:
+>set num to 42
+>```
+>#### Shorthand Variable Assignment
+>Shorthand assignments directly use `=`.
+>```
+># Shorthand example:
+>num = 42
+>```
+>#### Mix & Match Assignments
+>Assignments can mix the explicit and shorthand styles.
+>```
+># Mixed examples:
+>set num = 24
+>num to 36
+>```
+>#### Type Coercion Behavior
+>If an expression's type can be coerced to match the variable's type, the assignment will succeed. For example:
+>```
+># Type coercion examples:
+>float num = 42  # Integer 42 is coerced to float 42.0
+>int num2 = false # Boolean false is coerced to 0
+>```
+>If coercion is not possible, SkimSkript raises a runtime error. More detailed documentation regarding coercion will be coming soon.
 
-### Explicit Variable Declaration
-
-Explicit declarations use the keyword `declare` followed by the type, identifier, and an optional initializer using `as` along with an expression. Additional rules for initializations can be found in the next section discussing variable assignments.
-
-```
-# Explicit examples:
-declare int num as 5
-declare float num2 as 3.14
-declare string greeting
-```
-
-### Shorthand Variable Declaration
-
-Shorthand declarations omit the `declare` keyword and use `=` for initialization.
-
-```
-# Shorthand examples:
-int num = 5
-float num2 = 3.14
-string greeting
-```
-
-### Mix & Match Declarations
-
-The syntax allows combining explicit and shorthand elements.
-
-```
-# Mixed examples:
-declare int num = 10
-float num2 as 2.71
-```
- 
-## B. <u>Variable Assignments
- 
-Both styles allow assigning a value to an existing variable. The assignment must follow data type rules; however, SkimSkript supports type coercion if the data types are compatible.
-
-### Explicit Variable Assignment
-
-Explicit assignments use the keyword `set` and the phrase `to`.
-
-```
-# Explicit example:
-set num to 42
-```
-
-### Shorthand Variable Assignment
-
-Shorthand assignments directly use `=`.
-
-```
-# Shorthand example:
-num = 42
-```
-
-### Mix & Match Assignments
-
-Assignments can mix the explicit and shorthand styles.
-
-```
-# Mixed examples:
-set num = 24
-num to 36
-```
-
-### Type Coercion Behavior
-
-If an expression's type can be coerced to match the variable's type, the assignment will succeed. For example:
-
-```
-# Type coercion examples:
-float num = 42  # Integer 42 is coerced to float 42.0
-int num2 = false # Boolean false is coerced to 0
-```
-
-If coercion is not possible, SkimSkript raises a runtime error. More detailed documentation regarding coercion will be coming soon.
-#
