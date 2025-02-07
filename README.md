@@ -528,8 +528,6 @@ Lastly, this definition has to be followed by an implicit or explicit function b
 > StoreSum(ref mySum 20 5)
 > ```
 
----
-
 ### **4. Function Calls in Expressions**  
 > If a function **returns a value**, it can be used inside expressions.  
 > If the returned value's type does **not match** the expected type in the expression, SkimSkript attempts **type coercion**.  
@@ -548,5 +546,113 @@ Lastly, this definition has to be followed by an implicit or explicit function b
 > In both examples, if `GetSum` returns a type **different** from the expected type (e.g., `string` instead of `int`),  
 > SkimSkript will attempt **coercion**. If coercion is **not possible**, an error occurs at runtime.
 
+# 9. Scope
+
+## A. Overview
+
+> Scope in SkimSkript determines where variables and functions can be accessed or modified.
+> It follows modern scoping rules, ensuring variables are only available within their defined context.
+
+## B. Top-Level Scope
+
+> Variables declared at the top level exist throughout the entire program, from the point of declaration onward.
+> These variables are accessible within functions and control structures.
+>
+> ```
+> # At this point, isRunning does not exist
+> # Trying to use it would result in an error
+>
+> bool isRunning = true  # Declared at the top level, accessible to everything below
+>
+> # Now it exists!
+> ```
+
+## C. Block Scope
+
+> Each control structure (`while`, `if`, etc.) introduces a new **block scope**.
+> - Variables declared inside a block are **not accessible outside the block**.
+> - However, they are accessible **within the block and in nested blocks**.
+>
+> ```
+> while isRunning
+> {
+>     int selectedNum = read()  # Exists only inside this `while` block
+>
+>     if selectedNum <= 12 && selectedNum > 0
+>         print(" " selectedNum + "! = " + Factorial(selectedNum) " ")
+>     else
+>         print(" " "Error: Numbers must be less than 13 and greater than 0" " ")
+>
+>     isRunning = read() == 1  # Can modify global isRunning
+> }
+>
+> # selectedNum no longer exists outside the while block
+> ```
+
+## D. Function Scope
+
+> Functions introduce an **isolated scope**, meaning:
+> - **Only parameters and top-level variables** are accessible inside the function.
+> - Variables declared inside a function **cannot be accessed outside of it**.
+>
+> ```
+> def int Factorial(int n)
+> {
+>     # Can access function parameter (n) and global variables
+>     if n == 0
+>         return 1
+>
+>     return n * Factorial(n - 1)  # Recursive calls work as expected
+> }
+>
+> # Factorial function does not have access to selectedNum from while loop
+> ```
+
+## E. Scoping Rules & Errors
+
+> 1. **A variable cannot be used before it is declared.**
+>     ```
+>     print(isRunning)  # ❌ Error: isRunning is not defined yet
+>     bool isRunning = true
+>     ```
+>
+> 2. **Block-scoped variables disappear after execution of their block.**
+>     ```
+>     if true
+>     {
+>         int temp = 5
+>     }
+>     print(temp)  # ❌ Error: temp is out of scope
+>     ```
+>
+> 3. **Functions only have access to top-level variables and their parameters.**
+>     ```
+>     def void TestFunction()
+>     {
+>         print(selectedNum)  # ❌ Error: selectedNum is only inside while-loop
+>     }
+>     ```
+>
+> 4. **Variables inside a function do not affect variables outside.**
+>     ```
+>     def void Example()
+>     {
+>         int x = 10
+>     }
+>     
+>     Example()
+>     print(x)  # ❌ Error: x does not exist outside Example
+>     ```
+
+## F. Summary
+
+> - **Top-Level Variables**: Exist from declaration onward and are accessible globally.
+> - **Block Scope**: Variables inside loops and conditionals exist only within those blocks.
+> - **Function Scope**: Variables inside functions are isolated unless explicitly passed or declared globally.
+> - **Scoping Errors**: Using undeclared or out-of-scope variables results in runtime errors.
+
 ---
+
+> Understanding scope ensures **safe variable management**, prevents **accidental modifications**, and supports **structured programming** in SkimSkript.
+
 
