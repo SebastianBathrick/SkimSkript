@@ -424,4 +424,129 @@ Lastly, this definition has to be followed by an implicit or explicit function b
 > }
 > ```
 > If coercion fails, SkimSkript raises a runtime exception.
+## D. Function Blocks
+> Function definitions in SkimSkript require a **function block**, which determines how statements are grouped within the function body.  
+> There are two types of function blocks: **implied blocks** and **explicit blocks**.  
+### Implied Blocks
+> Implied blocks allow for a **single statement or control structure** to directly follow the function definition.  
+> These blocks do **not** require curly braces `{}` and are useful for concise, single-expression functions.  
+>
+> #### Shorthand implied block using `=>`:
+> ```
+> # A concise function using an implied block
+> def int GetSum(int operand1 int operand2) =>
+>     return operand1 + operand2
+> ```
+>
+> #### Explicit implied block using `as follows`:
+> ```
+> # Explicit version of an implied block
+> def int GetSum(int operand1 int operand2) as follows
+>     return operand1 + operand2
+> ```
+> Since implied blocks **only allow a single statement**, attempting to include multiple statements results in a **syntax error**.
+### Explicit Blocks  
+> Explicit blocks behave like standard function blocks, allowing multiple statements within **curly braces `{}`**.  
+> These blocks must be used whenever a function requires more than one statement in its body.  
+>
+> ```
+> # A function using an explicit block
+> def int GetSum(int operand1 int operand2)
+> {
+>     int result = operand1 + operand2
+>     print("Computed sum: " + result)
+>     return result
+> }
+> ```
+> Explicit blocks offer flexibility and are required for functions with **multiple expressions, loops, or conditionals**.
+## E. Function Calls
+
+> In SkimSkript, functions are executed using function calls.  
+> Functions can be invoked using **explicit calls** or **shorthand calls**, and may include parameters passed by **value** or **reference**.  
+> If a function **returns a value**, it can be used in expressions, where SkimSkript will attempt **type coercion** if necessary.  
+> If coercion is not possible, a **runtime exception** will occur.
+
+---
+
+### **1. Explicit Function Calls**  
+> Explicit function calls use the `run` keyword, followed by the function name and parentheses.  
+
+> ```
+> # Calling a function explicitly
+> run PrintHelloWorld()
+> ```
+> ```
+> # Calling a function with parameters (pass by value)
+> run GetSum(20 userNumber)
+> ```
+
+---
+
+### **2. Shorthand Function Calls**  
+> Shorthand function calls omit the `run` keyword and only use the function name.  
+
+> ```
+> # Calling a function using shorthand
+> PrintHelloWorld
+> ```
+> ```
+> # Calling a function with parameters (pass by value)
+> GetSum(20 userNumber)
+> ```
+
+---
+
+### **3. Passing Parameters**  
+> Functions can receive parameters using **pass by value** or **pass by reference**.  
+> When passing by **value**, a copy of the argument is provided to the function.  
+> When passing by **reference**, the actual variable is modified inside the function.  
+
+#### **Pass by Value**
+> **Pass by value** sends a copy of the argument, meaning changes inside the function do not affect the original variable.  
+
+> ```
+> # Pass by value (Explicit)
+> run GetSum(20 userNumber)
+> ```
+
+> ```
+> # Pass by value (Shorthand)
+> GetSum(20 userNumber)
+> ```
+
+#### **Pass by Reference**
+> **Pass by reference** allows a function to modify the original variable.  
+> Only **identifiers** (variable names) can be passed by reference—**expressions are not allowed**.  
+
+> ```
+> # Pass by reference (Explicit)
+> run StoreSum(reference mySum 20 5)
+> ```
+
+> ```
+> # Pass by reference (Shorthand)
+> StoreSum(ref mySum 20 5)
+> ```
+
+---
+
+### **4. Function Calls in Expressions**  
+> If a function **returns a value**, it can be used inside expressions.  
+> If the returned value's type does **not match** the expected type in the expression, SkimSkript attempts **type coercion**.  
+> If coercion **fails**, a **runtime exception** is raised.
+
+> ```
+> # Function call in an expression (Explicit)
+> total = 20 + value of GetSum(20 userNumber)
+> ```
+
+> ```
+> # Function call in an expression (Shorthand)
+> total = 20 + GetSum(20 userNumber)
+> ```
+
+> In both examples, if `GetSum` returns a type **different** from the expected type (e.g., `string` instead of `int`),  
+> SkimSkript will attempt **coercion**. If coercion is **not possible**, an error occurs at runtime.
+
+---
 
