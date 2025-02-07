@@ -329,3 +329,99 @@ else
 >	print("Your score: " + myScore)
 >}
 >```
+# 7. Function Definitions and Bodies
+## A. Function Definitions
+ In SkimSkript, functions allow for reusable blocks of code that can be called whenever needed.
+### Explicit Function Definition
+> Explicit function definitions use the keyword `define`, followed by an **optional return type**, the keyword `function`, and then a **function identifier**.
+> 
+> After the identifier, functions must have an **opening parenthesis** and a **closing parenthesis**, even if no parameters are included.  
+> Lastly, this definition must be followed by an implicit or explicit function block (discussed in a later section).  
+> ```
+> # A function that takes two integers and returns their sum
+> define int function GetSum(int operand1 int operand2)
+> {
+>     return operand1 + operand2
+> }
+> 
+> # A function that stores the sum of two numbers in a referenced variable
+> define function StoreSum(reference int sumVar int operand1 int operand2)
+> {
+>     sumVar = operand1 + operand2
+> }
+> ```
+### Shorthand Function Definition
+> Explicit function definitions start with the keyword `def`, followed by a **return type** (if not `void`), then a **function identifier**.  
+>  
+> After the identifier, functions must have an **opening parenthesis** and a **closing parenthesis**, even if no parameters are included.
+Lastly, this definition has to be followed by an implicit or explicit function block (which is mentioned in a later section).
+> ```
+> # A simple function with no return value
+> def SayHello()
+> {
+>     print("Hello")
+> }
+> ```
+>
+> ```
+> # A function that returns an integer
+> def int GetCount()
+> {
+>     return 3 # Returns are discussed in the next section
+> }
+> ```
+
+## B. Parameters
+> Functions can accept **parameters** that allow passing values into the function.  
+> Each parameter must follow a structured format that consists of:
+> - *(If pass by reference)* the `ref` keyword (optional)
+> - A **data type** (`int`, `float`, `string`, etc.)
+> - An **identifier** (parameter name)  
+>
+> Parameters are written inside parentheses, separated by spaces instead of commas.  
+> If a function requires multiple parameters, each must follow the same format inside the parentheses.
+> ```
+> # A function that takes two integer parameters and returns their sum
+> def int GetSum(int operand1 int operand2)
+> {
+>     return operand1 + operand2
+> }
+>
+> # A function that stores the sum of two numbers in a referenced variable
+> def StoreSum(ref int sumVar int operand1 int operand2)
+> {
+>     sumVar = operand1 + operand2
+> }
+> ```
+> The `ref` keyword in the `StoreSum` function allows the `sumVar` variable to be updated outside the function.
+## C. Return Statements
+> Return statements indicate what a function provides back to its caller. The expression returned must be of the **same data type** stated in the function definition.  
+>  
+> If the returned expression's type **differs from the function's return type**, SkimSkript will attempt to **coerce** it to the expected type. However, if coercion is **not possible**, a **runtime exception** will occur.
+### Explicit Returns  
+> Explicit returns use the phrase `give back`, followed by an optional expression.  
+> ```
+> # Explicit example:
+> give back result
+>
+> # Explicit example with type coercion:
+> define int function GetValue()
+> {
+>     give back 3.5  # The float 3.5 is coerced to int 3
+> }
+> ```
+> If coercion is not possible, an error is raised at runtime.
+### Shorthand Returns  
+> Shorthand returns only use the `return` keyword.  
+> ```
+> # Shorthand example:
+> return result
+>
+> # Shorthand example with coercion:
+> define float function GetHalf()
+> {
+>     return 2  # The integer 2 is coerced to float 2.0
+> }
+> ```
+> If coercion fails, SkimSkript raises a runtime exception.
+
