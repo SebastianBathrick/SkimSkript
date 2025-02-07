@@ -233,12 +233,12 @@
 If statements in SkimSkript allow conditional code execution in explicit or shorthand forms.
 
 ### Explicit If/ElseIf/Else
-Explicit syntax uses `if`, `but if` (for `else if`), and `otherwise` (for `else`).
+Explicit syntax uses `if`, `instead if` (for `else if`), and `otherwise` (for `else`).
 ```
 # Explicit example:
 if isRunning then
     print "Running"
-but if num == 2 then
+instead if num == 2 then
     print "Number is 2"
 otherwise
     print "Stopped"
@@ -260,7 +260,7 @@ Elements of explicit and shorthand syntax can be combined.
 # Mixed example:
 if isRunning
     print "Running"
-but if num == 2
+instead if num == 2
     print "Number is 2"
 else
     print "Stopped"
