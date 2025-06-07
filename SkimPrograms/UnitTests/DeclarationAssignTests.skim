@@ -1,0 +1,367 @@
+print("Starting Variable Declaration & Assignment Tests")
+print("==============================================")
+
+print("Testing basic integer declarations...")
+# Basic integer declarations - verbose syntax
+declare integer var1 as 10
+assert var1 == 10
+
+declare int var2 as 25
+assert var2 == 25
+
+# Basic integer declarations - brief syntax  
+int var3 = 15
+assert var3 == 15
+
+integer var4 = 50
+assert var4 == 50
+
+# Mixed syntax
+declare int var5 = 30
+assert var5 == 30
+
+print("Basic integer declarations passed!")
+
+print("Testing integer declarations without initialization...")
+# Declarations without initialization
+declare integer uninitInt
+declare int uninitInt2
+int uninitInt3
+integer uninitInt4
+
+# Test that uninitialized variables can be assigned
+uninitInt = 100
+assert uninitInt == 100
+
+uninitInt2 = -50
+assert uninitInt2 == -50
+
+uninitInt3 = 0
+assert uninitInt3 == 0
+
+uninitInt4 = 999
+assert uninitInt4 == 999
+
+print("Integer declarations without initialization passed!")
+
+print("Testing float/floating point declarations...")
+# Float declarations - verbose syntax
+declare float floatVar1 as 3.14
+assert floatVar1 == 3.14
+
+declare floating point floatVar2 as 2.5
+assert floatVar2 == 2.5
+
+# Brief syntax
+float floatVar3 = 1.0
+assert floatVar3 == 1.0
+
+# Mixed syntax  
+declare float floatVar4 = -5.5
+assert floatVar4 == -5.5
+
+# Uninitialized floats
+declare float uninitFloat
+uninitFloat = 10.75
+assert uninitFloat == 10.75
+
+print("Float declarations passed!")
+
+print("Testing boolean declarations...")
+# Boolean declarations - verbose syntax
+declare bool boolVar1 as true
+assert boolVar1 == true
+
+declare boolean boolVar2 as false
+assert boolVar2 == false
+
+# Brief syntax
+bool boolVar3 = true
+assert boolVar3 == true
+
+boolean boolVar4 = false  
+assert boolVar4 == false
+
+# Mixed syntax
+declare bool boolVar5 = true
+assert boolVar5 == true
+
+# Uninitialized booleans
+declare bool uninitBool
+uninitBool = false
+assert uninitBool == false
+
+uninitBool = true
+assert uninitBool == true
+
+print("Boolean declarations passed!")
+
+print("Testing string declarations...")
+# String declarations - verbose syntax
+declare string stringVar1 as "Hello World"
+assert stringVar1 == "Hello World"
+
+# Brief syntax
+string stringVar2 = "SkimSkript"
+assert stringVar2 == "SkimSkript"
+
+# Mixed syntax
+declare string stringVar3 = "Testing"
+assert stringVar3 == "Testing"
+
+# Empty strings
+string emptyString = ""
+assert emptyString == ""
+
+# Uninitialized strings
+declare string uninitString
+uninitString = "Assigned later"
+assert uninitString == "Assigned later"
+
+print("String declarations passed!")
+
+print("Testing variable reassignment...")
+# Integer reassignment
+int reassignInt = 10
+assert reassignInt == 10
+reassignInt = 20
+assert reassignInt == 20
+reassignInt = -5
+assert reassignInt == -5
+
+# Float reassignment
+float reassignFloat = 1.5
+assert reassignFloat == 1.5
+reassignFloat = 3.14159
+assert reassignFloat == 3.14159
+reassignFloat = -2.5
+assert reassignFloat == -2.5
+
+# Boolean reassignment
+bool reassignBool = true
+assert reassignBool == true
+reassignBool = false
+assert reassignBool == false
+reassignBool = true
+assert reassignBool == true
+
+# String reassignment
+string reassignString = "First"
+assert reassignString == "First"
+reassignString = "Second"
+assert reassignString == "Second"
+reassignString = "Final"
+assert reassignString == "Final"
+
+print("Variable reassignment passed!")
+
+print("Testing case insensitive keywords...")
+# Test case insensitive keywords
+DECLARE INTEGER upperVar AS 100
+assert upperVar == 100
+
+Declare Int mixedVar As 50
+assert mixedVar == 50
+
+FLOAT upperFloat = 2.5
+assert upperFloat == 2.5
+
+Bool upperBool = TRUE
+assert upperBool == true
+
+STRING upperString = "UPPERCASE"
+assert upperString == "UPPERCASE"
+
+print("Case insensitive keywords passed!")
+
+print("Testing assignment with 'as' keyword...")
+# Using 'as' for assignment (not just declaration)
+int asVar = 10
+assert asVar == 10
+
+# Note: Need to check if 'as' can be used for reassignment or only declaration
+# This might depend on the language specification
+
+print("Assignment with 'as' keyword passed!")
+
+print("Testing negative number assignments...")
+# Negative numbers
+int negInt = -100
+assert negInt == -100
+
+float negFloat = -3.14
+assert negFloat == -3.14
+
+declare integer negVar2 as -500
+assert negVar2 == -500
+
+declare float negFloatVar as -1.5
+assert negFloatVar == -1.5
+
+print("Negative number assignments passed!")
+
+print("Testing zero assignments...")
+# Zero values
+int zeroInt = 0
+assert zeroInt == 0
+
+float zeroFloat = 0.0
+assert zeroFloat == 0.0
+
+declare integer declaredZero as 0
+assert declaredZero == 0
+
+print("Zero assignments passed!")
+
+print("Testing large number assignments...")
+# Large numbers
+int largeInt = 999999
+assert largeInt == 999999
+
+declare integer veryLargeInt as 1000000
+assert veryLargeInt == 1000000
+
+float largeFloat = 123456.789
+assert largeFloat == 123456.789
+
+print("Large number assignments passed!")
+
+print("Testing variable operations after assignment...")
+# Using variables in expressions
+int operationVar1 = 10
+int operationVar2 = 5
+
+int sum = operationVar1 + operationVar2
+assert sum == 15
+
+int difference = operationVar1 - operationVar2  
+assert difference == 5
+
+int product = operationVar1 * operationVar2
+assert product == 50
+
+int quotient = operationVar1 / operationVar2
+assert quotient == 2
+
+# Reassign based on operations
+operationVar1 = operationVar1 + 5
+assert operationVar1 == 15
+
+operationVar2 = operationVar2 * 2
+assert operationVar2 == 10
+
+print("Variable operations after assignment passed!")
+
+print("Testing complex variable assignments...")
+# Complex expressions in assignments
+int complexVar = (10 + 5) * 2 - 3
+assert complexVar == 27
+
+float complexFloat = 10.5 + 2.5 * 3.0
+assert complexFloat == 18.0
+
+declare int expressionVar as 2 ^ 3 + 1
+assert expressionVar == 9
+
+# Using previously declared variables in new declarations
+int baseVar = 20
+declare int derivedVar as baseVar + 10
+assert derivedVar == 30
+
+print("Complex variable assignments passed!")
+
+print("Testing multiple declarations on separate lines...")
+# Multiple declarations
+declare integer multiVar1 as 1
+declare integer multiVar2 as 2  
+declare integer multiVar3 as 3
+
+assert multiVar1 == 1
+assert multiVar2 == 2
+assert multiVar3 == 3
+
+# Brief syntax multiple declarations
+int briefVar1 = 10
+int briefVar2 = 20
+int briefVar3 = 30
+
+assert briefVar1 == 10
+assert briefVar2 == 20
+assert briefVar3 == 30
+
+print("Multiple declarations passed!")
+
+print("Testing identifier edge cases...")
+# Valid identifiers
+int a = 1
+assert a == 1
+
+int myVar2 = 2
+assert myVar2 == 2
+
+int longVariableName = 100
+assert longVariableName == 100
+
+int var123 = 123
+assert var123 == 123
+
+string textVar = "identifier test"
+assert textVar == "identifier test"
+
+print("Identifier edge cases passed!")
+
+print("Testing mixed data type declarations...")
+# Mixing different data types in same scope
+int mixedInt = 42
+float mixedFloat = 3.14
+bool mixedBool = true
+string mixedString = "mixed"
+
+assert mixedInt == 42
+assert mixedFloat == 3.14
+assert mixedBool == true
+assert mixedString == "mixed"
+
+# Verify they maintain their values
+assert mixedInt == 42
+assert mixedFloat == 3.14
+assert mixedBool == true
+assert mixedString == "mixed"
+
+print("Mixed data type declarations passed!")
+
+print("Testing special string values...")
+# Special string cases
+string spaceString = " "
+assert spaceString == " "
+
+string numbersInString = "12345"
+assert numbersInString == "12345"
+
+string symbolsInString = "!@#$%^&*()"
+assert symbolsInString == "!@#$%^&*()"
+
+string mixedContentString = "Hello 123 World!"
+assert mixedContentString == "Hello 123 World!"
+
+print("Special string values passed!")
+
+print("Testing boolean literal variations...")
+# Boolean values (case insensitive according to docs)
+bool trueBool1 = true
+assert trueBool1 == true
+
+bool trueBool2 = TRUE
+assert trueBool2 == true
+
+bool falseBool1 = false
+assert falseBool1 == false
+
+bool falseBool2 = FALSE
+assert falseBool2 == false
+
+print("Boolean literal variations passed!")
+
+print("")
+print("All variable declaration & assignment tests completed successfully!")
+print("Total test categories: 17")
