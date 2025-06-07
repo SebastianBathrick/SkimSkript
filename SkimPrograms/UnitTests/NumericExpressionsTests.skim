@@ -1,3 +1,257 @@
-﻿
+﻿print("Starting Numeric Expression Tests")
+print("=================================")
+
+assert (20 * 50 + 21) + 5 == 1026
+
+print("Testing basic arithmetic operations...")
+# Basic arithmetic operations
+assert 5 + 3 == 8
+assert 10 - 4 == 6
+assert 7 * 6 == 42
+assert 15 / 3 == 5
+assert 17 / 5 == 3  # Integer division truncates
+assert 7 / 2 == 3   # Integer division truncates
+assert 17 % 5 == 2  # Modulo operation
+assert 7 % 2 == 1   # Modulo operation
+print("Basic arithmetic operations passed!")
+
+print("Testing negative numbers...")
 # Negative numbers
 assert -5 + 3 == -2
+assert -10 - 4 == -14
+assert -7 * 6 == -42
+assert -15 / 3 == -5
+assert -17 / 5 == -3  # Negative integer division truncates
+assert -7 / 2 == -3   # Negative integer division truncates
+assert 5 + (-3) == 2
+assert 10 - (-4) == 14
+assert 7 * (-6) == -42
+assert 15 / (-3) == -5
+assert -17 % 5 == -2  # Negative modulo
+assert 17 % (-5) == 2 # Modulo with negative divisor
+assert (-17) % (-5) == -2 # Both negative modulo
+print("Negative numbers passed!")
+
+print("Testing double negatives...")
+# Double negatives
+assert -(-5) == 5
+assert -(-10) + 3 == 13
+assert -(-7) * 2 == 14
+print("Double negatives passed!")
+
+print("Testing parentheses - basic grouping...")
+# Parentheses - basic grouping
+assert (5 + 3) * 2 == 16
+assert 5 + (3 * 2) == 11
+assert (10 - 4) / 2 == 3
+assert 10 - (4 / 2) == 8
+assert (17 + 3) % 5 == 0  # Modulo with parentheses
+assert 17 + (3 % 5) == 20 # Modulo with parentheses
+print("Basic parentheses grouping passed!")
+
+print("Testing nested parentheses...")
+# Nested parentheses
+assert ((5 + 3) * 2) - 1 == 15
+assert (5 + (3 * 2)) + 4 == 15
+assert ((10 - 4) / 2) * 3 == 9
+assert (10 - (4 / 2)) + 5 == 13
+print("Nested parentheses passed!")
+
+print("Testing complex nested parentheses...")
+# Complex nested parentheses
+assert (((5 + 3) * 2) - 1) + 7 == 22
+assert ((5 + 3) * (2 - 1)) + 4 == 12
+assert (5 + 3) * ((2 - 1) + 4) == 40
+print("Complex nested parentheses passed!")
+
+print("Testing parentheses with negative numbers...")
+# Parentheses with negative numbers
+assert (-5 + 3) * 2 == -4
+assert -(5 + 3) * 2 == -16
+assert (-5 - 3) / (-2) == 4
+assert ((-5) * (-3)) + 2 == 17
+print("Parentheses with negative numbers passed!")
+
+print("Testing order of operations without parentheses...")
+# Order of operations without parentheses
+assert 2 + 3 * 4 == 14
+assert 20 - 4 * 3 == 8
+assert 15 / 3 + 2 == 7
+assert 2 * 3 + 4 * 5 == 26
+assert 17 % 5 + 3 == 5   # Modulo has same precedence as multiplication/division
+assert 3 + 17 % 5 == 5   # Modulo evaluated before addition
+assert 20 / 3 * 2 == 12  # Integer division then multiplication: (20/3)*2 = 6*2 = 12
+print("Order of operations without parentheses passed!")
+
+print("Testing order of operations with mixed signs...")
+# Order of operations with mixed signs
+assert -2 + 3 * 4 == 10
+assert -20 - 4 * 3 == -32
+assert -15 / 3 + 2 == -3
+assert -2 * 3 + 4 * 5 == 14
+assert -17 % 5 + 10 == 8   # Negative modulo with addition
+assert -20 / 3 * 2 == -12  # Negative integer division: (-20/3)*2 = -6*2 = -12
+print("Order of operations with mixed signs passed!")
+
+print("Testing complex expressions...")
+# Complex expressions
+assert 2 * (3 + 4) - 5 == 9
+assert (2 + 3) * (4 - 1) == 15
+assert 100 / (5 * 2) + 3 == 13
+assert (50 - 20) / (3 + 2) == 6
+print("Complex expressions passed!")
+
+print("Testing large numbers...")
+# Large numbers
+assert 1000 + 2000 == 3000
+assert 5000 - 1500 == 3500
+assert 100 * 50 == 5000
+assert 10000 / 100 == 100
+print("Large numbers passed!")
+
+print("Testing zero operations...")
+# Zero operations
+assert 0 + 5 == 5
+assert 5 + 0 == 5
+assert 0 - 5 == -5
+assert 5 - 0 == 5
+assert 0 * 5 == 0
+assert 5 * 0 == 0
+assert 0 / 5 == 0
+assert 0 % 5 == 0    # Zero modulo any number is zero
+print("Zero operations passed!")
+
+print("Testing decimal/floating point (if supported)...")
+# Decimal/floating point (if supported)
+assert 5.5 + 2.3 == 7.8
+assert 10.0 - 3.5 == 6.5
+assert 2.5 * 4.0 == 10.0
+assert 15.0 / 3.0 == 5.0
+print("Decimal/floating point passed!")
+
+print("Testing integer truncation behavior (C-style)...")
+# Integer truncation behavior (C-style)
+assert 7 / 2 == 3      # 3.5 truncates to 3
+assert 9 / 4 == 2      # 2.25 truncates to 2
+assert 11 / 3 == 3     # 3.666... truncates to 3
+assert -7 / 2 == -3    # -3.5 truncates toward zero to -3
+assert -9 / 4 == -2    # -2.25 truncates toward zero to -2
+assert 100 / 7 == 14   # 14.285... truncates to 14
+print("Integer truncation behavior passed!")
+
+print("Testing mixed integer and decimal (if supported)...")
+# Mixed integer and decimal (if supported)
+assert 5 + 2.5 == 7.5
+assert 10.0 - 3 == 7.0
+assert 2.5 * 4 == 10.0
+assert 15 / 3.0 == 5.0
+print("Mixed integer and decimal passed!")
+
+print("Testing edge cases with parentheses and negatives...")
+# Edge cases with parentheses and negatives
+assert -(5 + 3) == -8
+assert -((5 + 3) * 2) == -16
+assert (-5 + (-3)) * 2 == -16
+assert ((-5) + (-3)) / (-2) == 4
+print("Edge cases with parentheses and negatives passed!")
+
+print("Testing comprehensive modulo operations...")
+# Comprehensive modulo tests
+assert 10 % 3 == 1
+assert 15 % 4 == 3
+assert 100 % 7 == 2
+assert 25 % 5 == 0
+assert 13 % 13 == 0
+assert 5 % 10 == 5     # Dividend smaller than divisor
+assert 1 % 2 == 1      # Dividend smaller than divisor
+
+# Modulo with negative numbers (C-style behavior)
+assert 10 % 3 == 1
+assert (-10) % 3 == -1   # Result has same sign as dividend
+assert 10 % (-3) == 1    # Result has same sign as dividend  
+assert (-10) % (-3) == -1 # Result has same sign as dividend
+
+# Modulo in complex expressions
+assert (10 + 5) % 7 == 1
+assert 10 % (3 + 2) == 0
+assert (20 % 6) + (15 % 4) == 5  # 2 + 3 = 5
+assert 100 % (10 + 5) == 10      # 100 % 15 = 10
+
+# Mixed operations with modulo
+assert 10 / 3 + 10 % 3 == 4      # 3 + 1 = 4 (integer division + remainder)
+assert 17 / 5 * 5 + 17 % 5 == 17 # Reconstruct original: 3*5 + 2 = 17
+print("Comprehensive modulo operations passed!")
+
+print("Testing exponentiation operator (^)...")
+# Exponentiation tests
+assert 2 ^ 3 == 8      # 2 to the power of 3
+assert 3 ^ 2 == 9      # 3 to the power of 2
+assert 5 ^ 1 == 5      # Any number to the power of 1
+assert 4 ^ 0 == 1      # Any number to the power of 0
+assert 0 ^ 5 == 0      # Zero to any positive power
+assert 1 ^ 100 == 1    # One to any power
+assert 10 ^ 2 == 100   # Powers of 10
+assert 2 ^ 4 == 16     # 2 to the 4th power
+
+# Negative bases with exponentiation
+assert (-2) ^ 2 == 4   # Negative base, even exponent
+assert (-2) ^ 3 == -8  # Negative base, odd exponent
+assert (-3) ^ 2 == 9   # Negative base, even exponent
+assert (-3) ^ 3 == -27 # Negative base, odd exponent
+
+# Exponentiation with negative exponents (if supported)
+# Note: These might not be supported if your language only handles integers
+# assert 2 ^ (-2) == 0   # Would be 0.25 but truncates to 0 in integer arithmetic
+
+# Order of operations with exponentiation (^ has higher precedence than *, /, %)
+assert 2 * 3 ^ 2 == 18    # 2 * (3^2) = 2 * 9 = 18
+assert 3 ^ 2 * 2 == 18    # (3^2) * 2 = 9 * 2 = 18
+assert 2 + 3 ^ 2 == 11    # 2 + (3^2) = 2 + 9 = 11
+assert 20 - 2 ^ 3 == 12   # 20 - (2^3) = 20 - 8 = 12
+assert 16 / 2 ^ 2 == 4    # 16 / (2^2) = 16 / 4 = 4
+assert 17 % 2 ^ 3 == 1    # 17 % (2^3) = 17 % 8 = 1
+
+# Parentheses with exponentiation
+assert (2 + 3) ^ 2 == 25  # (2+3)^2 = 5^2 = 25
+assert 2 ^ (1 + 2) == 8   # 2^(1+2) = 2^3 = 8
+assert (4 - 1) ^ 2 == 9   # (4-1)^2 = 3^2 = 9
+assert 3 ^ (5 - 3) == 9   # 3^(5-3) = 3^2 = 9
+
+# Nested exponentiation (right associative typically)
+# Note: This depends on whether your language supports right associativity for ^
+# Most languages evaluate 2^3^2 as 2^(3^2) = 2^9 = 512, not (2^3)^2 = 8^2 = 64
+assert 2 ^ 3 ^ 2 == 512   # Right associative: 2^(3^2) = 2^9 = 512
+# If left associative, it would be: assert 2 ^ 3 ^ 2 == 64  # Left associative: (2^3)^2 = 8^2 = 64
+
+# Complex expressions with exponentiation
+assert (2 ^ 3) + (3 ^ 2) == 17     # 8 + 9 = 17
+assert (2 ^ 3) * (3 ^ 2) == 72     # 8 * 9 = 72
+assert (5 ^ 2) - (3 ^ 2) == 16     # 25 - 9 = 16
+assert (10 ^ 2) / (5 ^ 2) == 4     # 100 / 25 = 4
+assert (13 ^ 2) % (5 ^ 2) == 19    # 169 % 25 = 19
+
+# Larger exponents
+assert 2 ^ 5 == 32     # 2^5
+assert 3 ^ 4 == 81     # 3^4
+assert 5 ^ 3 == 125    # 5^3
+assert 2 ^ 10 == 1024  # 2^10
+
+# Mixed operations with exponents and other operators
+assert 2 * 3 ^ 2 + 1 == 19         # 2 * 9 + 1 = 19
+assert (2 + 3) ^ 2 - 5 == 20       # 25 - 5 = 20
+assert 100 / (2 ^ 2) + 3 == 28     # 100 / 4 + 3 = 28
+assert (2 ^ 4) % 5 + 1 == 2        # 16 % 5 + 1 = 1 + 1 = 2
+print("Exponentiation tests passed!")
+
+print("Testing multiple levels of nesting...")
+# Multiple levels of nesting
+assert (((2 + 3) * 4) - 5) / 3 == 5
+assert ((10 - (2 * 3)) + 4) * 2 == 16
+assert (5 * (3 + (2 * 4))) - 10 == 45
+assert ((20 % 7) + 3) * 2 == 18   # (6 + 3) * 2 = 18
+assert ((25 / 6) + (25 % 6)) == 5  # 4 + 1 = 5
+print("Multiple levels of nesting passed!")
+
+print("")
+print("All numeric expression tests completed successfully!")
+print("Total test categories: 14")

@@ -3,6 +3,7 @@ using SkimSkript.TokenManagement;
 using SkimSkript.ErrorHandling;
 using SkimSkript.Nodes;
 using SkimSkript.Nodes.StatementNodes;
+using SkimSkript.Nodes.Runtime;
 
 namespace SkimSkript.Parsing
 {
@@ -255,13 +256,13 @@ namespace SkimSkript.Parsing
         /// operator precedence regarding arithmetic.</summary>
         private Node ParseArithmeticExpression()
         {
-            Node leftNode = GetTerm();
+            Node leftNode = ParseTerm();
             TokenType tokenType;
 
             while (_tokens.HasTokens && ((tokenType = _tokens.PeekType()) == TokenType.Add || tokenType == TokenType.Subtract))
             {
                 _tokens.Remove();
-                Node rightNode = GetTerm(); // Low-precedence arithmetic (add/subtract) acts on terms
+                Node rightNode = ParseTerm(); // Low-precedence arithmetic (add/subtract) acts on terms
                 leftNode = new MathExpressionNode((MathOperator)tokenType, leftNode, rightNode);
             }
 
@@ -277,15 +278,15 @@ namespace SkimSkript.Parsing
         }
 
         /// <summary>Handles a term which could possibly contain embedded expressions, terms, or factors.</summary>
-        private Node GetTerm()
+        private Node ParseTerm()
         {
-            Node leftFactor = GetExponentTerm();
+            Node leftFactor = ParseExponentTerm();
             TokenType tokenType;
 
             while (_tokens.HasTokens && (tokenType = _tokens.PeekType()) >= TokenType.Multiply && tokenType <= TokenType.Exponent)
             {
                 _tokens.Remove();
-                Node rightFactor = GetExponentTerm();
+                Node rightFactor = ParseExponentTerm();
                 leftFactor = new MathExpressionNode((MathOperator)tokenType, leftFactor, rightFactor);
             }
 
@@ -293,15 +294,15 @@ namespace SkimSkript.Parsing
         }
 
         /// <summary>Handles exponent that happens to be of highest precedence.</summary>
-        private Node GetExponentTerm()
+        private Node ParseExponentTerm()
         {
-            Node baseFactor = GetFactor();
+            Node baseFactor = ParseFactor();
             TokenType tokenType;
 
             while (_tokens.HasTokens && (tokenType = _tokens.PeekType()) == TokenType.Exponent)
             {
                 _tokens.Remove();
-                Node exponent = GetExponentTerm(); // Recursive call for right associativity
+                Node exponent = ParseExponentTerm(); // Recursive call for right associativity
                 baseFactor = new MathExpressionNode(MathOperator.Exponent, baseFactor, exponent);
             }
 
@@ -309,7 +310,7 @@ namespace SkimSkript.Parsing
         }
 
         /// <summary>Handles a factor of varying types like literals, variable identifiers, and function calls.</summary>
-        private Node GetFactor()
+        private Node ParseFactor()
         {
             TokenType tokenType = _tokens.PeekType();
 
@@ -327,7 +328,7 @@ namespace SkimSkript.Parsing
                 case TokenType.FunctionCallStartExpression: return GetFunctionCall();
                 case TokenType.True: return new BoolValueNode(true);
                 case TokenType.False: return new BoolValueNode(false);
-                case TokenType.Subtract: return new MathExpressionNode(MathOperator.Multiply, new IntValueNode(-1), GetExpression());
+                case TokenType.Subtract: return new MathExpressionNode(MathOperator.Multiply, new IntValueNode(-1), ParseFactor());
                 default: throw new SyntaxError("Invalid factor in conditionalExpression.", _tokens, ErrorTokenPosition.Backward);
             } 
         }
