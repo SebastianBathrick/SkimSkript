@@ -1,4 +1,7 @@
-﻿namespace SkimSkript.Nodes
+﻿using SkimSkript.Syntax;
+using SkimSkript.TokenManagement;
+
+namespace SkimSkript.Nodes
 {
     /// <summary>Class representing a mathematical expression.</summary>
     public class MathExpressionNode : ExpressionNode
@@ -17,6 +20,6 @@
         public MathExpressionNode(MathOperator mathOperator, Node leftOperand, Node rightOperand):  base(leftOperand, rightOperand) =>
             _mathOperator = mathOperator;
 
-        public override string ToString() => String.Empty;
+        public override string ToString() => $"{LeftOperand} {SyntaxSpec.GetOperatorLexeme((TokenType)_mathOperator)} {RightOperand}";
     }
 }

@@ -2,6 +2,7 @@
 using SkimSkript.TokenManagement;
 using SkimSkript.ErrorHandling;
 using SkimSkript.Nodes;
+using SkimSkript.Nodes.StatementNodes;
 
 namespace SkimSkript.Parsing
 {
@@ -108,6 +109,7 @@ namespace SkimSkript.Parsing
                 TokenType.WhileLoop => GetWhileLoop(),
                 TokenType.If => GetIfStatement(),    
                 TokenType.Identifier => GetIdentifierStartStatement(), //The function will be called here,
+                TokenType.Assertion => GetAssertionStatement(),
                 _ => throw new SyntaxError("Expected new statement but instead found an invalid token.", _tokens, ErrorTokenPosition.InPlace)
             };
 
@@ -136,12 +138,12 @@ namespace SkimSkript.Parsing
             ValueNode valueType = GetTypeValueNode(_tokens.RemoveAndGetType());
             string identifier = _tokens.MatchRemoveAndGetLexeme(TokenType.Identifier);
 
-            //If there is an expression, parse it, and store its root in the statement node.
-            //An assignment operator can be used prior to an expression, or a reserved type meant only for initializing variables.
+            //If there is an conditionalExpression, parse it, and store its root in the statement node.
+            //An assignment operator can be used prior to an conditionalExpression, or a reserved type meant only for initializing variables.
             if (_tokens.TryMatchAndRemove(TokenType.VariableInitialize) || _tokens.TryMatchAndRemove(TokenType.AssignmentOperator))
                 return new VariableDeclarationNode(identifier, GetExpression(), valueType);
 
-            //If there is no expression assigned instantiate a ValueNode with a default value.
+            //If there is no conditionalExpression assigned instantiate a ValueNode with a default value.
             return new VariableDeclarationNode(identifier, valueType);
         }
 
@@ -166,7 +168,7 @@ namespace SkimSkript.Parsing
             return new IfNode(condition, block, null);
         }
 
-        /// <summary>Parses an assignment statement where what is presumably a variable is assigned an expression.</summary>
+        /// <summary>Parses an assignment statement where what is presumably a variable is assigned an conditionalExpression.</summary>
         private StatementNode GetAssignment()
         {
             _tokens.TryMatchAndRemove(TokenType.AssignmentStart);
@@ -185,7 +187,7 @@ namespace SkimSkript.Parsing
             return new WhileNode(expression, GetBlock());
         }
 
-        /// <summary>Parses a return statement with or without an expression.</summary>
+        /// <summary>Parses a return statement with or without an conditionalExpression.</summary>
         private StatementNode GetReturnStatement()
         {
             _tokens.MatchAndRemove(TokenType.Return);
@@ -199,6 +201,14 @@ namespace SkimSkript.Parsing
                 return GetAssignment();
 
             return GetFunctionCall();
+        }
+
+        /// <summary>Parses an assertion statement with an conditional conditionalExpression.</summary>
+        private StatementNode GetAssertionStatement()
+        {
+            _tokens.MatchAndRemove(TokenType.Assertion);
+            var conditionalExpression = GetExpression();
+            return new AssertionNode(conditionalExpression);
         }
         #endregion
 
@@ -258,7 +268,7 @@ namespace SkimSkript.Parsing
             return leftNode;
         }
 
-        /// <summary>Parses an expression enclosed by parenthesis.</summary>
+        /// <summary>Parses an conditionalExpression enclosed by parenthesis.</summary>
         private Node ParseInnerExpression()
         {
             Node expression = GetExpression();
@@ -318,7 +328,7 @@ namespace SkimSkript.Parsing
                 case TokenType.True: return new BoolValueNode(true);
                 case TokenType.False: return new BoolValueNode(false);
                 case TokenType.Subtract: return new MathExpressionNode(MathOperator.Multiply, new IntValueNode(-1), GetExpression());
-                default: throw new SyntaxError("Invalid factor in expression.", _tokens, ErrorTokenPosition.Backward);
+                default: throw new SyntaxError("Invalid factor in conditionalExpression.", _tokens, ErrorTokenPosition.Backward);
             } 
         }
 

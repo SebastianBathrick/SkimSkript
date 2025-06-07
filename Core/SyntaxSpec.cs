@@ -56,7 +56,8 @@ namespace SkimSkript.Syntax
             ("and", TokenType.And),
             ("or just", TokenType.Xor),
             ("then", TokenType.Then),
-            ("left after dividing by", TokenType.Modulus)
+            ("left after dividing by", TokenType.Modulus),
+            ("assert", TokenType.Assertion)
         };
 
         public static readonly Dictionary<string, TokenType> operatorDict = new Dictionary<string, TokenType>
@@ -82,7 +83,7 @@ namespace SkimSkript.Syntax
 
         public static readonly string[] BuiltInFunctionIdentifiers = { "print", "read", "clear", };
 
-        #region Methods for ErrorHandler
+        #region Getters
         public static string GetReservedWordLexeme(TokenType tokenType)
         {
             foreach (var word in reservedWords)
@@ -119,6 +120,10 @@ namespace SkimSkript.Syntax
                     return op.Key;
             return String.Empty;
         }
+        #endregion
+
+        #region Methods for ErrorHandler
+
 
         public static bool IsDelimeterType(TokenType tokenType) => tokenType is TokenType.ParenthesisOpen
             or TokenType.ParenthesisClose or TokenType.BlockOpen or TokenType.BlockClose;

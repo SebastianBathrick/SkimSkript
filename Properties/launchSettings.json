@@ -2,7 +2,7 @@
   "profiles": {
     "SkimSkript": {
       "commandName": "Project",
-      "commandLineArgs": "C:\\Users\\Sebastian\\Desktop\\SkimSkript\\ExamplePrograms\\FizzBuzz.skim"
+      "commandLineArgs": "C:\\Users\\Sebastian\\Desktop\\SkimSkript\\SkimPrograms\\UnitTests\\NumericExpressionsTests.skim"
     }
   }
 }
