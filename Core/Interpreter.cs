@@ -197,7 +197,8 @@ namespace SkimSkript.Interpretation
             {
                 left = new BoolValueNode(EvaluateExpression(expression.LeftOperand).ToBool());
 
-                if (expression.LogicalOperator == LogicalOperator.Or && left.ToBool())
+                // TODO: Add short circuiting for and operator
+                if (expression.LogicalOperator == LogicalOperator.Or && left.ToBool()) 
                     return new BoolValueNode(true); //Short circuit.
 
                 right = new BoolValueNode(EvaluateExpression(expression.RightOperand).ToBool());
