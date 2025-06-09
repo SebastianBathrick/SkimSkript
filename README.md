@@ -200,7 +200,7 @@ integer myVariable5 = 50
 declare string myVariable6
 ```
 
-###Variable Assignments
+### Variable Assignments
 Variables can be initialized during declaration or reassigned after. **Note:** Values assigned to a variable will be coerced to be the variable type. If the coercion is invalid, an exception will be thrown.
 ####Verbose
 ```python
@@ -227,7 +227,7 @@ Variables declared on the top level are considered global. Meaning you can acces
 ```csharp
 string globalVar = "I can be accessed anywhere after my declaration!"
 ```
-####Local Scope
+#### Local Scope
 Variables and parameters declared as part of a function definition/body can only be used inside that function.
 ```
 # Parameter "rightOperand" can only be used inside the block below
@@ -249,7 +249,7 @@ def AddFiveAndPrint(int rightOperand)
 AddFiveAndPrint(20)
 ```
 
-####Block Scope
+#### Block Scope
 Variables declared inside of a control structure can be used within that control structure (including nested control structures)
 ```
 print("Please enter a positive number to multiply by -1:")
@@ -272,8 +272,8 @@ else
  print("Error: Number entered was not positive")
     
 ```
-##Control Structures
-###If Statements
+## Control Structures
+### If Statements
 If statements work virtually the same as any other language, but you have the option to use the ```then``` keyword.
 ```csharp
 if myCondition is true then
@@ -283,7 +283,7 @@ if myCondition2 is false
 	print("myCondition2 is false")
 ```
 
-###If-Else Statements
+### If-Else Statements
 If-else statement's give you a choice of two different keywords to serve as "else". ```else``` and ```otherwise``` that can be used interchangably.
 ```
 # This can either be the verbose or brief "if." The interpreter will accept either.
@@ -297,7 +297,7 @@ if myCondition2 is false
 otherwise
 	print("MyCondition2 is true")
 ```
-###Else-If Statements
+### Else-If Statements
 Else if statements have many variants to choose from for the sake of variety. You can use ```else if```, ```elif```, ```instead if```, ```alternatively if```, and ```otherwise if```.
 ```
 print("Please pick a number from 0-5:")
@@ -318,7 +318,7 @@ otherwise if userSelection is 5
 else
 	print("Selection outside of valid range")
 ```
-###While Loops
+### While Loops
 While loops provide three different options syntactic options to choose from before your loop condition. ```while```, ```repeat while```, and ```repeat code while```.
 ```
 int iterator1 = 0
@@ -345,9 +345,9 @@ repeat code while iterator3 < 5
 	print("iterator3: " + iterator3)
 }
 ```
-###Control Structure Blocks
+### Control Structure Blocks
 Control structures have two seperate types of blocks you can choose from.
-####Explicit Blocks
+#### Explicit Blocks
 Explicit blocks are defined by an opening and closing curly brace (i.e. ```{``` and ```}```.) Explicit blocks can contain one or more statements. However, a block must be explicit if it contains more than one statement.
 ```csharp
 bool isRunning = true
@@ -365,7 +365,7 @@ while isRunning is true
 	}
 }
 ```
-####Implicit Blocks
+#### Implicit Blocks
 If not using curly braces only one statement will be considered in that block.
 ```
 bool isRunning = true
@@ -388,11 +388,11 @@ if maxValue <= 1000 or maxValue >= 1
 
 	
 ```
-##Functions
+## Functions
 SkimSkript offers both statically typed user defined functions and built-in functions.
 
 **Note: Definitions without a return type are void.**
-###Function Definitions
+### Function Definitions
 A **brief** function definition starts with the keyword ```def``` followed by a data-type (or lack thereof), a case sensitive```identifier```, ```opening + closing parenthesis```, and a block. 
 
 ```
@@ -430,5 +430,5 @@ define bool IsThisAFunction() { return true }
 def floating point function GetFloatValue() { give back 30.0 }
 ```
 
-###Function Parameters
+### Function Parameters
 Functions accept both statically typed pass-by-value and pass-by-reference parameters
