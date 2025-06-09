@@ -395,7 +395,7 @@ SkimSkript offers both statically typed user defined functions and built-in func
 ### Function Definitions
 A **brief** function definition starts with the keyword ```def``` followed by a data-type (or lack thereof), a case sensitive```identifier```, ```opening + closing parenthesis```, and a block. 
 
-```
+```python
 def NoReturnTypeFunction() { }
 
 def int IntFunction() { return 1 }
@@ -408,7 +408,7 @@ def bool BoolFunction() { return true }
 ```
 A **verbose** function definition starts with the keywords ```define function``` followed by a data-type (or lack thereof), ```identifier```, ```opening + closing```, and a block. 
 
-```
+```javascript
 define function NoReturnTypeFunction()
 
 define integer function IntFunction() { give back 1 }
@@ -420,7 +420,7 @@ define string function StringFunction() { give back "Hello" }
 define boolean function BoolFunction() { give back true }
 ```
 And of course, you can combine the syntaxes.
-```
+```python
 def integer GetMeaningOfLife() { give back 42 }
 
 define PrintHelloWorld() { print("Hello World") }
@@ -430,5 +430,42 @@ define bool IsThisAFunction() { return true }
 def floating point function GetFloatValue() { give back 30.0 }
 ```
 
-### Function Parameters
-Functions accept both statically typed pass-by-value and pass-by-reference parameters
+### Function Parameters & Calls
+Functions accept both statically typed pass-by-value and pass-by-reference parameters.
+
+#### Pass-by-Value Parameters
+Parameters are declared in between the parenthesis to the right of the function identifier. Pass-by-value parameters need the ```data type``` followed by an ```identifier```. To declare multiple parameters just repeat said process to the right of the first parameter declaration.
+```python
+def PrintString(int stringParameter) {
+	print("String argument: " + stringParameter)
+}
+
+def int GetSum(int left int right) {
+	return left + right
+}
+```
+#### Pass-by-Reference Parameters
+Pass-by-reference parameters have the same rules as pass-by-value with the one difference being that pass-by-reference declarations require ```ref``` or ```reference to``` before the data type.
+```python
+def IncrementInts(ref int int1 ref int int2) {
+	int1 = int1 + 1
+	int2 = int2 + 1
+}
+
+def IncrementFloats(reference to float float1 reference to float float2) {
+	float1 = float1 + 1
+	float2 = float2 + 1
+}
+```
+#### Function Calls
+To call a function simply use its identifier followed by opening and closing parenthesis. If it has parameters just list the expressions or identifiers you'd like to send as arguments inside the parenthesis. If a parameter is pass-by-reference the argument sent **must be an identifier** and has to be labeled using ```ref``` or ```reference to```.
+```csharp
+PrintString("This is a string argument!")
+
+int myInt1 = 1
+int myInt2 = 2
+
+int sum = GetSum(myInt1 myInt2)
+
+IncrementInts(ref myInt1 ref myInt2)
+```
