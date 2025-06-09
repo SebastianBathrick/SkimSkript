@@ -67,6 +67,7 @@
         Identifier,
 
         CommentStart,
+        Assertion,
 
         Undefined,
     }

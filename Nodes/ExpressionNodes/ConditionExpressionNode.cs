@@ -1,5 +1,8 @@
 ﻿// TODO: Split ConditionExpressionNode into two seperate classes (ComparisonExpression & LogicalExpression)
 
+using SkimSkript.Syntax;
+using SkimSkript.TokenManagement;
+
 namespace SkimSkript.Nodes
 {
     /// <summary>Class representing a conditional expression.</summary>
@@ -42,8 +45,13 @@ namespace SkimSkript.Nodes
             _isComparison = false;
         }
 
-        public override string ToString() =>
-            _isComparison ? $"{LeftOperand} {_comparisonOp} {RightOperand}" : $"{LeftOperand} {_logicalOp} {RightOperand}";
+        public override string ToString()
+        {
+            var opTokenType = _isComparison ? (TokenType)_comparisonOp : (TokenType)_logicalOp;
+            var opLexeme = SyntaxSpec.GetOperatorLexeme(opTokenType);
+            return $"{LeftOperand} {opLexeme} {RightOperand}";
+        }
+            
     }
 
 }

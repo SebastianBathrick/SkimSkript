@@ -2,6 +2,8 @@
 using SkimSkript.TokenManagement;
 using SkimSkript.ErrorHandling;
 using SkimSkript.Nodes;
+using SkimSkript.Nodes.StatementNodes;
+using SkimSkript.Nodes.Runtime;
 
 namespace SkimSkript.Parsing
 {
@@ -108,6 +110,7 @@ namespace SkimSkript.Parsing
                 TokenType.WhileLoop => GetWhileLoop(),
                 TokenType.If => GetIfStatement(),    
                 TokenType.Identifier => GetIdentifierStartStatement(), //The function will be called here,
+                TokenType.Assertion => GetAssertionStatement(),
                 _ => throw new SyntaxError("Expected new statement but instead found an invalid token.", _tokens, ErrorTokenPosition.InPlace)
             };
 
@@ -136,12 +139,12 @@ namespace SkimSkript.Parsing
             ValueNode valueType = GetTypeValueNode(_tokens.RemoveAndGetType());
             string identifier = _tokens.MatchRemoveAndGetLexeme(TokenType.Identifier);
 
-            //If there is an expression, parse it, and store its root in the statement node.
-            //An assignment operator can be used prior to an expression, or a reserved type meant only for initializing variables.
+            //If there is an conditionalExpression, parse it, and store its root in the statement node.
+            //An assignment operator can be used prior to an conditionalExpression, or a reserved type meant only for initializing variables.
             if (_tokens.TryMatchAndRemove(TokenType.VariableInitialize) || _tokens.TryMatchAndRemove(TokenType.AssignmentOperator))
                 return new VariableDeclarationNode(identifier, GetExpression(), valueType);
 
-            //If there is no expression assigned instantiate a ValueNode with a default value.
+            //If there is no conditionalExpression assigned instantiate a ValueNode with a default value.
             return new VariableDeclarationNode(identifier, valueType);
         }
 
@@ -166,7 +169,7 @@ namespace SkimSkript.Parsing
             return new IfNode(condition, block, null);
         }
 
-        /// <summary>Parses an assignment statement where what is presumably a variable is assigned an expression.</summary>
+        /// <summary>Parses an assignment statement where what is presumably a variable is assigned an conditionalExpression.</summary>
         private StatementNode GetAssignment()
         {
             _tokens.TryMatchAndRemove(TokenType.AssignmentStart);
@@ -185,7 +188,7 @@ namespace SkimSkript.Parsing
             return new WhileNode(expression, GetBlock());
         }
 
-        /// <summary>Parses a return statement with or without an expression.</summary>
+        /// <summary>Parses a return statement with or without an conditionalExpression.</summary>
         private StatementNode GetReturnStatement()
         {
             _tokens.MatchAndRemove(TokenType.Return);
@@ -199,6 +202,14 @@ namespace SkimSkript.Parsing
                 return GetAssignment();
 
             return GetFunctionCall();
+        }
+
+        /// <summary>Parses an assertion statement with an conditional conditionalExpression.</summary>
+        private StatementNode GetAssertionStatement()
+        {
+            _tokens.MatchAndRemove(TokenType.Assertion);
+            var conditionalExpression = GetExpression();
+            return new AssertionNode(conditionalExpression);
         }
         #endregion
 
@@ -245,20 +256,20 @@ namespace SkimSkript.Parsing
         /// operator precedence regarding arithmetic.</summary>
         private Node ParseArithmeticExpression()
         {
-            Node leftNode = GetTerm();
+            Node leftNode = ParseTerm();
             TokenType tokenType;
 
             while (_tokens.HasTokens && ((tokenType = _tokens.PeekType()) == TokenType.Add || tokenType == TokenType.Subtract))
             {
                 _tokens.Remove();
-                Node rightNode = GetTerm(); // Low-precedence arithmetic (add/subtract) acts on terms
+                Node rightNode = ParseTerm(); // Low-precedence arithmetic (add/subtract) acts on terms
                 leftNode = new MathExpressionNode((MathOperator)tokenType, leftNode, rightNode);
             }
 
             return leftNode;
         }
 
-        /// <summary>Parses an expression enclosed by parenthesis.</summary>
+        /// <summary>Parses an conditionalExpression enclosed by parenthesis.</summary>
         private Node ParseInnerExpression()
         {
             Node expression = GetExpression();
@@ -267,15 +278,15 @@ namespace SkimSkript.Parsing
         }
 
         /// <summary>Handles a term which could possibly contain embedded expressions, terms, or factors.</summary>
-        private Node GetTerm()
+        private Node ParseTerm()
         {
-            Node leftFactor = GetExponentTerm();
+            Node leftFactor = ParseExponentTerm();
             TokenType tokenType;
 
             while (_tokens.HasTokens && (tokenType = _tokens.PeekType()) >= TokenType.Multiply && tokenType <= TokenType.Exponent)
             {
                 _tokens.Remove();
-                Node rightFactor = GetExponentTerm();
+                Node rightFactor = ParseExponentTerm();
                 leftFactor = new MathExpressionNode((MathOperator)tokenType, leftFactor, rightFactor);
             }
 
@@ -283,15 +294,15 @@ namespace SkimSkript.Parsing
         }
 
         /// <summary>Handles exponent that happens to be of highest precedence.</summary>
-        private Node GetExponentTerm()
+        private Node ParseExponentTerm()
         {
-            Node baseFactor = GetFactor();
+            Node baseFactor = ParseFactor();
             TokenType tokenType;
 
             while (_tokens.HasTokens && (tokenType = _tokens.PeekType()) == TokenType.Exponent)
             {
                 _tokens.Remove();
-                Node exponent = GetExponentTerm(); // Recursive call for right associativity
+                Node exponent = ParseExponentTerm(); // Recursive call for right associativity
                 baseFactor = new MathExpressionNode(MathOperator.Exponent, baseFactor, exponent);
             }
 
@@ -299,7 +310,7 @@ namespace SkimSkript.Parsing
         }
 
         /// <summary>Handles a factor of varying types like literals, variable identifiers, and function calls.</summary>
-        private Node GetFactor()
+        private Node ParseFactor()
         {
             TokenType tokenType = _tokens.PeekType();
 
@@ -317,8 +328,8 @@ namespace SkimSkript.Parsing
                 case TokenType.FunctionCallStartExpression: return GetFunctionCall();
                 case TokenType.True: return new BoolValueNode(true);
                 case TokenType.False: return new BoolValueNode(false);
-                case TokenType.Subtract: return new MathExpressionNode(MathOperator.Multiply, new IntValueNode(-1), GetExpression());
-                default: throw new SyntaxError("Invalid factor in expression.", _tokens, ErrorTokenPosition.Backward);
+                case TokenType.Subtract: return new MathExpressionNode(MathOperator.Multiply, new IntValueNode(-1), ParseFactor());
+                default: throw new SyntaxError("Invalid factor in conditionalExpression.", _tokens, ErrorTokenPosition.Backward);
             } 
         }
 

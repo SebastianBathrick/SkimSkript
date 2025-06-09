@@ -12,9 +12,15 @@ namespace SkimSkript.Syntax
             ("def", TokenType.FunctionVoidDefine), ("def int", TokenType.FunctionIntDefine),
             ("def float", TokenType.FunctionFloatDefine), ("def bool", TokenType.FunctionFloatDefine),
 
+            ("def", TokenType.FunctionVoidDefine), ("def integer", TokenType.FunctionIntDefine),
+            ("def floating point", TokenType.FunctionFloatDefine), ("def boolean", TokenType.FunctionFloatDefine),
+
             // Function Definitions (Explicit)
             ("define function", TokenType.FunctionVoidDefine), ("define int function", TokenType.FunctionIntDefine),
             ("define float function", TokenType.FunctionFloatDefine), ("define bool function", TokenType.FunctionFloatDefine),
+
+            ("define function", TokenType.FunctionVoidDefine), ("define integer function", TokenType.FunctionIntDefine),
+            ("define floating point function", TokenType.FunctionFloatDefine), ("define boolean function", TokenType.FunctionFloatDefine),
 
             ("reference to",TokenType.PassByReference), ("ref",TokenType.PassByReference),
             #endregion
@@ -42,6 +48,9 @@ namespace SkimSkript.Syntax
             ("while",TokenType.WhileLoop),
             ("repeat code while",TokenType.WhileLoop),
             ("int",TokenType.IntegerKeyword),
+            ("integer", TokenType.IntegerKeyword),
+            ("floating point", TokenType.FloatKeyword),
+            ("boolean", TokenType.BoolKeyword),
             ("float",TokenType.FloatKeyword),
             ("string",TokenType.StringKeyword),
             ("bool",TokenType.BoolKeyword),
@@ -56,7 +65,8 @@ namespace SkimSkript.Syntax
             ("and", TokenType.And),
             ("or just", TokenType.Xor),
             ("then", TokenType.Then),
-            ("left after dividing by", TokenType.Modulus)
+            ("left after dividing by", TokenType.Modulus),
+            ("assert", TokenType.Assertion)
         };
 
         public static readonly Dictionary<string, TokenType> operatorDict = new Dictionary<string, TokenType>
@@ -82,7 +92,7 @@ namespace SkimSkript.Syntax
 
         public static readonly string[] BuiltInFunctionIdentifiers = { "print", "read", "clear", };
 
-        #region Methods for ErrorHandler
+        #region Getters
         public static string GetReservedWordLexeme(TokenType tokenType)
         {
             foreach (var word in reservedWords)
@@ -119,6 +129,10 @@ namespace SkimSkript.Syntax
                     return op.Key;
             return String.Empty;
         }
+        #endregion
+
+        #region Methods for ErrorHandler
+
 
         public static bool IsDelimeterType(TokenType tokenType) => tokenType is TokenType.ParenthesisOpen
             or TokenType.ParenthesisClose or TokenType.BlockOpen or TokenType.BlockClose;

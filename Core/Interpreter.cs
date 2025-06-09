@@ -2,6 +2,8 @@
 using SkimSkript.Nodes.ValueNodes;
 using SkimSkript.Nodes.Runtime;
 using SkimSkript.Nodes;
+using SkimSkript.Nodes.StatementNodes;
+using SkimSkript.Nodes.NodeExceptions;
 
 namespace SkimSkript.Interpretation
 {
@@ -59,7 +61,7 @@ namespace SkimSkript.Interpretation
         #region Statements
         /// <summary>Evaluates a statement node and performs the appropriate action based on its type.
         /// Returns true if a return statement was executed and false if otherwise.</summary>
-        public bool InterpretStatement(StatementNode node)
+        private bool InterpretStatement(StatementNode node)
         {
             switch (node)
             {
@@ -69,6 +71,8 @@ namespace SkimSkript.Interpretation
                     InterpretFunctionCall(functionCallNode); break;
                 case AssignmentNode assignmentNode:
                     AssignValueToVariable(assignmentNode); break;
+                case AssertionNode assertionNode:
+                    InterpretAssertion(assertionNode); break;
                 case IfNode ifNode:
                     return InterpretIfStructure(ifNode);
                 case WhileNode whileNode:
@@ -84,7 +88,7 @@ namespace SkimSkript.Interpretation
         /// <summary>Invokes a function call node and returns its result as a ValueNode.</summary>
         /// <returns>The result of the function call as a <see cref="ValueNode"/>. If the function has no return, 
         /// returns a default <see cref="IntValueNode"/> with a value of 0.</returns>
-        public ValueNode InterpretFunctionCall(FunctionCallNode functionCallNode)
+        private ValueNode InterpretFunctionCall(FunctionCallNode functionCallNode)
         {
             var interpretedArgs = InterpretArguments(functionCallNode.Arguments);
             CallableNode callNode = _callableFunctionsDict[functionCallNode.Identifier];
@@ -106,7 +110,7 @@ namespace SkimSkript.Interpretation
 
         /// <summary>Evaluates a while loop, executing its block while the condition is true.</summary>
         /// <returns>True if the loop executed a return statement while interpreting its block.</returns>
-        public bool InterpretWhileStructure(WhileNode whileNode)
+        private bool InterpretWhileStructure(WhileNode whileNode)
         {
             while (EvaluateExpression(whileNode.Condition).ToBool())
                 if (InterpretBlock((BlockNode)whileNode.Block))
@@ -117,7 +121,7 @@ namespace SkimSkript.Interpretation
 
         /// <summary>Evaluates an if statement, executing its block if the condition is true, and any else-if or else blocks as appropriate.</summary>
         /// <returns>True if the if structure executed a return statement while interpreting its block.</returns>
-        public bool InterpretIfStructure(IfNode ifNode)
+        private bool InterpretIfStructure(IfNode ifNode)
         {
             if (EvaluateExpression(ifNode.Condition).ToBool())
                 return InterpretBlock((BlockNode)ifNode.Block);
@@ -129,20 +133,32 @@ namespace SkimSkript.Interpretation
         }
 
         /// <summary>Handles return statement and sets the last returned value.</summary>
-        public void InterpretReturnStatement(ReturnNode returnNode)  =>     
+        private void InterpretReturnStatement(ReturnNode returnNode)  =>     
             _lastReturnedValue = returnNode.Expression != null ? 
             EvaluateExpression(returnNode.Expression) : _lastReturnedValue;
 
         /// <summary>Declares a new variable in the current scope.</summary>
-        public void InterpretVariableDeclaration(VariableDeclarationNode declaration)
+        private void InterpretVariableDeclaration(VariableDeclarationNode declarationNode)
         {
-            VariableNode variable = new VariableNode(null, declaration.ValueNodeType.GetType());        
-            _scope.AddVariable(declaration.Identifier, variable);
+            VariableNode variable = new VariableNode(null, declarationNode.ValueNodeType.GetType());        
+            _scope.AddVariable(declarationNode.Identifier, variable);
 
-            if (declaration.IsAssignment)
-                AssignValueToVariable(new AssignmentNode(null, declaration.AssignedExpression), variable);
+            if (declarationNode.IsAssignment)
+                AssignValueToVariable(new AssignmentNode(null, declarationNode.AssignedExpression), variable);
+        }
+
+        /// <summary>Evaluates an assertionNode statement and ensures the condition associated is true.</summary>
+        /// <exception cref="AssertionException">
+        /// Thrown if the conditional expression stored in the statement is false.
+        /// </exception>
+        private void InterpretAssertion(AssertionNode assertionNode)
+        {
+            var interpretedExpression = EvaluateExpression(assertionNode.Condition);
+            if (!EvaluateExpression(assertionNode.Condition).ToBool())
+                throw new AssertionException($"{assertionNode.ToString()}\nInstead left left operand evaluated to: {interpretedExpression}");
         }
         #endregion
+
         #region Expressions
         /// <summary>Evaluates an expression node and returns its computed ValueNode.</summary>
         /// <returns>The result of the evaluated expression as a <see cref="ValueNode"/>.</returns>
@@ -181,7 +197,8 @@ namespace SkimSkript.Interpretation
             {
                 left = new BoolValueNode(EvaluateExpression(expression.LeftOperand).ToBool());
 
-                if (expression.LogicalOperator == LogicalOperator.Or && left.ToBool())
+                // TODO: Add short circuiting for and operator
+                if (expression.LogicalOperator == LogicalOperator.Or && left.ToBool()) 
                     return new BoolValueNode(true); //Short circuit.
 
                 right = new BoolValueNode(EvaluateExpression(expression.RightOperand).ToBool());
@@ -210,6 +227,7 @@ namespace SkimSkript.Interpretation
                 _ => throw new InvalidDataException($"\"{node}\" is not a valid factor data type.")
             };
         #endregion
+
         #region Helper Methods
         /// <summary>Assigns a value to an existing variable in the current scope.</summary>
         private void AssignValueToVariable(AssignmentNode assignment, VariableNode? variableNode = null)
