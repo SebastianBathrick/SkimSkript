@@ -87,8 +87,8 @@ As of now, SkimSkript has the following:
 - Semantic analysis
 - Ignored Symbols
 - Implicit blocks
-
-
+- Assertion Statements
+  
 ## What Features are Coming Next?
 **(More detailed and beginner-friendly guides coming soon!)**<br>
 The following features I'd like to add next are:
@@ -109,19 +109,19 @@ You can write a classic "Hello World" program by writing ```print``` followed by
 ```python
 print("Hello World")
 ```
-Then in a terminal of your choice type the path of **skimskript.exe** and your **.skim file path** as an argument. It should look something like this:
+Then, in a terminal of your choice, type the path of **skimskript.exe** and your **.skim file path** as an argument. It should look something like this:
 ```bash
 PS C:\Users\sebas> skimskript HelloWorld.skim
 ```
 ## 2. ) Ignored Content
 ### 2.1 ) Comments
-To comment, use the pound sign (i.e. ```#```) at the end of a line followed by your comment:
+To comment, use the pound sign (i.e., ```#```) at the end of a line followed by your comment:
 ```python
 # This is a comment
 ```
 
 ### 2.2 ) Symbols
-When it comes to non-alphabetic and non-numeric symbols, SkimSkript gives you quite a bit of leeway. Essentially, you can use any symbol not on this table without interfering with your program. <br><br>
+When it comes to non-alphabetic and non-numeric symbols, SkimSkript gives you quite a bit of leeway. You can use any symbol not on this table without interfering with your program. <br><br>
 **Reserved Symbols:**
 |+   | -  |*   | /  |%   | >  |
 | ------------ | ------------ | ------------ | ------------ | ------------ | ------------ |
@@ -148,7 +148,7 @@ As long as there is at least a single space between alphabetic and numeric lexem
 
 ### 2.4 ) Keywords/Phrases
 SkimSkript keywords have some quirks:
-- **Only complete phrases and singular keywords are reserved.** Meaning using a single word from a reserved phrase is allowed as an identifier, unless the whole phrase is present. For example, ```give back``` is reserved, but you can use ```give``` and ```back``` as variable names.
+- **Only complete phrases and singular keywords are reserved.** Meaning using a single word from a reserved phrase is allowed as an identifier unless the whole phrase is present. For example, ```give back``` is reserved, but you can use ```give``` and ```back``` as variable names.
 - **Reserved words and phrases are NOT case-sensitive**. So, ```Give back``` , ```iF```, and ```INTEGER``` are all valid.
 
 **Reserved Keywords:**
@@ -160,7 +160,7 @@ SkimSkript keywords have some quirks:
 |  float | bool  | boolean  |  string | is  |  or | 
 |  and | then  | minus  |  plus |   
 ## 3. ) Data Types
-Right now SkimSkript offers 4 different data types to choose from:
+Right now, SkimSkript offers four different data types to choose from:
 ### 3.1 ) Integers
 Whole numbers that truncate digits to the right of the decimal point. The data type can be written as ```int``` or ```integer```. Literals can be purely digits or a negative sign followed by digits. Examples: ```29```, ```5```, and ```-300```.
 
@@ -182,9 +182,9 @@ Identifiers are tokens at least one character long that start with an alphabetic
 - ```My Var``` --> Two seperate identifiers
 
 ### 4.2 ) Variable Declarations
-Variables are declared by identifying a type and optionally an initial value.
+You can declare variables by identifying a type and, optionally, an initial value.
 #### Verbose
-```bash
+```csharp
 declare integer myVariable as 10
 ```
 #### Brief
@@ -212,7 +212,7 @@ bool myBool = false
 myBool = true
 ```
 #### Mix
-```
+```csharp
  float myFloat
  set myFloat = 20.0
     
@@ -222,13 +222,20 @@ myBool = true
 ### 4.4 ) Variable Scopes
 SkimSkript contains three separate scope types that determine where you can use certain variables and parameters.
 #### Global Scope
-Variables declared on the top level are considered global. Meaning you can access the variable from anywhere (including functions.)
-```csharp
+Variables declared on the top level are considered global. So you can access the variable from anywhere (including functions.))
+```python
 string globalVar = "I can be accessed anywhere after my declaration!"
+ModifyGlobalVar()
+print(globalVar) # Output: I was modified by a function!!!
+
+def ModifyGlobalVar()
+{
+	globalVar = "I was modified by a function!!!"
+}
 ```
 #### Local Scope
-Variables and parameters declared as part of a function definition/body can only be used inside that function.
-```
+Variables declared in a function body are only accessible within that body (the function's block and nested blocks). Similarly, parameters of a function are only accessible within that function's body but, conversely, are declared in the function definition.
+```python
 # Parameter "rightOperand" can only be used inside the block below
 def AddFiveAndPrint(int rightOperand) 
 {
@@ -249,8 +256,8 @@ AddFiveAndPrint(20)
 ```
 
 #### Block Scope
-Variables declared inside of a control structure can be used within that control structure (including nested control structures)
-```
+Inside control structure blocks, any variables declared are only to be accessed from that block or a nested block.
+```python
 print("Please enter a positive number to multiply by -1:")
 int userNumber = input()
 
@@ -283,8 +290,8 @@ if myCondition2 is false
 ```
 
 ### 5.2 ) If-Else Statements
-If-else statement's give you a choice of two different keywords to serve as "else". ```else``` and ```otherwise``` that can be used interchangably.
-```
+If-else statements give you a choice of two different keywords to serve as "else." ```else``` and ```otherwise``` that can be used interchangably.
+```python
 # This can either be the verbose or brief "if." The interpreter will accept either.
 if myCondition is true 
 	print("myCondition is true")
@@ -297,8 +304,8 @@ otherwise
 	print("MyCondition2 is true")
 ```
 ### 5.3 ) Else-If Statements
-Else if statements have many variants to choose from for the sake of variety. You can use ```else if```, ```elif```, ```instead if```, ```alternatively if```, and ```otherwise if```.
-```
+Else-if statements have many variants to choose from. You can use ```else if```, ```elif```, ```instead if```, ```alternatively if```, and ```otherwise if```.
+```python
 print("Please pick a number from 0-5:")
 int userSelection = read()
 
@@ -318,8 +325,8 @@ else
 	print("Selection outside of valid range")
 ```
 ### 5.4 ) While Loops
-While loops provide three different options syntactic options to choose from before your loop condition. ```while```, ```repeat while```, and ```repeat code while```.
-```
+While loops provide three different syntactic options to choose from before your loop condition. ```while```, ```repeat while```, and ```repeat code while```.
+```python
 int iterator1 = 0
 
 while iterator1 < 5
@@ -345,10 +352,10 @@ repeat code while iterator3 < 5
 }
 ```
 ### 5.5 ) Control Structure Blocks
-Control structures have two seperate types of blocks you can choose from.
+Control structures have two separate "types" or "styles" of blocks you can choose depending on your preference.
 #### Explicit Blocks
-Explicit blocks are defined by an opening and closing curly brace (i.e. ```{``` and ```}```.) Explicit blocks can contain one or more statements. However, a block must be explicit if it contains more than one statement.
-```csharp
+You can define an explicit block by an opening and closing curly brace (i.e., ```{``` and ```}```.) Explicit blocks can contain one or more statements. However, a block must be explicit if it includes more than one statement (as mentioned in the implicit blocks section).
+```python
 bool isRunning = true
 
 while isRunning is true
@@ -365,8 +372,8 @@ while isRunning is true
 }
 ```
 #### Implicit Blocks
-If not using curly braces only one statement will be considered in that block.
-```
+If not defined by opening and closing curly braces, then the interpreter will treat an expected block as implicit. Unlike explicit blocks, only singular statements are allowed by the interpreter in implicit blocks.
+```python
 bool isRunning = true
 int iterator = 0
 
@@ -388,11 +395,12 @@ if maxValue <= 1000 or maxValue >= 1
 	
 ```
 ## 6. ) Functions
-SkimSkript offers both statically typed user defined functions and built-in functions.
+SkimSkript offers statically typed support for both user-defined and built-in functions.
 
 **Note: Definitions without a return type are void.**
 ### 6.1 ) Function Definitions
-A **brief** function definition starts with the keyword ```def``` followed by a data-type (or lack thereof), a case sensitive```identifier```, ```opening + closing parenthesis```, and a block. 
+#### Brief
+A brief function definition begins with the keyword ```def```, followed by an optional ``` data type```, a case-sensitive ```identifier```, parentheses ```()``` (even if empty), and a ```block```.
 
 ```python
 def NoReturnTypeFunction() { }
@@ -405,7 +413,9 @@ def string StringFunction() { return "Hello" }
 
 def bool BoolFunction() { return true }
 ```
-A **verbose** function definition starts with the keywords ```define function``` followed by a data-type (or lack thereof), ```identifier```, ```opening + closing```, and a block. 
+
+#### Verbose
+A verbose function definition starts with the keywords ```define function``` followed by an optional data-type, ```identifier```, parenthesis ```()``` (even if empty), and a block. 
 
 ```javascript
 define function NoReturnTypeFunction()
@@ -418,6 +428,7 @@ define string function StringFunction() { give back "Hello" }
 
 define boolean function BoolFunction() { give back true }
 ```
+#### Mix
 And of course, you can combine the syntaxes.
 ```python
 def integer GetMeaningOfLife() { give back 42 }
@@ -429,11 +440,37 @@ define bool IsThisAFunction() { return true }
 def floating point function GetFloatValue() { give back 30.0 }
 ```
 
+### 6.2 ) Return Statements
+A function can exit at any point in its body using a return statement — either the keyword ```return``` or the phrase ```give back```. For void functions (functions that don't return a value), return statements are optional but can still be used for clarity or early exits.
+```python
+ExitEarly() # Printed output: Nothing
+
+def ExitEarly()
+{
+	# Immediately exits scope regardless of any remaining statements
+	return
+
+	
+	print("Nothing will be printed.") # This statement can't be reached
+}
+
+def ExitInNestedBlock()
+{
+	if true
+	{
+		print("I'm going to return from inside a control structure!)
+		return
+	}
+}
+```
+
+However, if a function is defined to return a value, it must use return or give back followed by an ```expression``` before exiting. That expression must match the declared return type or be coercible to it at runtime. If it doesn't, the interpreter will raise an error.
+
 ### 6.2 ) Function Parameters & Calls
 Functions accept both statically typed pass-by-value and pass-by-reference parameters.
 
 #### Pass-by-Value Parameters
-Parameters are declared in between the parenthesis to the right of the function identifier. Pass-by-value parameters need the ```data type``` followed by an ```identifier```. To declare multiple parameters just repeat said process to the right of the first parameter declaration.
+Parameter declarations appear inside the parentheses to the left of the identifier. A ```data type``` followed by an ```identifier``` denotes a pass-by-value parameter. To declare multiple parameters, repeat this pattern to the right of the first.
 ```python
 def PrintString(int stringParameter) {
 	print("String argument: " + stringParameter)
@@ -444,7 +481,7 @@ def int GetSum(int left int right) {
 }
 ```
 #### Pass-by-Reference Parameters
-Pass-by-reference parameters have the same rules as pass-by-value with the one difference being that pass-by-reference declarations require ```ref``` or ```reference to``` before the data type.
+Pass-by-reference parameters follow the same rules as pass-by-value, with one key difference: pass-by-reference declarations require the use of ```ref``` or ```reference to``` before the data type.
 ```python
 def IncrementInts(ref int int1 ref int int2) {
 	int1 = int1 + 1
@@ -456,8 +493,8 @@ def IncrementFloats(reference to float float1 reference to float float2) {
 	float2 = float2 + 1
 }
 ```
-#### 6.3 ) Function Calls
-To call a function simply use its identifier followed by opening and closing parenthesis. If it has parameters just list the expressions or identifiers you'd like to send as arguments inside the parenthesis. If a parameter is pass-by-reference the argument sent **must be an identifier** and has to be labeled using ```ref``` or ```reference to```.
+### 6.3 ) Function Calls
+To call a function, use its identifier followed by opening and closing parenthesis. If it has parameters, list the expressions or identifiers you'd like to send as arguments inside the parenthesis. If a parameter is passed by reference, the argument forwarded **must be an identifier** and must be labeled using ```ref``` or ```reference to```.
 ```csharp
 PrintString("This is a string argument!")
 
