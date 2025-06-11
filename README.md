@@ -441,32 +441,66 @@ def floating point function GetFloatValue() { give back 30.0 }
 ```
 
 ### 6.2 ) Return Statements
+#### Void Functions
 A function can exit at any point in its body using a return statement — either the keyword ```return``` or the phrase ```give back```. For void functions (functions that don't return a value), return statements are optional but can still be used for clarity or early exits.
 ```python
-ExitEarly() # Printed output: Nothing
-
 def ExitEarly()
 {
 	# Immediately exits scope regardless of any remaining statements
 	return
 
-	
-	print("Nothing will be printed.") # This statement can't be reached
+	# This statement can't be reached
+	print("Nothing will be printed.") 
 }
 
 def ExitInNestedBlock()
 {
 	if true
 	{
-		print("I'm going to return from inside a control structure!)
+		print("I'm going to return from inside a control structure!")
+
+		# Even inside a nested block a return statement will exit
+		# the function entirely when executed
 		return
 	}
+
+	# Control normally could exit an if statement block after executing it,
+	# but, because of the return, control exits the function inside the if block
+	print("I can't be printed")
 }
 ```
 
-However, if a function is defined to return a value, it must use return or give back followed by an ```expression``` before exiting. That expression must match the declared return type or be coercible to it at runtime. If it doesn't, the interpreter will raise an error.
+### Value-Returning Function
+If a function is defined to return a value, it must use return or give back followed by an ```expression``` before exiting. That expression must match the declared return type or be coercible to it at runtime. If it doesn't, the interpreter will raise an error.
+```python
+def int ReturnOnePlusOne()
+{
+	# Returns an integer value of 2
+	return 1 + 1
+}
 
-### 6.2 ) Function Parameters & Calls
+def float ReturnMyVariable()
+{
+	float myVar = 32.0
+
+	# Returns value of variable which is the float 32.0
+	return myVar
+}
+
+def float ReturnStringAsFloat()
+{
+	# Coerces the string to a float value of 132.12
+	return "132.12"
+}
+
+def int FailToReturnValue()
+{
+	# Will throw an exception because the string does not match the pattern of an int
+	return "This string literal cannot be coerced into an int"
+}
+```
+
+### 6.2 ) Function Parameters
 Functions accept both statically typed pass-by-value and pass-by-reference parameters.
 
 #### Pass-by-Value Parameters
@@ -493,8 +527,9 @@ def IncrementFloats(reference to float float1 reference to float float2) {
 	float2 = float2 + 1
 }
 ```
-### 6.3 ) Function Calls
+### 6.3 ) Function Calls + Arguments
 To call a function, use its identifier followed by opening and closing parenthesis. If it has parameters, list the expressions or identifiers you'd like to send as arguments inside the parenthesis. If a parameter is passed by reference, the argument forwarded **must be an identifier** and must be labeled using ```ref``` or ```reference to```.
+
 ```csharp
 PrintString("This is a string argument!")
 
@@ -505,3 +540,4 @@ int sum = GetSum(myInt1 myInt2)
 
 IncrementInts(ref myInt1 ref myInt2)
 ```
+Function calls can appear **before or after** their definitions. Functions can also be **recursive**, calling themselves within their own body.
