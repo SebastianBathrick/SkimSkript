@@ -1,55 +1,42 @@
 ﻿using SkimSkript;
+using SkimSkript.EntryPoint;
+using SkimSkript.Logging;
 
 class Program
 {
+    private const LogLevel DEFAULT_LOG_LEVEL = LogLevel.Warning;
+
     private static int Main(string[] args)
     {
+        var log = new ConsoleLogger()
+            .SetMinimumLogLevel(DEFAULT_LOG_LEVEL); // Set the minimum log level for logging
+
         if (args.Length == 0)
         {
-            Console.Error.WriteLine("Error: One or file path arguments required.");
+            log.Error("Requires at least one file path argument");
             return -1;
         }
 
         var core = new SkimSkriptCore();
+        var fileReader = new FileReader();
 
         foreach(var filepath in args)
         {
+            string[]? linesOfCode = null;
+
             try
             {
-                if(!TryGetFileContents(filepath, out var fileContents))
-                    return -1; // Error already logged in TryGetFileContents
-
-                core.Execute(fileContents!);
+                linesOfCode = fileReader.GetLinesOfCode(filepath);
             }
             catch (Exception ex)
             {
-                Console.Error.WriteLine($"Error processing file '{filepath}': {ex.Message}");
+                log.Error(ex, "Failed to read file: {FilePath}", filepath);
                 return -1;
             }
+
+            core.Execute(linesOfCode!); // Interpret the lines of code
         }
 
         return core.WasExecutionSuccessful ? 0 : -1;
-    }
-
-    private static bool TryGetFileContents(string filePath, out string[]? linesOfCode)
-    {
-        linesOfCode = null;
-
-        if (!File.Exists(filePath))
-        {
-            Console.Error.WriteLine($"Error: File '{filePath}' does not exist.");
-            return false;
-        }
-
-        try
-        {
-            linesOfCode = File.ReadLines(filePath).ToArray();
-            return true;
-        }
-        catch (Exception ex)
-        {
-            Console.Error.WriteLine("Error reading file: " + ex.Message);
-            return false;
-        }
     }
 }

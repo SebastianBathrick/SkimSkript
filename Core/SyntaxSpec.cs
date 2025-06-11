@@ -15,6 +15,12 @@ namespace SkimSkript.Syntax
             ("def", TokenType.FunctionVoidDefine), ("def integer", TokenType.FunctionIntDefine),
             ("def floating point", TokenType.FunctionFloatDefine), ("def boolean", TokenType.FunctionFloatDefine),
 
+            ("define", TokenType.FunctionVoidDefine), ("define int", TokenType.FunctionIntDefine),
+            ("define float", TokenType.FunctionFloatDefine), ("define bool", TokenType.FunctionFloatDefine),
+
+            ("define", TokenType.FunctionVoidDefine), ("define integer", TokenType.FunctionIntDefine),
+            ("define floating point", TokenType.FunctionFloatDefine), ("define boolean", TokenType.FunctionFloatDefine),
+
             // Function Definitions (Explicit)
             ("define function", TokenType.FunctionVoidDefine), ("define int function", TokenType.FunctionIntDefine),
             ("define float function", TokenType.FunctionFloatDefine), ("define bool function", TokenType.FunctionFloatDefine),

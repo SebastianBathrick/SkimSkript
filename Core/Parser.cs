@@ -45,7 +45,7 @@ namespace SkimSkript.Parsing
             return new AbstractSyntaxTreeRoot(statements, functions);
         }
 
-        #region Functions/Blocks
+        #region Function & Blocks
         /// <summary>Parses a function definition along with its body.</summary>
         private FunctionNode GetFunctionNode()
         {
@@ -95,10 +95,11 @@ namespace SkimSkript.Parsing
         #endregion
 
         #region Statements
+        #region Primary Statement Parsing Methods
         /// <summary>Determines using the front-most token what type of statement needs to be parsed
         /// next, and then parses that statement.</summary>
         /// <exception cref="SyntaxError"></exception>
-        public StatementNode GetStatement() =>
+        private StatementNode GetStatement() =>
             _tokens.PeekType() switch
             {
                 TokenType.DeclarationStart or TokenType.IntegerKeyword or
@@ -114,6 +115,17 @@ namespace SkimSkript.Parsing
                 _ => throw new SyntaxError("Expected new statement but instead found an invalid token.", _tokens, ErrorTokenPosition.InPlace)
             };
 
+        /// <summary>Returns either a function call or a variable assignment statment where the first token is an identifier.</summary>
+        private StatementNode GetIdentifierStartStatement()
+        {
+            if (_tokens.TryPeekAheadType(out TokenType tokenType) && tokenType == TokenType.AssignmentOperator)
+                return GetAssignment();
+
+            return GetFunctionCall();
+        }
+        #endregion
+
+        #region Function Statements
         /// <summary>Parses function call and any potential arguments sent.</summary>
         private StatementNode GetFunctionCall()
         {
@@ -132,6 +144,15 @@ namespace SkimSkript.Parsing
             return new FunctionCallNode(identifier, args);
         }
 
+        /// <summary>Parses a return statement with or without an conditionalExpression.</summary>
+        private StatementNode GetReturnStatement()
+        {
+            _tokens.MatchAndRemove(TokenType.Return);
+            return new ReturnNode(IsExpressionStartingToken(_tokens.PeekType()) ? GetExpression() : null);
+        }
+        #endregion
+
+        #region Variable Statements
         /// <summary>Parses a variable declaration and can potentially parse an initilization in the same statement.</summary>
         private StatementNode GetVariableDeclaration()
         {
@@ -148,6 +169,18 @@ namespace SkimSkript.Parsing
             return new VariableDeclarationNode(identifier, valueType);
         }
 
+        /// <summary>Parses an assignment statement where what is presumably a variable or parameter is assigned an expression.</summary>
+        private StatementNode GetAssignment()
+        {
+            _tokens.TryMatchAndRemove(TokenType.AssignmentStart);
+            string identifer = _tokens.MatchRemoveAndGetLexeme(TokenType.Identifier);
+            _tokens.MatchAndRemove(TokenType.AssignmentOperator);
+
+            return new AssignmentNode(new IdentifierNode(identifer), GetExpression());
+        }
+        #endregion
+
+        #region Control Structure Statements
         /// <summary>Parses an if statement along with recursively parsing else if, and else structures.</summary>
         /// <param name="isSelfElse">Indicates whether the given call is recursive and for an else if or else structure.</param>
         private StatementNode GetIfStatement(bool isSelfElse)
@@ -169,16 +202,6 @@ namespace SkimSkript.Parsing
             return new IfNode(condition, block, null);
         }
 
-        /// <summary>Parses an assignment statement where what is presumably a variable is assigned an conditionalExpression.</summary>
-        private StatementNode GetAssignment()
-        {
-            _tokens.TryMatchAndRemove(TokenType.AssignmentStart);
-            string identifer = _tokens.MatchRemoveAndGetLexeme(TokenType.Identifier);
-            _tokens.MatchAndRemove(TokenType.AssignmentOperator);
-
-            return new AssignmentNode(new IdentifierNode(identifer), GetExpression());
-        }
-
         /// <summary>Parses a while loop with its condition and associated block.</summary>
         private StatementNode GetWhileLoop()
         {
@@ -187,23 +210,9 @@ namespace SkimSkript.Parsing
             _tokens.TryMatchAndRemove(TokenType.Then);
             return new WhileNode(expression, GetBlock());
         }
+        #endregion
 
-        /// <summary>Parses a return statement with or without an conditionalExpression.</summary>
-        private StatementNode GetReturnStatement()
-        {
-            _tokens.MatchAndRemove(TokenType.Return);
-            return new ReturnNode(IsExpressionStartingToken(_tokens.PeekType()) ? GetExpression() : null);
-        }
-
-        /// <summary>Returns either a function call or a variable assignment statment where the first token is an identifier.</summary>
-        private StatementNode GetIdentifierStartStatement()
-        {
-            if (_tokens.TryPeekAheadType(out TokenType tokenType) && tokenType == TokenType.AssignmentOperator)
-                return GetAssignment();
-
-            return GetFunctionCall();
-        }
-
+        #region Misc. Statements
         /// <summary>Parses an assertion statement with an conditional conditionalExpression.</summary>
         private StatementNode GetAssertionStatement()
         {
@@ -212,11 +221,12 @@ namespace SkimSkript.Parsing
             return new AssertionNode(conditionalExpression);
         }
         #endregion
+        #endregion
 
         #region Expressions
         /// <summary>Parses a logical, comparison, and/or arithmetic expressions. Starting with
         /// logical expressions as they are the lowest precedence level.</summary>
-        public Node GetExpression() => ParseLogicalExpression();
+        private Node GetExpression() => ParseLogicalExpression();
 
         /// <summary>Can parse expressions containing the lowest precedence logical operators. Serves as
         /// the entry point for parsing all expressions (conditionals AND mathematical).</summary>

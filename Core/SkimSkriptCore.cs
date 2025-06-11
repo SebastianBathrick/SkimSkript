@@ -3,6 +3,7 @@ using SkimSkript.Interpretation;
 using SkimSkript.ErrorHandling;
 using SkimSkript.Semantics;
 using SkimSkript.Parsing;
+using System.Diagnostics;
 
 namespace SkimSkript
 {
@@ -14,7 +15,7 @@ namespace SkimSkript
         public bool WasExecutionSuccessful => _wasExecutionSuccessful;
 
         ///<summary>Performs lexical analysis, parses, and executes the provided code.</summary>
-        public void Execute(string[] linesOfCode)
+        public void Execute(string[] linesOfCode, bool isDebugging = false)
         {
             try
             {
