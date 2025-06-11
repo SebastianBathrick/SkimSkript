@@ -11,12 +11,15 @@ namespace SkimSkript.Parsing
     ///object.</summary>
     public class Parser
     {
+        #region Data Members & Properties
         private AbstractSyntaxTreeRoot _abstractSyntaxTreeRoot;
         private TokenContainer _tokens;        
         
         /// <summary>Represents an abstract syntax tree (AST) root created during parsing to be utilized runtime.</summary>
         public AbstractSyntaxTreeRoot AbstractSyntaxTreeRoot => _abstractSyntaxTreeRoot;
+        #endregion
 
+        #region Entry Point
         /// <summary>Constructor that builds AST.</summary>
         /// <param name="tokens">Structure containing tokens gathered during the lexical analysis stage.</param>
         public Parser(TokenContainer tokens)
@@ -43,6 +46,7 @@ namespace SkimSkript.Parsing
 
             return new AbstractSyntaxTreeRoot(statements, functions);
         }
+        #endregion
 
         #region Function & Blocks
         /// <summary>Parses a function definition along with its body.</summary>
@@ -61,8 +65,11 @@ namespace SkimSkript.Parsing
             while (IsParameterDeclarations(isParenthesis))
             {
                 bool isRef = _tokens.TryMatchAndRemove(TokenType.PassByReference);
-                var parameterDeclaration = (VariableDeclarationNode)GetVariableDeclaration();
-                parameters.Add(new ParameterNode(parameterDeclaration, isRef, parameterDeclaration.Identifier));
+
+                var paramDeclaration = GetVariableDeclaration();
+                var paramId = ((VariableDeclarationNode)paramDeclaration).Identifier;
+
+                parameters.Add(new ParameterNode(paramDeclaration, isRef, identifier));
             }
 
             if (isParenthesis)
@@ -128,7 +135,7 @@ namespace SkimSkript.Parsing
         /// <summary>Parses function call and any potential arguments sent.</summary>
         private StatementNode GetFunctionCall()
         {
-            _tokens.TryMatchAndRemove(tokenType: TokenType.FunctionCallStart);
+            _tokens.TryMatchAndRemove(TokenType.FunctionCallStart);
             _tokens.TryMatchAndRemove(TokenType.FunctionCallStartExpression);
 
             string identifier = _tokens.MatchRemoveAndGetLexeme(TokenType.Identifier);
@@ -168,18 +175,22 @@ namespace SkimSkript.Parsing
             throw new NotImplementedException("Collection declarations are not yet implemented.");
         }
 
+        /// <summary> Parses a variable or parameter declaration with a value data type. </summary>
         private StatementNode GetValueTypeVariableDeclaration()
         {
-            ValueNode valueType = GetTypeValueNode(_tokens.RemoveAndGetType());
-            string identifier = _tokens.MatchRemoveAndGetLexeme(TokenType.Identifier);
+            var varDataType = GetValueNodeType(_tokens.RemoveAndGetType());
+            var varIdentifier = _tokens.MatchRemoveAndGetLexeme(TokenType.Identifier);
 
-            //If there is an conditionalExpression, parse it, and store its root in the statement node.
-            //An assignment operator can be used prior to an conditionalExpression, or a reserved type meant only for initializing variables.
-            if (_tokens.TryMatchAndRemove(TokenType.VariableInitialize) || _tokens.TryMatchAndRemove(TokenType.AssignmentOperator))
-                return new VariableDeclarationNode(identifier, GetExpression(), valueType);
+            /* AssignmentOperator can be used for both initialization and assignment. VariableInitialize
+             * is only used for initialization which is why the tokens are seperate. */
+            var isInitialized = _tokens.TryMatchAndRemove(TokenType.VariableInitialize);
+            isInitialized = isInitialized || _tokens.TryMatchAndRemove(TokenType.AssignmentOperator);
 
-            //If there is no conditionalExpression assigned instantiate a ValueNode with a default value.
-            return new VariableDeclarationNode(identifier, valueType);
+            /* If initialized get an expression (that will potetially be coerced runtime). Otherwise get a default 
+             * value node for the data type in the declaration. */
+            var varInitValue = isInitialized ? GetExpression() : GetValueNodeOfType(varDataType);
+
+            return new VariableDeclarationNode(varIdentifier, varDataType, varInitValue);
         }
 
         /// <summary>Parses an assignment statement where what is presumably a variable or parameter is assigned an expression.</summary>
@@ -393,7 +404,7 @@ namespace SkimSkript.Parsing
           };
         #endregion
 
-        #region Get ValueNode Methods
+        #region Data Type Node Getters
         private ValueNode? GetFunctionReturnTypeNode() =>
             _tokens.RemoveAndGetType() switch
             {
@@ -405,15 +416,38 @@ namespace SkimSkript.Parsing
             };
 
 
-        /// <summary>Returns a value type node based on the token type.</summary>
-        private ValueNode GetTypeValueNode(TokenType tokenType) =>
+        /// <summary> Returns value node that coorelates with the data-type keyword provided. </summary>
+        private Type GetValueNodeType(TokenType tokenType) =>
             tokenType switch
             {
-                TokenType.FloatKeyword => new FloatValueNode(),
-                TokenType.BoolKeyword => new BoolValueNode(),
-                TokenType.StringKeyword => new StringValueNode(),
-                _ => new IntValueNode(),
+                TokenType.FloatKeyword => typeof(FloatValueNode),
+                TokenType.BoolKeyword => typeof(BoolValueNode),
+                TokenType.StringKeyword => typeof(StringValueNode),
+                TokenType.IntegerKeyword => typeof(IntValueNode),
+                _ => throw new SyntaxError($"Invalid data type token: {tokenType}.", _tokens, ErrorTokenPosition.Backward)
             };
+
+        /// <summary> Returns value node instance of the type defined with a default value. </summary>
+        private ValueNode GetValueNodeOfType(Type valueNodeType) =>
+            valueNodeType switch
+            {
+                Type t when t == typeof(IntValueNode) => new IntValueNode(),
+                Type t when t == typeof(FloatValueNode) => new FloatValueNode(),
+                Type t when t == typeof(BoolValueNode) => new BoolValueNode(),
+                Type t when t == typeof(StringValueNode) => new StringValueNode(),
+                _ => throw new SyntaxError($"Invalid value node type: {valueNodeType}.", _tokens, ErrorTokenPosition.Backward)
+            };
+
+        private void GetDeclaredType()
+        {
+            //var tokenType = _tokens.RemoveAndGetType();
+
+            //if (!IsCollectionDataType(_tokens.PeekType()))
+               // return GetTypeValueNode(tokenType);
+
+
+            // The list keyword trails and can enclose the type
+        }
         #endregion
 
         #region Misc. Methods

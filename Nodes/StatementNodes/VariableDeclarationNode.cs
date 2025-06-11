@@ -5,7 +5,7 @@
     {
         private string _identifier;   
         private Node _assignedExpression;
-        private Node _valueNodeType; // TODO: Store the type of value node as opposed to an instance.
+        private Type _dataType;
 
         /// <summary>Represents identifier of the variable.</summary>
         public string Identifier => _identifier;
@@ -18,27 +18,17 @@
         /// depending on the data type of the variable.</summary>
         public Node AssignedExpression => _assignedExpression; // TODO: Change to just the type as opposed to an instance.
 
-        /// <summary>Instance of a node storing the variable's data type for identification.</summary>
-        public Node ValueNodeType => _valueNodeType;
+        /// <summary> Data type of variable. </summary>
+        public Type DataType => _dataType;
 
         /// <param name="identifier">Represents identifier of the variable.</param>
+        /// <param name="dataType">Data type of the variable.</param>
         /// <param name="assignedExpression">Expression that will be assigned to the variable potentially to later be coerced 
         /// depending on the data type of the variable.</param>
-        public VariableDeclarationNode(string identifier, Node assignedExpression)
+        public VariableDeclarationNode(string identifier, Type dataType, Node assignedExpression)
         {
             _assignedExpression = assignedExpression;
-            _valueNodeType = assignedExpression;
-            _identifier = identifier;
-        }
-
-        /// <param name="identifier">Represents identifier of the variable.</param>
-        /// <param name="assignedExpression">Expression that will be assigned to the variable potentially to later
-        /// be coerced depending on the data type of the variable.</param>
-        /// <param name="valueNodeType">Instance of a node storing the variable's data type for identification.</param>
-        public VariableDeclarationNode(string identifier, Node assignment, Node valueNodeType)
-        {
-            _assignedExpression = assignment;
-            _valueNodeType = valueNodeType;
+            _dataType = dataType;
             _identifier = identifier;
         }
 

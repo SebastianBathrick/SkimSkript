@@ -139,12 +139,28 @@ namespace SkimSkript.Interpretation
 
         /// <summary>Declares a new variable in the current scope.</summary>
         private void InterpretVariableDeclaration(VariableDeclarationNode declarationNode)
-        {
-            VariableNode variable = new VariableNode(null, declarationNode.ValueNodeType.GetType());        
-            _scope.AddVariable(declarationNode.Identifier, variable);
+        {          
+            var dataType = declarationNode.DataType;
+            var identifier = declarationNode.Identifier;
 
-            if (declarationNode.IsAssignment)
-                AssignValueToVariable(new AssignmentNode(null, declarationNode.AssignedExpression), variable);
+            // Variable declarations can be assigned any expression type during parsing.
+            var initVal = EvaluateExpression(declarationNode.AssignedExpression);
+            
+            try
+            {
+                // Coerce the value to be the same type as the variable's data type.
+                initVal = CoerceValue(initVal, dataType);
+            }
+            catch
+            {
+                throw new InvalidDataException(
+                    $"Variable \"{identifier}\" cannot be initialized with a value of type {initVal.GetType().Name}.\n" +
+                    $"Expected type: {dataType.Name}.");
+            }
+
+            /* Even if there was no explicit initialization, the parser will still store a value 
+             * node with a default value in the declaration node. Works like C# primitives. */
+            _scope.AddVariable(identifier, new VariableNode(initVal, dataType));
         }
 
         /// <summary>Evaluates an assertionNode statement and ensures the condition associated is true.</summary>
@@ -236,7 +252,7 @@ namespace SkimSkript.Interpretation
 
             if (variableNode != null)
             {
-                value = CastValue(value, variableNode.DataType);
+                value = CoerceValue(value, variableNode.DataType);
                 variableNode.AssignValue(value);
                 return;
             }
@@ -274,6 +290,7 @@ namespace SkimSkript.Interpretation
             return processedArguments;
         }
 
+        // TODO: Refactor method to avoid instantiating VariableDeclarationNodes for each use of a pass-by-value parameter.
         private void AssignValuesToParameters(List<Node> parameters, List<(Node source, bool isRef)>? processedArgs)
         {
             for (int i = 0; processedArgs != null && i < processedArgs.Count; i++)
@@ -287,16 +304,16 @@ namespace SkimSkript.Interpretation
                 else
                 {
                     //Get parameter's data type
-                    Type paramType = ((VariableDeclarationNode)parameter.ValueSource).ValueNodeType.GetType();
+                    Type paramType = ((VariableDeclarationNode)parameter.ValueSource).DataType.GetType();
                     //Cast an argument to the parameter's data type.
-                    ValueNode castedArg = CastValue((ValueNode)(processedArgs[i].source), paramType);
+                    ValueNode castedArg = CoerceValue((ValueNode)(processedArgs[i].source), paramType);
 
-                    InterpretVariableDeclaration(new VariableDeclarationNode(parameter.Identifier, castedArg));
+                    InterpretVariableDeclaration(new VariableDeclarationNode(parameter.Identifier, paramType, castedArg));
                 }
             }
         }
 
-        private ValueNode CastValue(ValueNode value, Type castType) =>
+        private ValueNode CoerceValue(ValueNode value, Type castType) =>
 
             castType switch
             {
