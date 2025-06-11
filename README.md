@@ -143,21 +143,20 @@ The following features I'd like to add next are:
 
 # Your First Program
 1. First create a **.skim** file. For the sake of this tutorial we're calling the file ```HelloWorld.skim```. This file will contain your SkimSkript code.
-
-
+	<br>
+ 
 3. Open ```HelloWorld.skim``` in your IDE of choice.
-
-
-4. Now with the file open, you can write a classic "Hello World" program by writing ```print``` followed by an open parenthesis, then ```"Hello World"``` (include the double quotes), and finish with a closing parenthesis:
-	
+	<br>
+ 
+4. Now with the file open, you can write a classic "Hello World" program by writing ```print``` followed by an open parenthesis, then ```"Hello World"``` (include the double quotes), and finish with a closing parenthesis:	
 	```python
 	print("Hello World")
 	```
-
+	<br>
  
 5. Save your modified ```HelloWorld.skim```
-
-
+	<br>
+ 
 6. You have two ways to execute ```HelloWorld.skim```.
 	- #### Option A
 		Set your current working directory to the repository folder that contains ```SkimSkript.csproj```. Then, use the ```dotnet run``` command and pass the ```HelloWorld.skim path``` as an argument.
