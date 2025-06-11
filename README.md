@@ -105,6 +105,34 @@ The following features I'd like to add next are:
 # Guide 
 
 ## 1. ) Your First Program
+### 1.1 ) Setting Up the Interpreter
+Assuming you have the **.NET 8 SDK** and have **downloaded the SkimSkript repository**, navigate to the directory on your system containing the ```SkimSkript.csproj``` using the terminal of your choosing.
+
+Your terminal should look something like this:
+```powershell
+PS C:\User\Sebastian> cd SkimSkript
+```
+
+Once in the same directory as the C# project file, type ```dotnet build```.
+```powershell
+PS C:\User\Sebastian\SkimSkript> dotnet build
+```
+If the interpreter compiled correctly, you should see a message in your terminal that resembles the following
+```powershell
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  SkimSkript -> 	 C:\User\Sebastian\SkimSkript\bin\Debug\net8.0\skimskript.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:00.74
+```
+**Note**: If any yellow warning text appears in the terminal after executing the command, there is no need to fear. So long as you can see ```Build succeeded``` (possibly among the warning(s)) and ```Time Elapsed XX:XX:XX.XX``` at the bottom of the message; then, the interpreter should be compiled and ready to go. 
+#### Congrats!
+You can now use the SkimSkript interpreter! We'll discuss the two different approaches in the next section, where we create your first SkimSkript app.
+
 You can write a classic "Hello World" program by writing ```print``` followed by an open parenthesis, then "Hello World" in double quotes, and finish with a closing parenthesis:
 ```python
 print("Hello World")
@@ -122,16 +150,14 @@ To comment, use the pound sign (i.e., ```#```) at the end of a line followed by 
 
 ### 2.2 ) Symbols
 When it comes to non-alphabetic and non-numeric symbols, SkimSkript gives you quite a bit of leeway. You can use any symbol not on this table without interfering with your program. <br><br>
-**Reserved Symbols:**
+#### Reserved Symbols
 |+   | -  |*   | /  |%   | >  |
 | ------------ | ------------ | ------------ | ------------ | ------------ | ------------ |
 |  < |=   | !=  |==   |&#124;&#124;   |&&   |
 | ^^  | "|
 
-**Note on Periods**: <u>Periods can affect your program if not used correctly.</u> Periods are used in floating-point numbers. 
-
-**Examples:**
-
+#### Float Period/Decimal Rules
+**Periods can affect your program if not used correctly.** Periods/decimals are used in floating-point numbers, but in most cases are ignored. 
 - Single float --> ```1.0``` --> Expected Syntax
 - Single float --> ```1.0...``` --> Extra periods are ignored
 - Single integer --> ```.1``` --> Floats start with digits
@@ -151,7 +177,7 @@ SkimSkript keywords have some quirks:
 - **Only complete phrases and singular keywords are reserved.** Meaning using a single word from a reserved phrase is allowed as an identifier unless the whole phrase is present. For example, ```give back``` is reserved, but you can use ```give``` and ```back``` as variable names.
 - **Reserved words and phrases are NOT case-sensitive**. So, ```Give back``` , ```iF```, and ```INTEGER``` are all valid.
 
-**Reserved Keywords:**
+#### Reserved Keywords
 
 |  run |  invoke |  return | true  | false  | if  |
 | ------------ | ------------ | ------------ | ------------ | ------------ | ------------ |
@@ -175,7 +201,7 @@ SkimSkript contains scoped variables declared in top-level, function, or control
 ### 4.1 ) Identifiers
 Identifiers are tokens at least one character long that start with an alphabetic character. Following the first character can be digits or alphabetic characters until whitespace. **Identifiers ARE case sensitive.** 
 
-**Examples:**
+####
 - ```a``` -->Valid identifier
 - ```myVar2``` --> Valid identifier
 - ```2Var``` --> Invalid identifier
@@ -470,7 +496,7 @@ def ExitInNestedBlock()
 }
 ```
 
-### Value-Returning Function
+#### Value-Returning Function
 If a function is defined to return a value, it must use return or give back followed by an ```expression``` before exiting. That expression must match the declared return type or be coercible to it at runtime. If it doesn't, the interpreter will raise an error.
 ```python
 def int ReturnOnePlusOne()
