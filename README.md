@@ -102,45 +102,81 @@ The following features I'd like to add next are:
 - File IO built-in functions
 - String escape characters
 
-# Guide 
+# Building the Interpreter
+1. Assuming you have the **.NET 8 SDK** and have downloaded the **SkimSkript repository**, set the current working directory to the repository folder that contains ```SkimSkript.csproj``` using the terminal of your choosing. Your terminal should look something like this:
+	##### Windows PowerShell:
+	```powershell
+	PS C:\User\Sebastian> cd SkimSkript
+	```
+   
+	##### Bash:
+	```bash
+	sebastian@computer:~$ cd SkimSkript
+	```
+2. Once in the same directory as the C# project file, type ```dotnet build``` and enter.
+	##### Windows PowerShell:
+	```powershell
+	PS C:\User\Sebastian\SkimSkript> dotnet build
+	```
+	
+	##### Bash:
+	```bash
+	sebastian@computer:~/SkimSkript$ dotnet build
+	```
 
-## 1. ) Your First Program
-### 1.1 ) Setting Up the Interpreter
-Assuming you have the **.NET 8 SDK** and have **downloaded the SkimSkript repository**, navigate to the directory on your system containing the ```SkimSkript.csproj``` using the terminal of your choosing.
+3. If the interpreter compiled correctly, you should see a message in your terminal that resembles the following:
+	```powershell
+	  Determining projects to restore...
+	  All projects are up-to-date for restore.
+	  SkimSkript -> 	 C:\User\Sebastian\SkimSkript\bin\Debug\net8.0\skimskript.dll
+	
+	Build succeeded.
+	    0 Warning(s)
+	    0 Error(s)
+	
+	Time Elapsed 00:00:00.74
+	```
+	**Note**: If any yellow warning text appears in the terminal after executing the command, there is no need to fear. So long as you can see ```Build succeeded``` (possibly among the warning(s)) and ```Time Elapsed XX:XX:XX.XX``` at the bottom of the message; then, the interpreter should be compiled and ready to go. 
+<br><br>
+**Congrats!** You can now use the SkimSkript interpreter! We'll discuss the two different approaches in the next section, where we create your first SkimSkript program.
 
-Your terminal should look something like this:
-```powershell
-PS C:\User\Sebastian> cd SkimSkript
-```
 
-Once in the same directory as the C# project file, type ```dotnet build```.
-```powershell
-PS C:\User\Sebastian\SkimSkript> dotnet build
-```
-If the interpreter compiled correctly, you should see a message in your terminal that resembles the following
-```powershell
-  Determining projects to restore...
-  All projects are up-to-date for restore.
-  SkimSkript -> 	 C:\User\Sebastian\SkimSkript\bin\Debug\net8.0\skimskript.dll
+# Your First Program
+1. First create a **.skim** file. For the sake of this tutorial we're calling the file ```HelloWorld.skim```. This file will contain your SkimSkript code.
 
-Build succeeded.
-    0 Warning(s)
-    0 Error(s)
 
-Time Elapsed 00:00:00.74
-```
-**Note**: If any yellow warning text appears in the terminal after executing the command, there is no need to fear. So long as you can see ```Build succeeded``` (possibly among the warning(s)) and ```Time Elapsed XX:XX:XX.XX``` at the bottom of the message; then, the interpreter should be compiled and ready to go. 
-#### Congrats!
-You can now use the SkimSkript interpreter! We'll discuss the two different approaches in the next section, where we create your first SkimSkript app.
+3. Open ```HelloWorld.skim``` in your IDE of choice.
 
-You can write a classic "Hello World" program by writing ```print``` followed by an open parenthesis, then "Hello World" in double quotes, and finish with a closing parenthesis:
-```python
-print("Hello World")
-```
-Then, in a terminal of your choice, type the path of **skimskript.exe** and your **.skim file path** as an argument. It should look something like this:
-```bash
-PS C:\Users\sebas> skimskript HelloWorld.skim
-```
+
+4. Now with the file open, you can write a classic "Hello World" program by writing ```print``` followed by an open parenthesis, then ```"Hello World"``` (include the double quotes), and finish with a closing parenthesis:
+	
+	```python
+	print("Hello World")
+	```
+
+ 
+5. Save your modified ```HelloWorld.skim```
+
+
+6. You have two ways to execute ```HelloWorld.skim```.
+	- #### Option A
+		Set your current working directory to the repository folder that contains ```SkimSkript.csproj```. Then, use the ```dotnet run``` command and pass the ```HelloWorld.skim path``` as an argument.
+		##### Windows PowerShell:
+		```powershell
+		PS C:\User\Sebastian\SkimSkript> dotnet run -- HelloWorld.skim
+		```
+		
+		##### Bash:
+		```bash
+		sebastian@computer:~/SkimSkript$ dotnet run -- HelloWorld.skim
+		```
+	 	**(If HelloWorld.skim is located elsewhere, use the full or relative path to the file instead.)**
+ 	#### Option B
+
+
+# Syntax Guide 
+
+
 ## 2. ) Ignored Content
 ### 2.1 ) Comments
 To comment, use the pound sign (i.e., ```#```) at the end of a line followed by your comment:
