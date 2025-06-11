@@ -1,9 +1,9 @@
-## What is SkimSkript?
+# What is SkimSkript?
 SkimSkript is an interpreted language designed for beginners. It features flexible, forgiving syntax and enforced typing with runtime coercion, allowing users to write in C-style braces, Python-like keywords, or even natural-language pseudocode. SkimSkript adapts to the programmer — not the other way around.
 
 With support for multiple syntactic styles, it serves as a stepping stone to more advanced languages. Beginners can experiment with static types, recursion, and procedural logic without being boxed into rigid syntax rules or overwhelmed by compiler errors.
 
-### Programmer Freedom
+## Programmer Freedom
 Would you like to stick to something more reminiscent of the C family of languages? You can!
 ```csharp
 int i = 1;
@@ -35,7 +35,7 @@ print(factorial(5))  # Output: 120
 ```
 
 You may want something more verbose, academic, or closer to written English. In that case, SkimSkript has got you covered:   
-```
+```csharp
 Declare int iterator as 1.
  
 Run print("Please enter a number to find its square root:").
@@ -45,25 +45,25 @@ Invoke print:("Square root" plus value of SquareRoot(input))
 
 Define integer function SquareRoot(integer number):
 {
- Declare integer odd as 1. Declare integer count as 0.
+	Declare integer odd as 1. Declare integer count as 0.
+	
+	Repeat while number is at least 0:
+	{
+		 Set number to number minus odd.
+		 Set odd to odd plus 2. 
+		 Set count to count plus 1.
+	}
 
- Repeat while number is at least 0
- {
- Set number to number minus odd.
- Set odd to odd plus 2. 
- Set count to count plus 1.
- }
-
- Give back count minus 1.
+	Give back count minus 1.
 }
 ```
 
-### How Does the Interpreter Do All This?
+## How Does the Interpreter Do All This?
 The SkimSkript interpreter utilizes no third-party libraries, so while it possesses the typical lexical analysis, AST parsing, and interpretation that many other tree interpreters have, it also has some quirks that enable its unique syntactic style.
 
 A prime example of this occurs during lexical analysis. After scanning each character in the source code, any alphabetic lexemes are fed into a trie structure. If a single alphabetic lexeme is a partial match for a phrase, the next lexeme is analyzed to check if it is part of that phrase as well. If a group of lexemes reaches a trie node containing a token type, those lexemes are grouped as a single token (assuming the following word does not continue a phrase). However, if the lexemes that form a partial match do not complete a phrase, then each of those lexemes is marked as an identifier. This unconventional approach allows for multi-word tokens, simplifies parsing, and accommodates multiple syntactic styles.
 
-### Is the Codebase Overcomplicated?
+## Is the Codebase Overcomplicated?
 
 Not at all. SkimSkript was built with maintainability and clarity in mind. The bulk of the interpreter was developed between October and December 2024 with a strong focus on clean architecture and minimal dependencies.
 
@@ -72,7 +72,7 @@ As of May 2025:
 - Maintainability Index: 88
 - No third-party libraries used
 
-### What Features Does it Have?
+## What Features Does it Have?
 As of now, SkimSkript has the following:
 - Statically typed variable declarations & assignments.
 - User-defined functions with optional statically typed return types.
@@ -89,9 +89,9 @@ As of now, SkimSkript has the following:
 - Implicit blocks
 
 
-### What Features are Coming Next?
+## What Features are Coming Next?
+**(More detailed and beginner-friendly guides coming soon!)**<br>
 The following features I'd like to add next are:
-<u>**(More Detailed +Beginner Guides Coming Soon)**</u>
 - More in-depth + novice guides
 - More advanced semantic analysis
 - Increment operator
@@ -104,7 +104,7 @@ The following features I'd like to add next are:
 
 # Guide 
 
-## Your First Program
+## 1. ) Your First Program
 You can write a classic "Hello World" program by writing ```print``` followed by an open parenthesis, then "Hello World" in double quotes, and finish with a closing parenthesis:
 ```python
 print("Hello World")
@@ -113,14 +113,14 @@ Then in a terminal of your choice type the path of **skimskript.exe** and your *
 ```bash
 PS C:\Users\sebas> skimskript HelloWorld.skim
 ```
-## Ignored Content
-### Comments
+## 2. ) Ignored Content
+### 2.1 ) Comments
 To comment, use the pound sign (i.e. ```#```) at the end of a line followed by your comment:
 ```python
 # This is a comment
 ```
 
-### Symbols
+### 2.2 ) Symbols
 When it comes to non-alphabetic and non-numeric symbols, SkimSkript gives you quite a bit of leeway. Essentially, you can use any symbol not on this table without interfering with your program. <br><br>
 **Reserved Symbols:**
 |+   | -  |*   | /  |%   | >  |
@@ -137,7 +137,7 @@ When it comes to non-alphabetic and non-numeric symbols, SkimSkript gives you qu
 - Single integer --> ```.1``` --> Floats start with digits
 - Two integers --> ```1..0``` --> Second periods are interpreted as trailing an int
 
-### Whitespace and Lines
+### 2.3 ) Whitespace and Lines
 As long as there is at least a single space between alphabetic and numeric lexemes, the interpreter ignores spacing and break lines:
 ```csharp
     int      myVar =      20
@@ -146,34 +146,33 @@ As long as there is at least a single space between alphabetic and numeric lexem
  ==        50) {print("My Variable is 50")}
 ```
 
-### Keywords/Phrases
+### 2.4 ) Keywords/Phrases
 SkimSkript keywords have some quirks:
 - **Only complete phrases and singular keywords are reserved.** Meaning using a single word from a reserved phrase is allowed as an identifier, unless the whole phrase is present. For example, ```give back``` is reserved, but you can use ```give``` and ```back``` as variable names.
 - **Reserved words and phrases are NOT case-sensitive**. So, ```Give back``` , ```iF```, and ```INTEGER``` are all valid.
 
 **Reserved Keywords:**
 
-|   |   |   |   |   |   |
+|  run |  invoke |  return | true  | false  | if  |
 | ------------ | ------------ | ------------ | ------------ | ------------ | ------------ |
-| run  | invoke  | return  | true  | false  | if  |
 |  else |  elif |  otherwise | while  | def  |  ref |
 | declare  | set  | to  | as  | int  | integer  |
 |  float | bool  | boolean  |  string | is  |  or | 
 |  and | then  | minus  |  plus |   
-## Data Types
+## 3. ) Data Types
 Right now SkimSkript offers 4 different data types to choose from:
-### Integers
+### 3.1 ) Integers
 Whole numbers that truncate digits to the right of the decimal point. The data type can be written as ```int``` or ```integer```. Literals can be purely digits or a negative sign followed by digits. Examples: ```29```, ```5```, and ```-300```.
 
-### Floating-Points
+### 3.2 ) Floating-Points
 Numbers with digits to the right of a single decimal point. The data type can be written as ```float``` or ```floating point```. The literals are an optional negative sign followed by one or more digits, a single decimal, and trailing digit(s). Examples: ```1.0```, ```432.992```, and ```-32.12```.
-### Booleans
+### 3.3 ) Booleans
 True or false values. The data type can be written as ```bool``` or ```boolean```. The literals are either ```true``` or ```false```.
-### Strings
+### 3.4 ) Strings
 Stored text that can be appended to, printed, or read in through user input. The data type can be written as ```string``` The literals are characters enclosed in double parenthesis. Example: ```"This is a string literal!"```
-## Variables
+## 4. ) Variables
 SkimSkript contains scoped variables declared in top-level, function, or control structure blocks.
-### Identifiers
+### 4.1 ) Identifiers
 Identifiers are tokens at least one character long that start with an alphabetic character. Following the first character can be digits or alphabetic characters until whitespace. **Identifiers ARE case sensitive.** 
 
 **Examples:**
@@ -182,7 +181,7 @@ Identifiers are tokens at least one character long that start with an alphabetic
 - ```2Var``` --> Invalid identifier
 - ```My Var``` --> Two seperate identifiers
 
-### Variable Declarations
+### 4.2 ) Variable Declarations
 Variables are declared by identifying a type and optionally an initial value.
 #### Verbose
 ```bash
@@ -200,7 +199,7 @@ integer myVariable5 = 50
 declare string myVariable6
 ```
 
-### Variable Assignments
+### 4.3 ) Variable Assignments
 Variables can be initialized during declaration or reassigned after. **Note:** Values assigned to a variable will be coerced to be the variable type. If the coercion is invalid, an exception will be thrown.
 ####Verbose
 ```python
@@ -220,7 +219,7 @@ myBool = true
  int myInt as 5
  myInt to myFloat
 ```
-### Variable Scopes
+### 4.4 ) Variable Scopes
 SkimSkript contains three separate scope types that determine where you can use certain variables and parameters.
 #### Global Scope
 Variables declared on the top level are considered global. Meaning you can access the variable from anywhere (including functions.)
@@ -272,8 +271,8 @@ else
  print("Error: Number entered was not positive")
     
 ```
-## Control Structures
-### If Statements
+## 5. ) Control Structures
+### 5.1 ) If Statements
 If statements work virtually the same as any other language, but you have the option to use the ```then``` keyword.
 ```csharp
 if myCondition is true then
@@ -283,7 +282,7 @@ if myCondition2 is false
 	print("myCondition2 is false")
 ```
 
-### If-Else Statements
+### 5.2 ) If-Else Statements
 If-else statement's give you a choice of two different keywords to serve as "else". ```else``` and ```otherwise``` that can be used interchangably.
 ```
 # This can either be the verbose or brief "if." The interpreter will accept either.
@@ -297,7 +296,7 @@ if myCondition2 is false
 otherwise
 	print("MyCondition2 is true")
 ```
-### Else-If Statements
+### 5.3 ) Else-If Statements
 Else if statements have many variants to choose from for the sake of variety. You can use ```else if```, ```elif```, ```instead if```, ```alternatively if```, and ```otherwise if```.
 ```
 print("Please pick a number from 0-5:")
@@ -318,7 +317,7 @@ otherwise if userSelection is 5
 else
 	print("Selection outside of valid range")
 ```
-### While Loops
+### 5.4 ) While Loops
 While loops provide three different options syntactic options to choose from before your loop condition. ```while```, ```repeat while```, and ```repeat code while```.
 ```
 int iterator1 = 0
@@ -345,7 +344,7 @@ repeat code while iterator3 < 5
 	print("iterator3: " + iterator3)
 }
 ```
-### Control Structure Blocks
+### 5.5 ) Control Structure Blocks
 Control structures have two seperate types of blocks you can choose from.
 #### Explicit Blocks
 Explicit blocks are defined by an opening and closing curly brace (i.e. ```{``` and ```}```.) Explicit blocks can contain one or more statements. However, a block must be explicit if it contains more than one statement.
@@ -388,11 +387,11 @@ if maxValue <= 1000 or maxValue >= 1
 
 	
 ```
-## Functions
+## 6. ) Functions
 SkimSkript offers both statically typed user defined functions and built-in functions.
 
 **Note: Definitions without a return type are void.**
-### Function Definitions
+### 6.1 ) Function Definitions
 A **brief** function definition starts with the keyword ```def``` followed by a data-type (or lack thereof), a case sensitive```identifier```, ```opening + closing parenthesis```, and a block. 
 
 ```python
@@ -430,7 +429,7 @@ define bool IsThisAFunction() { return true }
 def floating point function GetFloatValue() { give back 30.0 }
 ```
 
-### Function Parameters & Calls
+### 6.2 ) Function Parameters & Calls
 Functions accept both statically typed pass-by-value and pass-by-reference parameters.
 
 #### Pass-by-Value Parameters
@@ -457,7 +456,7 @@ def IncrementFloats(reference to float float1 reference to float float2) {
 	float2 = float2 + 1
 }
 ```
-#### Function Calls
+#### 6.3 ) Function Calls
 To call a function simply use its identifier followed by opening and closing parenthesis. If it has parameters just list the expressions or identifiers you'd like to send as arguments inside the parenthesis. If a parameter is pass-by-reference the argument sent **must be an identifier** and has to be labeled using ```ref``` or ```reference to```.
 ```csharp
 PrintString("This is a string argument!")
