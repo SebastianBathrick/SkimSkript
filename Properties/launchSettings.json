@@ -2,7 +2,7 @@
   "profiles": {
     "SkimSkript": {
       "commandName": "Project",
-      "commandLineArgs": "C:\\Users\\Sebastian\\Desktop\\SkimSkript\\SkimPrograms\\UnitTests\\NumericExpressionsTests.skim"
+      "commandLineArgs": "C:\\\\Users\\\\sebas\\\\OneDrive\\\\Documents\\\\GitHub\\\\SkimSkript\\\\UnitTests\\\\NumericExpressionsTests.skim C:\\Users\\sebas\\OneDrive\\Documents\\GitHub\\SkimSkript\\UnitTests\\DeclarationAssignTests.skim"
     }
   }
 }

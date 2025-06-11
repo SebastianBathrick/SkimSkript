@@ -3,7 +3,6 @@ using SkimSkript.TokenManagement;
 using SkimSkript.ErrorHandling;
 using SkimSkript.Nodes;
 using SkimSkript.Nodes.StatementNodes;
-using SkimSkript.Nodes.Runtime;
 
 namespace SkimSkript.Parsing
 {
@@ -157,6 +156,20 @@ namespace SkimSkript.Parsing
         private StatementNode GetVariableDeclaration()
         {
             _tokens.TryMatchAndRemove(TokenType.DeclarationStart);
+
+            if(IsCollectionDataType(_tokens.PeekType()))
+                return GetCollectionDeclaration();
+
+            return GetValueTypeVariableDeclaration();
+        }
+
+        private StatementNode GetCollectionDeclaration()
+        {
+            throw new NotImplementedException("Collection declarations are not yet implemented.");
+        }
+
+        private StatementNode GetValueTypeVariableDeclaration()
+        {
             ValueNode valueType = GetTypeValueNode(_tokens.RemoveAndGetType());
             string identifier = _tokens.MatchRemoveAndGetLexeme(TokenType.Identifier);
 
@@ -353,11 +366,34 @@ namespace SkimSkript.Parsing
         }
         #endregion
 
-        #region Helper Methods
+        #region Utility Methods
+        #region Token Type Checkers
+        private bool IsCollectionDataType(TokenType tokenType) => tokenType == TokenType.ListKeyword;
+
+        // TODO: Refactor token type checkers to accept token type parameter instead of using PeekType() directly and potentially split methods into seperate class.
         private bool IsParameterDeclarations(bool usesParenthesis) =>
            !usesParenthesis && _tokens.PeekType() != TokenType.BlockOpen && _tokens.PeekType() != TokenType.FunctionImpliedBlock
             || usesParenthesis && _tokens.PeekType() != TokenType.ParenthesisClose;
 
+        private bool IsFunctionDefNext() =>
+            _tokens.PeekType() switch
+            {
+                TokenType.FunctionIntDefine or TokenType.FunctionFloatDefine or TokenType.FunctionStringDefine or TokenManagement.TokenType.FunctionVoidDefine
+                or TokenType.FunctionBoolDefine => true,
+                _ => false
+            };
+
+        private bool IsExpressionStartingToken(TokenType tokenType) =>
+          tokenType switch
+          {
+              TokenType.FunctionCallStartExpression or TokenType.Integer or
+              TokenType.Float or TokenType.String or TokenType.ParenthesisOpen or
+              TokenType.False or TokenType.True or TokenType.Subtract or TokenType.Identifier => true,
+              _ => false
+          };
+        #endregion
+
+        #region Get ValueNode Methods
         private ValueNode? GetFunctionReturnTypeNode() =>
             _tokens.RemoveAndGetType() switch
             {
@@ -368,14 +404,21 @@ namespace SkimSkript.Parsing
                 _ => null
             };
 
-        private bool IsFunctionDefNext() =>
-            _tokens.PeekType() switch
-            {
-                TokenType.FunctionIntDefine or TokenType.FunctionFloatDefine or TokenType.FunctionStringDefine or TokenManagement.TokenType.FunctionVoidDefine
-                or TokenType.FunctionBoolDefine => true, _ => false               
-            };
 
-        private (Node, bool) GetArgument()
+        /// <summary>Returns a value type node based on the token type.</summary>
+        private ValueNode GetTypeValueNode(TokenType tokenType) =>
+            tokenType switch
+            {
+                TokenType.FloatKeyword => new FloatValueNode(),
+                TokenType.BoolKeyword => new BoolValueNode(),
+                TokenType.StringKeyword => new StringValueNode(),
+                _ => new IntValueNode(),
+            };
+        #endregion
+
+        #region Misc. Methods
+        // TODO: Revisit this meth to check if it can be merged with its caller
+        private (Node, bool) GetArgument() 
         {
             bool isRef = _tokens.TryMatchAndRemove(TokenType.PassByReference);
 
@@ -388,25 +431,7 @@ namespace SkimSkript.Parsing
         }
 
         private StatementNode GetIfStatement() => GetIfStatement(false);
-
-        private bool IsExpressionStartingToken(TokenType tokenType) =>
-          tokenType switch
-          {
-              TokenType.FunctionCallStartExpression or TokenType.Integer or
-              TokenType.Float or TokenType.String or TokenType.ParenthesisOpen or
-              TokenType.False or TokenType.True or TokenType.Subtract or TokenType.Identifier => true,
-              _ => false
-          };
-
-        /// <summary>Returns a value type node based on the token type.</summary>
-        private ValueNode GetTypeValueNode(TokenType tokenType) =>
-            tokenType switch
-            {
-                TokenType.FloatKeyword => new FloatValueNode(),
-                TokenType.BoolKeyword => new BoolValueNode(),
-                TokenType.StringKeyword => new StringValueNode(),
-                _ => new IntValueNode(),
-            };
+        #endregion
         #endregion
     }
 }

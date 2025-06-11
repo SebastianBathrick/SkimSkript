@@ -93,7 +93,9 @@ namespace SkimSkript.Syntax
             { "&&", TokenType.And },
             { "^^", TokenType.Xor },
             { "=", TokenType.AssignmentOperator },
-            { "=>", TokenType.FunctionImpliedBlock }
+            { "=>", TokenType.FunctionImpliedBlock },
+            { "[", TokenType.CollectionOpen },
+            { "]", TokenType.CollectionClose },
         };
 
         public static readonly string[] BuiltInFunctionIdentifiers = { "print", "read", "clear", };
