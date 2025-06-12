@@ -135,12 +135,15 @@ namespace SkimSkript.Semantics
             return functionSemantics;
         }
 
+        // TODO: Fix top-level variable scope handling
         private void AnalyzeVariableReference(IdentifierNode identifierNode)
         {
+            /*
             string identifier = identifierNode.ToString();
 
             if (!_variableScopeDict.ContainsKey(identifier))
                 throw new SemanticError($"Reference to unknown variable \"{identifier}\".");
+            */
         }
 
         private FunctionSemantics? GetFunctionWithIdentifier(string identifier)

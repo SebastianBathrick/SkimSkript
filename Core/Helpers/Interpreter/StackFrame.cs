@@ -1,20 +1,27 @@
-﻿using SkimSkript.Nodes.Runtime;
-using SkimSkript.ErrorHandling;
+﻿using SkimSkript.ErrorHandling;
+using SkimSkript.Nodes;
+using SkimSkript.Nodes.Runtime;
+using SkimSkript.Nodes.ValueNodes;
 
 namespace SkimSkript.Interpretation.Helpers
 {
+    using VariableMetadata = (int level, string identifier);
+
     /// <summary> Container for a top-level scope or function's scope. </summary>
     public class StackFrame
     {
+        #region Data Members & Properties
         private const int INIT_CAP = 10; //Initial dictionary cap
-
-        private Dictionary<(int level, string identifier), VariableNode> _frameDict;
+       
         private int _currBlockLevel = 0;
+        private Dictionary<VariableMetadata, VariableNode>? _frameDict;
 
-        /// <summary> Enter a block scope within the same frame and travel downwards one level. </summary>
+        private Dictionary<VariableMetadata, VariableNode> FrameDictionary => _frameDict ??= new(INIT_CAP);
+        #endregion
+
+        #region Scope Management
         public void EnterScope() => _currBlockLevel++;
 
-        /// <summary> Removes the current block level and goes back to the previous. </summary>
         public void ExitScope()
         {
             if (_frameDict == null)
@@ -26,29 +33,53 @@ namespace SkimSkript.Interpretation.Helpers
 
             _currBlockLevel--;
         }
+        #endregion
 
-        /// <summary> Adds a variable to the most deeply nested scope in the stack frame. </summary>
-        public VariableNode AddVariable(string identifier, VariableNode variable)
+        #region Variable Getter Methods
+        public Node GetVariablePointer(string identifier)
         {
-            _frameDict ??= GetNewFrameDict();
-            _frameDict.Add((_currBlockLevel, identifier), variable);
-            return variable;
+            var variable = GetVariable(identifier);
+            return variable.Value;
+        }
+
+        public ValueNode GetVariableValueCopy(string identifier)
+        {
+            var pointer = (ValueNode)GetVariable(identifier).Value;
+            return pointer.Copy();
+        }
+
+        public Type GetVariableDataType(string identifier)
+        {
+            var variable = GetVariable(identifier);
+            return variable.DataType;
         }
 
         /// <summary> Search from the lowest to highest depths to get variable associated with identifier </summary>
-        public VariableNode? GetVariable(string identifier)
+        /// <exception cref="UnknownIdentifierError"> Given identifier was not found in stack frame.</example>
+        private VariableNode GetVariable(string identifier)
         {
-            _frameDict ??= GetNewFrameDict();
-
+            // TODO: Refactor to increase efficiency
             for (int i = _currBlockLevel; i >= 0; i--)
-                if(_frameDict.TryGetValue((i, identifier), out VariableNode? var))
+                if (FrameDictionary.TryGetValue((i, identifier), out VariableNode? var))
                     return var;
 
             throw new UnknownIdentifierError(identifier);
         }
+        #endregion
 
-        /// <summary> Returns a new frame dictionary. Intended to be called when one is not already present. </summary>
-        private Dictionary<(int, string), VariableNode> GetNewFrameDict() =>
-            new Dictionary<(int, string), VariableNode>(INIT_CAP);
+        #region Variable Manipulation Methods
+        /// <summary> Adds a variable to the most deeply nested scope in the stack frame. </summary>
+        public void AddVariable(string identifier, Node value, Type dataType) =>
+            FrameDictionary.Add((_currBlockLevel, identifier), new VariableNode(value, dataType));
+
+        /// <summary> Updates value of a variable in the current scope. </summary>
+        /// <remarks>Maintains the same value node pointer.</remarks>
+        public void AssignValueToVariable(string identifier, ValueNode value)
+        {
+            var pointer = (ValueNode)GetVariable(identifier).Value; 
+            pointer.AssignValue(value);
+        }
+        #endregion
+
     }
 }

@@ -178,19 +178,19 @@ namespace SkimSkript.Parsing
         /// <summary> Parses a variable or parameter declaration with a value data type. </summary>
         private StatementNode GetValueTypeVariableDeclaration()
         {
-            var varDataType = GetValueNodeType(_tokens.RemoveAndGetType());
-            var varIdentifier = _tokens.MatchRemoveAndGetLexeme(TokenType.Identifier);
+            var dataType = GetValueNodeType(_tokens.RemoveAndGetType());
+            var identifier = _tokens.MatchRemoveAndGetLexeme(TokenType.Identifier);
 
-            /* AssignmentOperator can be used for both initialization and assignment. VariableInitialize
+            /* AssignmentOperator can be used for both initialization and assignment. However VariableInitialize
              * is only used for initialization which is why the tokens are seperate. */
-            var isInitialized = _tokens.TryMatchAndRemove(TokenType.VariableInitialize);
-            isInitialized = isInitialized || _tokens.TryMatchAndRemove(TokenType.AssignmentOperator);
+            var isInit = _tokens.TryMatchAndRemove(TokenType.VariableInitialize);
+            isInit = isInit || _tokens.TryMatchAndRemove(TokenType.AssignmentOperator);
 
-            /* If initialized get an expression (that will potetially be coerced runtime). Otherwise get a default 
-             * value node for the data type in the declaration. */
-            var varInitValue = isInitialized ? GetExpression() : GetValueNodeOfType(varDataType);
+            /* If initialized get an expression (that will potetially be coerced runtime by the interpreter).
+             * Otherwise get a default value node for the data type in the declaration. */
+            var initValue = isInit ? GetExpression() : GetValueNodeOfType(dataType);
 
-            return new VariableDeclarationNode(varIdentifier, varDataType, varInitValue);
+            return new VariableDeclarationNode(identifier, dataType, initValue);
         }
 
         /// <summary>Parses an assignment statement where what is presumably a variable or parameter is assigned an expression.</summary>

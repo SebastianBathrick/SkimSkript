@@ -11,21 +11,17 @@ namespace SkimSkript.Syntax
             // Function Definitions (Shorthand)
             ("def", TokenType.FunctionVoidDefine), ("def int", TokenType.FunctionIntDefine),
             ("def float", TokenType.FunctionFloatDefine), ("def bool", TokenType.FunctionFloatDefine),
+            ("def string", TokenType.FunctionStringDefine),
 
-            ("def", TokenType.FunctionVoidDefine), ("def integer", TokenType.FunctionIntDefine),
+            ("def integer", TokenType.FunctionIntDefine),
             ("def floating point", TokenType.FunctionFloatDefine), ("def boolean", TokenType.FunctionFloatDefine),
 
-            ("define", TokenType.FunctionVoidDefine), ("define int", TokenType.FunctionIntDefine),
-            ("define float", TokenType.FunctionFloatDefine), ("define bool", TokenType.FunctionFloatDefine),
-
-            ("define", TokenType.FunctionVoidDefine), ("define integer", TokenType.FunctionIntDefine),
-            ("define floating point", TokenType.FunctionFloatDefine), ("define boolean", TokenType.FunctionFloatDefine),
-
-            // Function Definitions (Explicit)
+            // Define (Data Type) Function
             ("define function", TokenType.FunctionVoidDefine), ("define int function", TokenType.FunctionIntDefine),
             ("define float function", TokenType.FunctionFloatDefine), ("define bool function", TokenType.FunctionFloatDefine),
+            ("define string function", TokenType.FunctionStringDefine),
 
-            ("define function", TokenType.FunctionVoidDefine), ("define integer function", TokenType.FunctionIntDefine),
+            ("define integer function", TokenType.FunctionIntDefine),
             ("define floating point function", TokenType.FunctionFloatDefine), ("define boolean function", TokenType.FunctionFloatDefine),
 
             ("reference to",TokenType.PassByReference), ("ref",TokenType.PassByReference),

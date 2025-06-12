@@ -27,26 +27,20 @@ namespace SkimSkript.Interpretation.Helpers
         // variable w/ a parameter.
 
         /// <summary> Adds a <see cref="VariableNode"/> associated with an iddentifier to the current scope. </summary>
-        public VariableNode AddVariable(string identifier, VariableNode variableNode)
-        {
-            variableNode.AddToFunctionReferenceCount();
-            return CurrentStackFrame.AddVariable(identifier, variableNode);
-        }
+        public void AddVariable(string identifier, Node value, Type dataType) => 
+            CurrentStackFrame.AddVariable(identifier, value, dataType);
 
-        /// <summary> Returns the <see cref="ValueNode"/> reference thats stored by the variable 
-        /// with the provided identifier in the current scope. </summary>
-        public ValueNode GetVariableValueReference(string identifier) => ((ValueNode)GetVariable(identifier).Value);
+        public void AssignValueToVariable(string identifier, ValueNode value) =>
+            CurrentStackFrame.AssignValueToVariable(identifier, value);
 
-        /// <summary> Returns the <see cref="VariableNode"/> associated with the provided identifier in the current scope. </summary>
-        public VariableNode GetVariable(string identifier)
-        {
-            VariableNode var = CurrentStackFrame.GetVariable(identifier);
+        public ValueNode GetVariableValueCopy(string identifier) =>
+            CurrentStackFrame.GetVariableValueCopy(identifier);
 
-            if (var != null)
-                return var;
+        public Type GetVariableDataType(string identifier) => 
+            CurrentStackFrame.GetVariableDataType(identifier);
 
-            return _topLevelFrame.GetVariable(identifier);
-        }
+        public Node GetVariablePointer(string identifier) =>
+            CurrentStackFrame.GetVariablePointer(identifier);
         #endregion
 
         /// <summary> Exits the current function scope and switches to the next on the stack. </summary>
