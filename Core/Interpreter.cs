@@ -8,6 +8,8 @@ using SkimSkript.Core.Helpers.Interpreter;
 
 namespace SkimSkript.Interpretation
 {
+    using ArgData = (Node source, bool isRef);
+
     /// <summary> The <c>Interpreter</c> class is responsible for executing the program represented by an
     ///  Abstract Syntax Tree (AST) generated from the parsed source code. It handles function calls, 
     ///  variable management, expressions,  and control structures (e.g., if, while) to produce 
@@ -23,8 +25,7 @@ namespace SkimSkript.Interpretation
             InterpretBlock(root);
         }
 
-        /// <summary>Executes a block node, entering a new scope and executing each statement.</summary>
-        /// <returns>True if the loop executed a return statement while interpreting its block.</returns>
+        /// <summary> Interprets block and its executible statements then returns data about exit. </summary>
         private BlockExitData InterpretBlock(Node block)
         {            
             _scope.EnterScope();          
@@ -44,8 +45,7 @@ namespace SkimSkript.Interpretation
             return exitData ?? new BlockExitData(BlockExitType.StatementsExhausted);
         }
 
-        /// <summary>Returns all user-defined & built-in functions in a map with keys defined by
-        /// their identifier matched to their <see cref="CallableNode"/>.</summary>
+        /// <summary> Returns dictionary of built-in & user-defined functions mapped to their idenifiers. </summary>
         private Dictionary<string, CallableNode> AddCallableFunctionsToMap(List<Node> functions)
         {
             var funcDict = new Dictionary<string, CallableNode>();
@@ -62,8 +62,7 @@ namespace SkimSkript.Interpretation
         }
 
         #region Statements
-        /// <summary>Evaluates a statement node and performs the appropriate action based on its type.
-        /// Returns true if a return statement was executed and false if otherwise.</summary>
+        /// <summary> Interprets a single statement node and returns any exit data if applicable. </summary>
         private BlockExitData? InterpretStatement(StatementNode node)
         {
             switch (node)
@@ -84,13 +83,11 @@ namespace SkimSkript.Interpretation
                     return InterpretReturnStatement(returnNode); 
             }
 
-            return null; // It is only a single statement
+            return null; // Only a single non-return statement was executed, so no exit data.
         }
 
         #region Function Statements
-        /// <summary>Invokes a function call node and returns its result as a ValueNode.</summary>
-        /// <returns>The result of the function call as a <see cref="ValueNode"/>. If the function has no return, 
-        /// returns a default <see cref="IntValueNode"/> with a value of 0.</returns>
+        /// <summary> Interprets function call by interpreting arguments, parameters, and the function body. </summary>
         private ValueNode? InterpretFunctionCall(FunctionCallNode functionCallNode)
         {
             // Evaluates argument expressions (no coercion) and finds pointers to variable references 
@@ -105,9 +102,9 @@ namespace SkimSkript.Interpretation
             return InterpretBuiltInFunction((BuiltInFunctionNode)callableNode, interpretedArgs);
         }
 
-        private List<(Node source, bool isRef)> InterpretArguments(List<(Node source, bool isRef)> rawArguments)
+        private List<ArgData> InterpretArguments(List<ArgData> rawArguments)
         {
-            List<(Node source, bool isRef)> evaluatedArguments = new();
+            List<ArgData> evaluatedArguments = new();
 
             foreach (var arg in rawArguments)
             {
@@ -123,10 +120,6 @@ namespace SkimSkript.Interpretation
                     evaluatedArguments.Add((evaluatedValueArg, isRefArg));
                     continue;
                 }
-
-                // References should only be a single variable identifier
-                if (rawArgNode is not IdentifierNode) //TODO: Move to semantic analyzer
-                    throw new InvalidDataException($"Reference argument must be an identifier, but got: {arg.source}.");
 
                 // Assumes this is an identifier node
                 var variableIdentifier = GetIdentifier(rawArgNode);
@@ -235,8 +228,6 @@ namespace SkimSkript.Interpretation
         #region Misc. Statements
         /// <summary>Evaluates an assertionNode statement and ensures the condition associated is true.</summary>
         /// <exception cref="AssertionException"> Thrown if the conditional expression stored in the statement is false. </exception>
-        /// 
-        /// 
         private void InterpretAssertion(AssertionNode assertionNode)
         {
             try
@@ -264,9 +255,7 @@ namespace SkimSkript.Interpretation
         #endregion
 
         #region Functions
-        private ValueNode? InterpretUserFunction(
-            FunctionNode functionNode,
-            List<(Node source, bool isRef)> interpretedArgs)
+        private ValueNode? InterpretUserFunction(FunctionNode functionNode, List<ArgData> interpretedArgs)
         {
             _scope.EnterFunctionScope();
 
@@ -287,17 +276,14 @@ namespace SkimSkript.Interpretation
         }
 
         private ValueNode? InterpretBuiltInFunction(
-            BuiltInFunctionNode builtInNode,
-            List<(Node source, bool isRef)> interpretedArgs)
+            BuiltInFunctionNode builtInNode, List<ArgData> interpretedArgs)
         {
             var returnValue = builtInNode.Call(interpretedArgs);
             return returnValue != null ? (ValueNode)returnValue : null;
         }
 
         /// <summary> Evaluates parameter nodes and adds parameters to scope. </summary>
-        private void AddParametersToScope(
-            List<Node> parameterDeclarations,
-            List<(Node source, bool isRef)> args)
+        private void AddParametersToScope(List<Node> parameterDeclarations, List<ArgData> args)
         {
             for (int i = 0; i < parameterDeclarations.Count; i++)
             {
@@ -380,8 +366,8 @@ namespace SkimSkript.Interpretation
                 BoolValueNode val => new BoolValueNode(val.ToBool()),
                 FloatValueNode val => new FloatValueNode(val.ToFloat()),                
                 StringValueNode val => new StringValueNode(val.ToString()),               
-                FunctionCallNode callNode => InterpretFunctionCall(callNode).Copy(),
-                IdentifierNode idNode => _scope.GetVariableValueCopy(idNode.ToString()).Copy(),
+                FunctionCallNode callNode => InterpretFunctionCall(callNode),
+                IdentifierNode idNode => _scope.GetVariableValueCopy(idNode.ToString()),
                 _ => throw new InvalidDataException($"\"{node}\" is not a valid factor data type.")
             };
         #endregion

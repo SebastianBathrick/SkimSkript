@@ -381,10 +381,6 @@ namespace SkimSkript.Parsing
         private bool IsCollectionDataType(TokenType tokenType) => tokenType == TokenType.ListKeyword;
 
         // TODO: Refactor token type checkers to accept token type parameter instead of using PeekType() directly and potentially split methods into seperate class.
-        private bool IsParameterDeclarations(bool usesParenthesis) =>
-           !usesParenthesis && _tokens.PeekType() != TokenType.BlockOpen && _tokens.PeekType() != TokenType.FunctionImpliedBlock
-            || usesParenthesis && _tokens.PeekType() != TokenType.ParenthesisClose;
-
         private bool IsFunctionDefNext() =>
             _tokens.PeekType() switch
             {
