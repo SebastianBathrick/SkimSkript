@@ -1,6 +1,7 @@
 ﻿using SkimSkript.Nodes.Runtime;
 using SkimSkript.Nodes.ValueNodes;
 using SkimSkript.Nodes;
+using SkimSkript.ErrorHandling;
 
 namespace SkimSkript.Interpretation.Helpers
 {
@@ -30,17 +31,55 @@ namespace SkimSkript.Interpretation.Helpers
         public void AddVariable(string identifier, Node value, Type dataType) => 
             CurrentStackFrame.AddVariable(identifier, value, dataType);
 
-        public void AssignValueToVariable(string identifier, ValueNode value) =>
-            CurrentStackFrame.AssignValueToVariable(identifier, value);
+        public void AssignValueToVariable(string identifier, ValueNode value)
+        {
+            if (CurrentStackFrame.GetVariablePointer(identifier) is not null)
+            {
+                CurrentStackFrame.AssignValueToVariable(identifier, value);
+                return;
+            }
 
-        public ValueNode GetVariableValueCopy(string identifier) =>
-            CurrentStackFrame.GetVariableValueCopy(identifier);
+            if (_topLevelFrame.GetVariablePointer(identifier) is not null)
+            {
+                _topLevelFrame.AssignValueToVariable(identifier, value);
+                return;
+            }
 
-        public Type GetVariableDataType(string identifier) => 
-            CurrentStackFrame.GetVariableDataType(identifier);
+            throw new UnknownIdentifierError(identifier);
+        }
 
-        public Node GetVariablePointer(string identifier) =>
-            CurrentStackFrame.GetVariablePointer(identifier);
+        public ValueNode GetVariableValueCopy(string identifier)
+        {
+            var valueCopy = CurrentStackFrame.GetVariableValueCopy(identifier);
+            if (valueCopy != null) return valueCopy;
+
+            valueCopy = _topLevelFrame.GetVariableValueCopy(identifier);
+            if (valueCopy != null) return valueCopy;
+
+            throw new UnknownIdentifierError(identifier);
+        }
+
+        public Type GetVariableDataType(string identifier)
+        {
+            var type = CurrentStackFrame.GetVariableDataType(identifier);
+            if (type != null) return type;
+
+            type = _topLevelFrame.GetVariableDataType(identifier);
+            if (type != null) return type;
+
+            throw new UnknownIdentifierError(identifier);
+        }
+
+        public Node GetVariablePointer(string identifier)
+        {
+            var pointer = CurrentStackFrame.GetVariablePointer(identifier);
+            if (pointer != null) return pointer;
+
+            pointer = _topLevelFrame.GetVariablePointer(identifier);
+            if (pointer != null) return pointer;
+
+            throw new UnknownIdentifierError(identifier);
+        }
         #endregion
 
         /// <summary> Exits the current function scope and switches to the next on the stack. </summary>

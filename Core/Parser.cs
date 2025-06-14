@@ -48,34 +48,33 @@ namespace SkimSkript.Parsing
         }
         #endregion
 
-        #region Function & Blocks
+        #region Function Definitions & Blocks
         /// <summary>Parses a function definition along with its body.</summary>
         private FunctionNode GetFunctionNode()
         {
             //If return type is null that means its a void returning function.
             ValueNode? returnTypeNode = GetFunctionReturnTypeNode();
 
-            string identifier = _tokens.RemoveAndGetLexeme();
-            List<Node> parameters = new List<Node>();
+            string functionIdentifier = _tokens.RemoveAndGetLexeme();
+            List<Node> parameters = new();
 
-            //In case parameter declarations are enclosed in parenthesis
-            bool isParenthesis = _tokens.TryMatchAndRemove(TokenType.ParenthesisOpen);
+            // Opening parenthesis to enclose parameter declarations
+            _tokens.MatchAndRemove(TokenType.ParenthesisOpen);
 
-            //Create parameters until the block begins
-            while (IsParameterDeclarations(isParenthesis))
+            // Keep reading parameters until the closing parenthesis
+            while (!_tokens.TryMatchAndRemove(TokenType.ParenthesisClose))
             {
-                bool isRef = _tokens.TryMatchAndRemove(TokenType.PassByReference);
+                // Optional reference keyword(s) -> data type -> parameter identifier
+                var isRef = _tokens.TryMatchAndRemove(TokenType.PassByReference);
+                var dataType = GetValueNodeType(_tokens.RemoveAndGetType());
 
-                var paramDeclaration = GetVariableDeclaration();
-                var paramId = ((VariableDeclarationNode)paramDeclaration).Identifier;
+                string paramIdentifier = _tokens.MatchRemoveAndGetLexeme(TokenType.Identifier);
+                IdentifierNode paramIdentifierNode = new(paramIdentifier);
 
-                parameters.Add(new ParameterNode(paramDeclaration, isRef, identifier));
+                parameters.Add(new ParameterNode(isRef, dataType, paramIdentifierNode));
             }
 
-            if (isParenthesis)
-                _tokens.MatchAndRemove(TokenType.ParenthesisClose);
-
-            return new FunctionNode(identifier, returnTypeNode, parameters, GetBlock(true));
+            return new FunctionNode(functionIdentifier, returnTypeNode, parameters, GetBlock(true));
         }
 
         /// <summary>Parses each statement within a block's scope.</summary>

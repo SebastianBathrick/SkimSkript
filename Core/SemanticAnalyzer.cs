@@ -35,6 +35,7 @@ namespace SkimSkript.Semantics
         /// and those nested within.</summary>
         private void AnalyzeFunctionBodies(List<Node> functionNodes)
         {
+            /*
             foreach(FunctionNode function in functionNodes)
             {
                 foreach (ParameterNode parameter in function.Parameters)
@@ -45,6 +46,7 @@ namespace SkimSkript.Semantics
                 //Exit parameter scope.
                 RemoveCurrentScopeVariables();
             }
+            */
         }
 
         /// <summary>Iterates through each statement and analyzes the semantics of each.</summary>
@@ -86,7 +88,7 @@ namespace SkimSkript.Semantics
                 else
                 {
                     if (!isExpression)
-                        throw new SemanticError("Value returning function does not return expression.");
+                        throw new SemanticError("Lexeme returning function does not return expression.");
 
                     AnalyzeExpression(returnNode.Expression);
                 }

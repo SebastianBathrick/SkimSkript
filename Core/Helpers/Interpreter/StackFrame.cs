@@ -36,36 +36,44 @@ namespace SkimSkript.Interpretation.Helpers
         #endregion
 
         #region Variable Getter Methods
-        public Node GetVariablePointer(string identifier)
+        public Node? GetVariablePointer(string identifier)
         {
             var variable = GetVariable(identifier);
-            return variable.Value;
+            return variable?.Value;
         }
 
-        public ValueNode GetVariableValueCopy(string identifier)
-        {
-            var pointer = (ValueNode)GetVariable(identifier).Value;
-            return pointer.Copy();
-        }
-
-        public Type GetVariableDataType(string identifier)
+        public ValueNode? GetVariableValueCopy(string identifier)
         {
             var variable = GetVariable(identifier);
-            return variable.DataType;
+            if (variable?.Value is ValueNode pointer)
+            {
+                return pointer.Copy();
+            }
+
+            return null;
+        }
+
+        public Type? GetVariableDataType(string identifier)
+        {
+            var variable = GetVariable(identifier);
+            return variable?.DataType;
         }
 
         /// <summary> Search from the lowest to highest depths to get variable associated with identifier </summary>
-        /// <exception cref="UnknownIdentifierError"> Given identifier was not found in stack frame.</example>
-        private VariableNode GetVariable(string identifier)
+        /// <exception cref="UnknownIdentifierError"> Given identifier was not found in stack frame.</exception>
+        private VariableNode? GetVariable(string identifier)
         {
             // TODO: Refactor to increase efficiency
             for (int i = _currBlockLevel; i >= 0; i--)
+            {
                 if (FrameDictionary.TryGetValue((i, identifier), out VariableNode? var))
                     return var;
+            }
 
-            throw new UnknownIdentifierError(identifier);
+            return null;
         }
         #endregion
+
 
         #region Variable Manipulation Methods
         /// <summary> Adds a variable to the most deeply nested scope in the stack frame. </summary>

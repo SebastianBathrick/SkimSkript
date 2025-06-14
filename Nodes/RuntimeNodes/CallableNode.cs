@@ -4,11 +4,11 @@
     /// includes the subroutine's identifier, parameters it accepts, a return type, and whether or not it's variadic.</summary>
     public abstract class CallableNode : Node
     {
-        private string _identifier;
+        private string _identifier; // TODO: Change string callable identifier to a node
         private List<Node> _parameters;
 
         protected bool isVariadic = false;
-        protected Node? _returnTypeNode;
+        protected Node? _returnTypeNode; // TODO: Change the _returnTypeNode to Type instead of Node
 
         /// <summary>The identifier to be referenced to call the subroutine.</summary>
         public string Identifier => _identifier;

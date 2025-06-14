@@ -4,6 +4,7 @@ using SkimSkript.Nodes.Runtime;
 using SkimSkript.Nodes;
 using SkimSkript.Nodes.StatementNodes;
 using SkimSkript.Nodes.NodeExceptions;
+using SkimSkript.Core.Helpers.Interpreter;
 
 namespace SkimSkript.Interpretation
 {
@@ -14,7 +15,6 @@ namespace SkimSkript.Interpretation
     public class Interpreter
     {        
         private ScopeManager _scope = new ScopeManager();
-        private ValueNode _lastReturnedValue = new IntValueNode();
         private Dictionary<string, CallableNode> _callableFunctionsDict; 
 
         public Interpreter(AbstractSyntaxTreeRoot root)
@@ -25,20 +25,24 @@ namespace SkimSkript.Interpretation
 
         /// <summary>Executes a block node, entering a new scope and executing each statement.</summary>
         /// <returns>True if the loop executed a return statement while interpreting its block.</returns>
-        private bool InterpretBlock(Node block)
+        private BlockExitData InterpretBlock(Node block)
         {            
             _scope.EnterScope();          
-            List<Node> statements = ((BlockNode)block).Statements;
-            bool isReturning = false;
+            var statements = ((BlockNode)block).Statements;
+            BlockExitData? exitData = null;
 
             foreach (StatementNode statement in statements)
-                if (isReturning = InterpretStatement(statement))
-                    break;
-            
-            if(!isReturning)
-                _scope.ExitScope();
+            {
+                exitData = InterpretStatement(statement);
 
-            return isReturning;
+                // If it has exit data but it wasn't a control structure that executed all statements
+                if (exitData != null && exitData.ExitType != BlockExitType.StatementsExhausted)
+                    break;
+            }
+
+           
+            _scope.ExitScope();
+            return exitData != null ? exitData : new BlockExitData();
         }
 
         /// <summary>Returns all user-defined & built-in functions in a map with keys defined by
@@ -61,93 +65,128 @@ namespace SkimSkript.Interpretation
         #region Statements
         /// <summary>Evaluates a statement node and performs the appropriate action based on its type.
         /// Returns true if a return statement was executed and false if otherwise.</summary>
-        private bool InterpretStatement(StatementNode node)
+        private BlockExitData? InterpretStatement(StatementNode node)
         {
             switch (node)
             {
-                case VariableDeclarationNode varNode: InterpretVariableDeclaration(varNode); break;
-                case FunctionCallNode functionCallNode: InterpretFunctionCall(functionCallNode); break;
-                case AssignmentNode assignmentNode: AssignValueToVariable(assignmentNode); break;
-                case AssertionNode assertionNode: InterpretAssertion(assertionNode); break;
-                case IfNode ifNode: return InterpretIfStructure(ifNode);
-                case WhileNode whileNode: return InterpretWhileStructure(whileNode);
-                case ReturnNode returnNode: InterpretReturnStatement(returnNode); return true;
+                case VariableDeclarationNode varNode: 
+                    InterpretVariableDeclaration(varNode); break;
+                case FunctionCallNode functionCallNode: 
+                    InterpretFunctionCall(functionCallNode); break;
+                case AssignmentNode assignmentNode: 
+                    AssignValueToVariable(assignmentNode); break;
+                case AssertionNode assertionNode: 
+                    InterpretAssertion(assertionNode); break;
+                case IfNode ifNode: 
+                    return InterpretIfStructure(ifNode);
+                case WhileNode whileNode: 
+                    return InterpretWhileStructure(whileNode);
+                case ReturnNode returnNode: 
+                    return InterpretReturnStatement(returnNode); 
             }
 
-            return false;
+            return null; // It is only a single statement
         }
 
+        #region Function Statements
         /// <summary>Invokes a function call node and returns its result as a ValueNode.</summary>
         /// <returns>The result of the function call as a <see cref="ValueNode"/>. If the function has no return, 
         /// returns a default <see cref="IntValueNode"/> with a value of 0.</returns>
-        private ValueNode InterpretFunctionCall(FunctionCallNode functionCallNode)
+        private ValueNode? InterpretFunctionCall(FunctionCallNode functionCallNode)
         {
-            var callArgs = functionCallNode.Arguments;
-
-            // Get values from expressions and references to variables sent by the caller
+            // Evaluates argument expressions (no coercion) and finds pointers to variable references 
             var interpretedArgs = InterpretArguments(functionCallNode.Arguments);
 
-            // Get function definiion and body
             //TODO: Handle function not found exception.
-            var callableNode = _callableFunctionsDict[functionCallNode.Identifier]; 
+            var callableNode = _callableFunctionsDict[functionCallNode.Identifier];
 
-            // If not user-defined, then it must be a built-in function.
-            if (callableNode is BuiltInFunctionNode)
-            {
-                var builtInFunctionNode = (BuiltInFunctionNode)callableNode;
+            if (callableNode is FunctionNode)
+                return InterpretUserFunction((FunctionNode)callableNode, interpretedArgs);
 
-                var returnValue = builtInFunctionNode.Call(interpretedArgs);
-                returnValue ??= new IntValueNode(); //TODO: Handle built-in return types properly.
-
-                return (ValueNode)returnValue;
-            }
-
-            var functionNode = (FunctionNode)callableNode;
-
-            // Enter the scope of the function body
-            _scope.EnterFunctionScope();
-
-            // Declare parameters in the newly added function scope
-            AssignValuesToParameters(functionNode.Parameters, interpretedArgs);
-
-            // Execute each statement in the function body block.
-            InterpretBlock(functionNode.Block);
-
-            // Exit the scope of the function body to caller scope.
-            _scope.ExitFunctionScope();
-
-            return _lastReturnedValue; //TODO: Handle user-defined return types properly.
+            return InterpretBuiltInFunction((BuiltInFunctionNode)callableNode, interpretedArgs);
         }
 
+        private List<(Node source, bool isRef)> InterpretArguments(List<(Node source, bool isRef)> rawArguments)
+        {
+            List<(Node source, bool isRef)> evaluatedArguments = new();
+
+            foreach (var arg in rawArguments)
+            {
+                var rawArgNode = arg.source;
+                var isRefArg = arg.isRef;
+
+                // Lexeme type rawArguments are just evaluated into a ValueNode
+                if (!isRefArg)
+                {
+                    var evaluatedValueArg = EvaluateExpression(rawArgNode);
+
+                    // source = evaluatedValueArg & isRef = isRefArg
+                    evaluatedArguments.Add((evaluatedValueArg, isRefArg));
+                    continue;
+                }
+
+                // References should only be a single variable identifier
+                if (rawArgNode is not IdentifierNode) //TODO: Move to semantic analyzer
+                    throw new InvalidDataException($"Reference argument must be an identifier, but got: {arg.source}.");
+
+                // Assumes this is an identifier node
+                var variableIdentifier = GetIdentifier(rawArgNode);
+
+                // Pointer will maintain ValueNode type, because coerced values are new instances of ValueNode.
+                var variablePointer = (ValueNode)_scope.GetVariablePointer(variableIdentifier);
+
+                // source = variablePointer & isRef = isRefArg
+                evaluatedArguments.Add((variablePointer, isRefArg));
+            }
+
+            return evaluatedArguments;
+        }
+
+        /// <summary>Handles return statement and sets the last returned value.</summary>
+        private BlockExitData InterpretReturnStatement(ReturnNode returnNode)
+        {
+            if(returnNode.Expression != null)
+            {
+                var returnValue = EvaluateExpression(returnNode.Expression);
+                return new BlockExitData(BlockExitType.ReturnStatement, returnValue);
+            }
+
+            return new BlockExitData(BlockExitType.ReturnStatement);
+        }
+        #endregion
+
+        #region Control Structures
         /// <summary>Evaluates a while loop, executing its block while the condition is true.</summary>
         /// <returns>True if the loop executed a return statement while interpreting its block.</returns>
-        private bool InterpretWhileStructure(WhileNode whileNode)
+        private BlockExitData InterpretWhileStructure(WhileNode whileNode)
         {
             while (EvaluateExpression(whileNode.Condition).ToBool())
-                if (InterpretBlock((BlockNode)whileNode.Block))
-                    return true; //Exit block early.
+            {
+                var exitData = InterpretBlock((BlockNode)whileNode.Block);
 
-            return false;
+                if (exitData.ExitType != BlockExitType.StatementsExhausted)
+                    return exitData;
+            }
+
+            // Upon reaching the termination condition
+            return new BlockExitData();
         }
 
         /// <summary>Evaluates an if statement, executing its block if the condition is true, and any else-if or else blocks as appropriate.</summary>
         /// <returns>True if the if structure executed a return statement while interpreting its block.</returns>
-        private bool InterpretIfStructure(IfNode ifNode)
+        private BlockExitData InterpretIfStructure(IfNode ifNode)
         {
             if (EvaluateExpression(ifNode.Condition).ToBool())
                 return InterpretBlock((BlockNode)ifNode.Block);
             else if (ifNode.ElseIfNode != null)
                 return InterpretIfStructure(ifNode.ElseIfNode);
 
-            //A lone if statement successfully executed block without returning.
-            return false;
+            // If the condition evaluates to false
+            return new BlockExitData();
         }
+        #endregion
 
-        /// <summary>Handles return statement and sets the last returned value.</summary>
-        private void InterpretReturnStatement(ReturnNode returnNode)  =>     
-            _lastReturnedValue = returnNode.Expression != null ? 
-            EvaluateExpression(returnNode.Expression) : _lastReturnedValue;
-
+        #region Variable Statements
         /// <summary>Declares a new variable in the current scope.</summary>
         private void InterpretVariableDeclaration(VariableDeclarationNode declarationNode)
         {          
@@ -157,19 +196,46 @@ namespace SkimSkript.Interpretation
             // Variable declarations can be assigned any expression type during parsing.
             var initVal = EvaluateExpression(declarationNode.AssignedExpression);
 
-            // Coerce the value to be the same type as the variable's data type.
-            var coercedInitVal = CoerceValue(initVal, dataType);
+            ValueNode coercedInitVal;
 
-            if(coercedInitVal == null)
+            // Coerce the value to be the same type as the variable's data type.
+            try
+            {
+                coercedInitVal = CoerceValue(initVal, dataType);
+            }
+            catch
+            {
                 throw new InvalidDataException(
                     $"Variable \"{identifier}\" cannot be initialized with a value of type {initVal.GetType().Name}.\n" +
                     $"Expected type: {dataType.Name}.");
+            }
 
             /* Even if there was no explicit initialization, the parser will still store a value 
              * node with a default value in the declaration node. Works like C# primitives. */
             _scope.AddVariable(identifier, coercedInitVal, dataType);
         }
 
+        private void AssignValueToVariable(AssignmentNode assignment)
+        {
+            // The expression can be of any ValueNode type, even after evaluation
+            var rawAssignVal = EvaluateExpression(assignment.AssignedExpression);
+
+            var identifier = assignment.IdentifierNode.ToString();
+            var varDataType = _scope.GetVariableDataType(identifier);
+
+            // Coerce the evaluated expression to the variable's data type
+            var coercedAssignVal = CoerceValue(rawAssignVal, varDataType);
+
+            if (coercedAssignVal == null)
+                throw new InvalidDataException(
+                    $"Variable \"{assignment.IdentifierNode}\" cannot be assigned a value of type {rawAssignVal.GetType().Name}.\n" +
+                    $"Expected type: {varDataType.Name}.");
+
+            _scope.AssignValueToVariable(identifier, coercedAssignVal);
+        }
+        #endregion
+
+        #region Misc. Statements
         /// <summary>Evaluates an assertionNode statement and ensures the condition associated is true.</summary>
         /// <exception cref="AssertionException">
         /// Thrown if the conditional expression stored in the statement is false.
@@ -178,14 +244,76 @@ namespace SkimSkript.Interpretation
         {
             try
             {
-                var interpretedExpression = EvaluateExpression(assertionNode.Condition);
+                var origExpression = (ConditionExpressionNode)assertionNode.Condition;
+                var interpretedExpression = EvaluateExpression(origExpression);
 
                 if (!interpretedExpression.ToBool())
-                    throw new AssertionException($"{assertionNode.ToString()}\nInstead left left operand evaluated to: {interpretedExpression}");
+                {
+                    var rightEval = EvaluateExpression(origExpression.RightOperand);
+                    var leftEval = EvaluateExpression(origExpression.LeftOperand);
+
+                    throw new AssertionException(
+                        $"\nLeft: {origExpression.LeftOperand} yielded {leftEval}\n" +
+                        $"Right: {origExpression.RightOperand} yielded {rightEval}\n");
+                }
+                    
             }
             catch(Exception ex)
             {
                 throw new AssertionException($"{assertionNode.ToString()}\nException was thrown while executing assertion: {ex.Message}");
+            }
+        }
+        #endregion
+        #endregion
+
+        #region Functions
+        private ValueNode? InterpretUserFunction(
+            FunctionNode functionNode,
+            List<(Node source, bool isRef)> interpretedArgs)
+        {
+            _scope.EnterFunctionScope();
+
+            AddParametersToScope(functionNode.Parameters, interpretedArgs);
+
+            // TODO: Add return checking to functions in semantic analysis
+            var bodyExitData = InterpretBlock(functionNode.Block);
+
+            _scope.ExitFunctionScope();
+
+            ValueNode? returnVal = null;
+
+            if (bodyExitData.IsReturnData)
+                returnVal = CoerceValue(bodyExitData.ReturnData, functionNode.ReturnType!);
+
+            return returnVal;
+        }
+
+        private ValueNode? InterpretBuiltInFunction(
+            BuiltInFunctionNode builtInNode,
+            List<(Node source, bool isRef)> interpretedArgs)
+        {
+            var returnValue = builtInNode.Call(interpretedArgs);
+            return returnValue != null ? (ValueNode)returnValue : null;
+        }
+
+        /// <summary> Evaluates parameter nodes and adds parameters to scope. </summary>
+        private void AddParametersToScope(
+            List<Node> parameterDeclarations,
+            List<(Node source, bool isRef)> args)
+        {
+            for (int i = 0; i < parameterDeclarations.Count; i++)
+            {
+                var paramNode = (ParameterNode)parameterDeclarations[i];
+                var identifier = GetIdentifier(paramNode.IdentifierNode);
+
+                Node validatedValueNode;
+
+                if (!args[i].isRef)
+                    validatedValueNode = CoerceValue((ValueNode)args[i].source, paramNode.DataType);
+                else
+                    validatedValueNode = args[i].source; // TODO: Add reference var type checking to semantic analysis
+
+                _scope.AddVariable(identifier, validatedValueNode, paramNode.DataType);
             }
         }
         #endregion
@@ -261,77 +389,19 @@ namespace SkimSkript.Interpretation
 
         #region Helper Methods
         /// <summary>Assigns a value to an existing variable in the current scope.</summary>
-        private void AssignValueToVariable(AssignmentNode assignment)
+
+
+        private string GetIdentifier(Node identifierNode)
         {
-            // The expression can be of any ValueNode type, even after evaluation
-            var rawAssignVal = EvaluateExpression(assignment.AssignedExpression);
+            var nodeType = identifierNode.GetType();
+            if (nodeType != typeof(IdentifierNode))
+                throw new InvalidDataException($"Expected {typeof(IdentifierNode).Name} but found {nodeType.Name}");
 
-            var identifier = assignment.IdentifierNode.ToString();
-            var varDataType = _scope.GetVariableDataType(identifier);
-
-            // Coerce the evaluated expression to the variable's data type
-            var coercedAssignVal = CoerceValue(rawAssignVal, varDataType);
-
-            if(coercedAssignVal == null)
-                throw new InvalidDataException(
-                    $"Variable \"{assignment.IdentifierNode}\" cannot be assigned a value of type {rawAssignVal.GetType().Name}.\n" +
-                    $"Expected type: {varDataType.Name}.");
-
-            _scope.AssignValueToVariable(identifier, coercedAssignVal);
+            return ((IdentifierNode)identifierNode).Lexeme;
         }
 
-        private List<(Node source, bool isRef)> InterpretArguments(List<(Node source, bool isRef)> arguments)
-        {
-            List<(Node source, bool isRef)> evaluatedArgs = new();
 
-            foreach (var arg in arguments)
-            {
-                var rawArg = arg.source;
-                var isRefArg = arg.isRef;
-
-                if(!isRefArg)
-                {
-                    // Value type arguments are just evaluated into a ValueNode
-                    var evaluatedValueArg = EvaluateExpression(rawArg);
-                    evaluatedArgs.Add((rawArg, isRefArg));
-                    continue;
-                }
-
-                if(rawArg is not IdentifierNode)
-                    throw new InvalidDataException($"Reference argument must be an identifier, but got: {arg.source}.");
-
-                // Pointer will maintain ValueNode type, because coerced values are new instances of ValueNode.
-                var variablePointer = _scope.GetVariablePointer(rawArg.ToString());
-                evaluatedArgs.Add((variablePointer, isRefArg));
-            }
-
-            return evaluatedArgs;
-        }
-
-        // TODO: Refactor method to avoid instantiating VariableDeclarationNodes for each use of a pass-by-value parameter.
-        private void AssignValuesToParameters(List<Node> parameters, List<(Node source, bool isRef)>? processedArgs)
-        {
-            for (int i = 0; processedArgs != null && i < processedArgs.Count; i++)
-            {
-                var arg = processedArgs[i];
-                var parameter = (ParameterNode)parameters[i];
-
-                if (processedArgs[i].isRef)
-                    //Reuse the VariableNode associated with the variable passed as a reference argument.
-                    _scope.AddVariable(parameter.Identifier, (VariableNode)arg.source);
-                else
-                {
-                    //Get parameter's data type
-                    Type paramType = ((VariableDeclarationNode)parameter.ValueSource).DataType.GetType();
-                    //Cast an argument to the parameter's data type.
-                    ValueNode castedArg = CoerceValue((ValueNode)(processedArgs[i].source), paramType);
-
-                    InterpretVariableDeclaration(new VariableDeclarationNode(parameter.Identifier, paramType, castedArg));
-                }
-            }
-        }
-
-        private ValueNode? CoerceValue(ValueNode value, Type castType) =>
+        private ValueNode CoerceValue(ValueNode value, Type castType) =>
 
             castType switch
             {
@@ -339,7 +409,7 @@ namespace SkimSkript.Interpretation
                 Type t when t == typeof(FloatValueNode) => new FloatValueNode(value.ToFloat()),
                 Type t when t == typeof(StringValueNode) => new StringValueNode(value.ToString()),
                 Type t when t == typeof(BoolValueNode) => new BoolValueNode(value.ToBool()),
-                _ => null
+                _ => throw new InvalidCastException($"Attempted invalid cast from {value.GetType().Name} to {castType.Name}.")
             };
         #endregion
     }

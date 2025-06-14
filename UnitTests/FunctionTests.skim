@@ -104,12 +104,12 @@ def bool IsGreater(int x int y)
 }
 
 print("Add(3, 7) returns: " + Add(3, 7))
-print("Add(10, -5) returns: " + Add(10, -5))
+print("Add(10, -5) returns: " + Add(10, (-5)))
 print("Concatenate('Hello', 'World') returns: " + Concatenate("Hello", "World"))
 print("IsGreater(10, 5) returns: " + IsGreater(10, 5))
 print("IsGreater(3, 8) returns: " + IsGreater(3, 8))
 assert Add(3, 7) == 10
-assert Add(10, -5) == 5
+assert Add(10,(-5)) == 5
 assert Concatenate("Hello", "World") == "HelloWorld"
 assert IsGreater(10, 5) == true
 assert IsGreater(3, 8) == false
