@@ -14,7 +14,7 @@ namespace SkimSkript.Interpretation
     ///  runtime results. </summary>
     public class Interpreter
     {        
-        private ScopeManager _scope = new ScopeManager();
+        private ScopeManager _scope = new();
         private Dictionary<string, CallableNode> _callableFunctionsDict; 
 
         public Interpreter(AbstractSyntaxTreeRoot root)
@@ -40,9 +40,8 @@ namespace SkimSkript.Interpretation
                     break;
             }
 
-           
             _scope.ExitScope();
-            return exitData != null ? exitData : new BlockExitData();
+            return exitData ?? new BlockExitData(BlockExitType.StatementsExhausted);
         }
 
         /// <summary>Returns all user-defined & built-in functions in a map with keys defined by
@@ -133,7 +132,7 @@ namespace SkimSkript.Interpretation
                 var variableIdentifier = GetIdentifier(rawArgNode);
 
                 // Pointer will maintain ValueNode type, because coerced values are new instances of ValueNode.
-                var variablePointer = (ValueNode)_scope.GetVariablePointer(variableIdentifier);
+                var variablePointer = _scope.GetVariablePointer(variableIdentifier);
 
                 // source = variablePointer & isRef = isRefArg
                 evaluatedArguments.Add((variablePointer, isRefArg));
@@ -145,13 +144,11 @@ namespace SkimSkript.Interpretation
         /// <summary>Handles return statement and sets the last returned value.</summary>
         private BlockExitData InterpretReturnStatement(ReturnNode returnNode)
         {
+            ValueNode? returnData = null;
             if(returnNode.Expression != null)
-            {
-                var returnValue = EvaluateExpression(returnNode.Expression);
-                return new BlockExitData(BlockExitType.ReturnStatement, returnValue);
-            }
+                returnData = EvaluateExpression(returnNode.Expression);
 
-            return new BlockExitData(BlockExitType.ReturnStatement);
+            return new BlockExitData(BlockExitType.ReturnStatement, returnData);
         }
         #endregion
 
@@ -169,7 +166,7 @@ namespace SkimSkript.Interpretation
             }
 
             // Upon reaching the termination condition
-            return new BlockExitData();
+            return new BlockExitData(BlockExitType.StatementsExhausted);
         }
 
         /// <summary>Evaluates an if statement, executing its block if the condition is true, and any else-if or else blocks as appropriate.</summary>
@@ -182,7 +179,7 @@ namespace SkimSkript.Interpretation
                 return InterpretIfStructure(ifNode.ElseIfNode);
 
             // If the condition evaluates to false
-            return new BlockExitData();
+            return new BlockExitData(BlockExitType.StatementsExhausted);
         }
         #endregion
 
@@ -237,9 +234,9 @@ namespace SkimSkript.Interpretation
 
         #region Misc. Statements
         /// <summary>Evaluates an assertionNode statement and ensures the condition associated is true.</summary>
-        /// <exception cref="AssertionException">
-        /// Thrown if the conditional expression stored in the statement is false.
-        /// </exception>
+        /// <exception cref="AssertionException"> Thrown if the conditional expression stored in the statement is false. </exception>
+        /// 
+        /// 
         private void InterpretAssertion(AssertionNode assertionNode)
         {
             try
@@ -282,6 +279,7 @@ namespace SkimSkript.Interpretation
 
             ValueNode? returnVal = null;
 
+            // If this function returns data coerce the data from the return statement to the function's type
             if (bodyExitData.IsReturnData)
                 returnVal = CoerceValue(bodyExitData.ReturnData, functionNode.ReturnType!);
 
@@ -305,9 +303,10 @@ namespace SkimSkript.Interpretation
             {
                 var paramNode = (ParameterNode)parameterDeclarations[i];
                 var identifier = GetIdentifier(paramNode.IdentifierNode);
-
                 Node validatedValueNode;
 
+                /* Value type arguments are coerced to match the type of the parameter while referenced 
+                 * variable pointers must maintain their type and be the same as the parameter type */
                 if (!args[i].isRef)
                     validatedValueNode = CoerceValue((ValueNode)args[i].source, paramNode.DataType);
                 else
@@ -389,8 +388,6 @@ namespace SkimSkript.Interpretation
 
         #region Helper Methods
         /// <summary>Assigns a value to an existing variable in the current scope.</summary>
-
-
         private string GetIdentifier(Node identifierNode)
         {
             var nodeType = identifierNode.GetType();
@@ -399,7 +396,6 @@ namespace SkimSkript.Interpretation
 
             return ((IdentifierNode)identifierNode).Lexeme;
         }
-
 
         private ValueNode CoerceValue(ValueNode value, Type castType) =>
 
