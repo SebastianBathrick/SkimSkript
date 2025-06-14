@@ -33,18 +33,11 @@ namespace SkimSkript.Interpretation.Helpers
         public void AssignValueToVariable(string identifier, Node value)
         {
             if (CurrentStackFrame.GetVariablePointer(identifier) is not null)
-            {
                 CurrentStackFrame.AssignValueToVariable(identifier, value);
-                return;
-            }
-
-            if (_topLevelFrame.GetVariablePointer(identifier) is not null)
-            {
+            else if (_topLevelFrame.GetVariablePointer(identifier) is not null)
                 _topLevelFrame.AssignValueToVariable(identifier, value);
-                return;
-            }
-
-            throw new UnknownIdentifierError(identifier);
+            else
+                throw new UnknownIdentifierError(identifier);
         }
 
         public Node GetVariableValueCopy(string identifier)
@@ -82,12 +75,10 @@ namespace SkimSkript.Interpretation.Helpers
         #endregion
 
         /// <summary> Exits the current function scope and switches to the next on the stack. </summary>
-        public void EnterScope() =>
-            CurrentStackFrame.EnterScope();
+        public void EnterScope() => CurrentStackFrame.EnterScope();
 
         /// <summary> Enters a new function scope. Meaning, what will at that time be the most deeply nested scope. </summary>
-        public void ExitScope() =>
-            CurrentStackFrame.ExitScope();
+        public void ExitScope() => CurrentStackFrame.ExitScope();
 
         /// <summary> Enters a new function scope one level deeper that has access to all previous scopes. </summary>
         public void EnterFunctionScope()

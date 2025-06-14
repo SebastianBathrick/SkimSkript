@@ -1,7 +1,6 @@
 ﻿using SkimSkript.LexicalAnalysis;
 using SkimSkript.Interpretation;
 using SkimSkript.ErrorHandling;
-using SkimSkript.Semantics;
 using SkimSkript.Parsing;
 using System.Diagnostics;
 
@@ -24,8 +23,6 @@ namespace SkimSkript
 
                 var parser = new Parser(tokens);
                 var astRoot = parser.AbstractSyntaxTreeRoot;
-
-                var semanticAnalyzer = new SemanticAnalyzer(astRoot);
 
                 var interpreter = new Interpreter(astRoot);
                 _wasExecutionSuccessful = true;
