@@ -198,9 +198,7 @@ namespace SkimSkript.Interpretation
         /// <returns>True if the loop executed a return statement while interpreting its block.</returns>
         private BlockExitData InterpretWhileStructure(WhileNode whileNode)
         {
-            var evaluatedCondition = EvaluateExpression(whileNode.Condition);
-
-            while (_coercionInterpreter.CoerceCondition(evaluatedCondition))
+            while (_coercionInterpreter.CoerceCondition(EvaluateExpression(whileNode.Condition)))
             {
                 var exitData = InterpretBlock((BlockNode)whileNode.Block);
 
@@ -330,7 +328,7 @@ namespace SkimSkript.Interpretation
             if (expression.IsShortCircuit(isLeftTrue))
                 return coercedLeft;
 
-            var right = EvaluateExpression(expression);
+            var right = EvaluateExpression(expression.RightOperand);
 
             _coercionInterpreter.CoerceLogicOperand(right, out var coercedRight);
             return _operationInterpreter.PerformLogicOperation(coercedLeft, coercedRight, expression.Operator);

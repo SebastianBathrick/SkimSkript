@@ -49,6 +49,7 @@ namespace SkimSkript.Syntax
             ("otherwise", TokenType.Else),
             ("while",TokenType.WhileLoop),
             ("repeat code while",TokenType.WhileLoop),
+            ("repeat while", TokenType.WhileLoop),
             ("int",TokenType.IntegerKeyword),
             ("integer", TokenType.IntegerKeyword),
             ("floating point", TokenType.FloatKeyword),

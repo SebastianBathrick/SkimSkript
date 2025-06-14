@@ -1,0 +1,245 @@
+print("Starting Condition Expression Tests")
+print("==================================")
+
+print("Testing basic comparison operators...")
+# Basic comparison operators
+int a = 5
+int b = 10
+
+# Equals (==)
+assert a == 5
+assert b == 10
+assert a == a
+assert b == b
+
+# Not Equals (!=)
+assert a != b
+assert a != 10
+assert b != 5
+
+# Greater Than (>)
+assert b > a
+assert b > 5
+assert 10 > a
+
+# Less Than (<)
+assert a < b
+assert a < 10
+assert 5 < b
+
+# Greater Than or Equal (>=)
+assert b >= a
+assert b >= 10
+assert 10 >= a
+assert a >= 5
+
+# Less Than or Equal (<=)
+assert a <= b
+assert a <= 5
+assert 5 <= b
+assert b <= 10
+
+print("Basic comparison operators passed!")
+
+print("Testing 'is' keyword variations...")
+# Testing 'is' keyword and its variations
+int x = 5
+int y = 10
+
+# Basic 'is'
+assert x is 5
+assert y is 10
+
+# 'is not'
+assert x is not 10
+assert y is not 5
+
+# 'is at least' (>=)
+assert y is at least x
+assert y is at least 10
+assert 10 is at least x
+
+# 'exceeds' (>)
+assert y exceeds x
+assert y exceeds 5
+assert 10 exceeds x
+
+# 'is at most' (<=)
+assert x is at most y
+assert x is at most 5
+assert 5 is at most y
+
+# 'is below' (<)
+assert x is below y
+assert x is below 10
+assert 5 is below y
+
+print("'is' keyword variations passed!")
+
+print("Testing boolean operators...")
+# Testing boolean operators
+bool trueVal = true
+bool falseVal = false
+
+# 'and' operator
+assert trueVal and trueVal
+assert trueVal and (trueVal and trueVal)
+assert (trueVal and trueVal) and trueVal
+
+# 'or' operator
+assert trueVal or falseVal
+assert falseVal or trueVal
+assert trueVal or (trueVal or falseVal)
+assert (falseVal or trueVal) or trueVal
+
+# 'or just' (xor) operator
+assert trueVal or just falseVal
+assert falseVal or just trueVal
+assert (trueVal or just falseVal) is not (trueVal or just trueVal)
+assert (falseVal or just trueVal) is not (falseVal or just falseVal)
+
+print("Boolean operators passed!")
+
+print("Testing complex boolean expressions...")
+# Complex boolean expressions
+int num1 = 5
+int num2 = 10
+int num3 = 15
+
+# Multiple conditions with 'and'
+assert num1 < num2 and num2 < num3
+assert (num1 < num2) and (num2 < num3)
+assert num1 is below num2 and num2 is below num3
+
+# Multiple conditions with 'or'
+assert num1 > num2 or num2 < num3
+assert (num1 > num2) or (num2 < num3)
+assert num1 exceeds num2 or num2 is below num3
+
+# Mixed operators
+assert (num1 < num2) and (num2 < num3) and (num3 > num1)
+assert (num1 > num2) or (num2 < num3) or (num3 > num1)
+assert (num1 < num2) and ((num2 < num3) or (num3 > num1))
+
+print("Complex boolean expressions passed!")
+
+print("Testing edge cases...")
+# Edge cases
+int zero = 0
+int neg = -5
+int pos = 5
+
+# Zero comparisons
+assert zero == 0
+assert zero is 0
+assert zero is at least 0
+assert zero is at most 0
+assert zero is not 1
+assert zero is below 1
+assert zero is below pos
+
+# Negative number comparisons
+assert neg < 0
+assert neg is below 0
+assert neg is at most -5
+assert neg is at least -5
+assert neg exceeds -10
+assert neg is not 0
+assert neg is not pos
+
+# Positive number comparisons
+assert pos > 0
+assert pos exceeds 0
+assert pos is at least 5
+assert pos is at most 5
+assert pos is below 10
+assert pos is not 0
+assert pos is not neg
+
+print("Edge cases passed!")
+
+print("Testing boolean value combinations...")
+# Boolean value combinations
+bool t = true
+bool f = false
+
+# All possible combinations with 'and'
+assert t and t
+assert (t and f) is not true
+assert (f and t) is not true
+assert (f and f) is not true
+
+# All possible combinations with 'or'
+assert t or t
+assert t or f
+assert f or t
+assert (f or f) is not true
+
+# All possible combinations with 'or just' (xor)
+assert (t or just t) is not true
+assert t or just f
+assert f or just t
+assert (f or just f) is not true
+
+print("Boolean value combinations passed!")
+
+print("Testing nested conditions...")
+# Nested conditions
+int val1 = 5
+int val2 = 10
+int val3 = 15
+
+# Nested 'and' conditions
+assert (val1 < val2) and ((val2 < val3) and (val3 > val1))
+assert ((val1 < val2) and (val2 < val3)) and (val3 > val1)
+
+# Nested 'or' conditions
+assert (val1 > val2) or ((val2 < val3) or (val3 > val1))
+assert ((val1 > val2) or (val2 < val3)) or (val3 > val1)
+
+# Mixed nesting
+assert (val1 < val2) and ((val2 < val3) or (val3 > val1))
+assert ((val1 > val2) or (val2 < val3)) and (val3 > val1)
+
+print("Nested conditions passed!")
+
+print("Testing comparison with arithmetic...")
+# Comparison with arithmetic expressions
+int base = 10
+
+# Basic arithmetic in comparisons
+assert base + 5 > base
+assert base - 5 < base
+assert base * 2 > base
+assert base / 2 < base
+assert base % 3 < base
+
+# Complex arithmetic in comparisons
+assert (base + 5) * 2 > base * 2
+assert (base - 5) / 2 < base / 2
+assert (base * 2) + 5 > base * 2
+assert (base / 2) - 1 < base / 2
+
+print("Comparison with arithmetic passed!")
+
+print("Testing modulus comparisons...")
+# Modulus comparisons
+int num = 10
+
+# Basic modulus comparisons
+assert num % 2 == 0
+assert num % 3 == 1
+assert num % 5 == 0
+assert num % 7 == 3
+
+# Using 'left after dividing by' keyword
+assert num left after dividing by 2 is 0
+assert num left after dividing by 3 is 1
+assert num left after dividing by 5 is 0
+assert num left after dividing by 7 is 3
+
+print("Modulus comparisons passed!")
+
+print("")
+print("All condition expression tests completed successfully!")
+print("Total test categories: 9") 

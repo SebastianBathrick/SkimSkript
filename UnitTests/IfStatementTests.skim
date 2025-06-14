@@ -1,0 +1,280 @@
+print("Starting If Statement Tests")
+print("==========================")
+
+print("Testing basic if statements...")
+# Basic if statements with different conditions
+int testInt = 10
+if testInt == 10
+    assert true
+
+if testInt != 5
+    assert true
+
+if testInt > 5
+    assert true
+
+if testInt < 20
+    assert true
+
+if testInt >= 10
+    assert true
+
+if testInt <= 10
+    assert true
+
+# Using 'is' keyword
+if testInt is 10
+    assert true
+
+if testInt is not 5
+    assert true
+
+print("Basic if statements passed!")
+
+print("Testing if statements with boolean variables...")
+# Boolean variables in conditions
+bool trueVar = true
+bool falseVar = false
+
+if trueVar
+    assert true
+
+if falseVar is not true
+    assert true
+
+if trueVar and falseVar is not true
+    assert true
+
+if trueVar or falseVar
+    assert true
+
+print("Boolean variable tests passed!")
+
+print("Testing if-else statements...")
+# Basic if-else
+if testInt == 10
+    assert true
+else
+    assert false
+
+if testInt == 5
+    assert false
+else
+    assert true
+
+# Using 'otherwise' keyword
+if testInt == 5
+    assert false
+otherwise
+    assert true
+
+print("If-else statements passed!")
+
+print("Testing else-if statements...")
+# Testing all variants of else-if
+int value = 2
+
+if value == 1
+    assert false
+else if value == 2
+    assert true
+else
+    assert false
+
+if value == 1
+    assert false
+elif value == 2
+    assert true
+else
+    assert false
+
+if value == 1
+    assert false
+instead if value == 2
+    assert true
+else
+    assert false
+
+if value == 1
+    assert false
+alternatively if value == 2
+    assert true
+else
+    assert false
+
+if value == 1
+    assert false
+otherwise if value == 2
+    assert true
+else
+    assert false
+
+print("Else-if statements passed!")
+
+print("Testing nested if statements...")
+# Nested if statements
+int outer = 10
+int inner = 5
+
+if outer == 10
+{
+    if inner == 5
+    {
+        assert true
+    }
+    else
+    {
+        assert false
+    }
+}
+else
+{
+    assert false
+}
+
+# Multiple levels of nesting
+if outer > 5
+{
+    if inner < 10
+    {
+        if outer + inner == 15
+        {
+            assert true
+        }
+        else
+        {
+            assert false
+        }
+    }
+    else
+    {
+        assert false
+    }
+}
+else
+{
+    assert false
+}
+
+print("Nested if statements passed!")
+
+print("Testing complex conditions...")
+# Complex boolean expressions
+int a = 5
+int b = 10
+int c = 15
+
+if a < b and b < c
+    assert true
+
+if a < b or b > c
+    assert true
+
+if a > b is not true
+    assert true
+
+if (a < b) and (b < c) and (c > a)
+    assert true
+
+if (a < b) or (b > c) or (c > a)
+    assert true
+
+print("Complex conditions passed!")
+
+print("Testing implicit vs explicit blocks...")
+# Implicit blocks
+if true
+    assert true
+
+if true
+    if true
+        assert true
+
+# Explicit blocks
+if true
+{
+    assert true
+    assert true
+}
+
+if true
+{
+    if true
+    {
+        assert true
+        assert true
+    }
+}
+
+print("Block style tests passed!")
+
+print("Testing edge cases...")
+# Edge cases with zero
+int zero = 0
+if zero == 0
+    assert true
+
+if zero is not 1
+    assert true
+
+# Edge cases with negative numbers
+int neg = -5
+if neg < 0
+    assert true
+
+if neg > -10
+    assert true
+
+# Edge cases with boolean expressions
+if true and true
+    assert true
+
+if false or true
+    assert true
+
+if false is not true
+    assert true
+
+print("Edge cases passed!")
+
+print("Testing 'then' keyword...")
+# Using 'then' keyword
+if true then
+    assert true
+
+if false then
+    assert false
+else
+    assert true
+
+if true then
+    if true then
+        assert true
+
+print("'Then' keyword tests passed!")
+
+print("Testing mixed syntax styles...")
+# Mixing different syntax styles
+if true
+{
+    if true then
+    {
+        if true
+            assert true
+    }
+}
+
+if true then
+{
+    if true
+    {
+        if true then
+            assert true
+    }
+}
+
+print("Mixed syntax tests passed!")
+
+print("")
+print("All if statement tests completed successfully!")
+print("Total test categories: 10") 
