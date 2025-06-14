@@ -167,6 +167,7 @@ namespace SkimSkript.Semantics
 
         private void AnalyzeExpression(Node expression)
         {
+            /*
             if (expression is ExpressionNode)
             {
                 ExpressionNode expr = (ExpressionNode)expression;
@@ -175,14 +176,17 @@ namespace SkimSkript.Semantics
             }
             else
                 AnalyzeTerm(expression);
+            */
         }
 
         private void AnalyzeTerm(Node term)
         {
+            /*
             if (term is ExpressionNode)
                 AnalyzeExpression(term);
             else
                 AnalyzeFactor(term);
+            */
         }
 
         private void AnalyzeFactor(Node factor)

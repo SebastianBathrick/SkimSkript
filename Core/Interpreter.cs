@@ -1,10 +1,9 @@
 ﻿using SkimSkript.Interpretation.Helpers;
-using SkimSkript.Nodes.ValueNodes;
-using SkimSkript.Nodes.Runtime;
 using SkimSkript.Nodes;
-using SkimSkript.Nodes.StatementNodes;
+using SkimSkript.Nodes.ExpressionNodes;
 using SkimSkript.Nodes.NodeExceptions;
-using SkimSkript.Core.Helpers.Interpreter;
+using SkimSkript.Nodes.Runtime;
+using SkimSkript.Nodes.StatementNodes;
 
 namespace SkimSkript.Interpretation
 {
@@ -17,6 +16,8 @@ namespace SkimSkript.Interpretation
     public class Interpreter
     {        
         private ScopeManager _scope = new();
+        private CoercionInterpreter _coercionInterpreter = new();
+        private OperationInterpreter _operationInterpreter = new();
         private Dictionary<string, CallableNode> _callableFunctionsDict; 
 
         public Interpreter(AbstractSyntaxTreeRoot root)
@@ -61,6 +62,53 @@ namespace SkimSkript.Interpretation
             return funcDict;
         }
 
+        #region Functions
+        private Node? InterpretUserFunction(FunctionNode functionNode, List<ArgData> interpretedArgs)
+        {
+            _scope.EnterFunctionScope();
+
+            AddParametersToScope(functionNode.Parameters, interpretedArgs);
+
+            // TODO: Add return checking to functions in semantic analysis
+            var bodyExitData = InterpretBlock(functionNode.Block);
+
+            _scope.ExitFunctionScope();
+
+            if (functionNode.IsVoid)
+                return null;
+
+            // If this function returns data coerce the data from the return statement to the function's type
+            return _coercionInterpreter.CoerceNodeValue(bodyExitData.ReturnData, functionNode.ReturnType!);
+        }
+
+        private Node? InterpretBuiltInFunction(
+            BuiltInFunctionNode builtInNode, List<ArgData> interpretedArgs)
+        {
+            var returnValue = builtInNode.Call(interpretedArgs);
+            return returnValue != null ? returnValue : null;
+        }
+
+        /// <summary> Evaluates parameter nodes and adds parameters to scope. </summary>
+        private void AddParametersToScope(List<Node> parameterDeclarations, List<ArgData> args)
+        {
+            for (int i = 0; i < parameterDeclarations.Count; i++)
+            {
+                var paramNode = (ParameterNode)parameterDeclarations[i];
+                var identifier = GetIdentifier(paramNode.IdentifierNode);
+                Node validatedValueNode;
+
+                /* Value type arguments are coerced to match the type of the parameter while referenced 
+                 * variable pointers must maintain their type and be the same as the parameter type */
+                if (!args[i].isRef)
+                    validatedValueNode = _coercionInterpreter.CoerceNodeValue(args[i].source, paramNode.DataType);
+                else
+                    validatedValueNode = args[i].source; // TODO: Add reference var type checking to semantic analysis
+
+                _scope.AddVariable(identifier, validatedValueNode, paramNode.DataType);
+            }
+        }
+        #endregion
+
         #region Statements
         /// <summary> Interprets a single statement node and returns any exit data if applicable. </summary>
         private BlockExitData? InterpretStatement(StatementNode node)
@@ -88,7 +136,7 @@ namespace SkimSkript.Interpretation
 
         #region Function Statements
         /// <summary> Interprets function call by interpreting arguments, parameters, and the function body. </summary>
-        private ValueNode? InterpretFunctionCall(FunctionCallNode functionCallNode)
+        private Node? InterpretFunctionCall(FunctionCallNode functionCallNode)
         {
             // Evaluates argument expressions (no coercion) and finds pointers to variable references 
             var interpretedArgs = InterpretArguments(functionCallNode.Arguments);
@@ -137,7 +185,7 @@ namespace SkimSkript.Interpretation
         /// <summary>Handles return statement and sets the last returned value.</summary>
         private BlockExitData InterpretReturnStatement(ReturnNode returnNode)
         {
-            ValueNode? returnData = null;
+            Node? returnData = null;
             if(returnNode.Expression != null)
                 returnData = EvaluateExpression(returnNode.Expression);
 
@@ -150,7 +198,9 @@ namespace SkimSkript.Interpretation
         /// <returns>True if the loop executed a return statement while interpreting its block.</returns>
         private BlockExitData InterpretWhileStructure(WhileNode whileNode)
         {
-            while (EvaluateExpression(whileNode.Condition).ToBool())
+            var evaluatedCondition = EvaluateExpression(whileNode.Condition);
+
+            while (_coercionInterpreter.CoerceCondition(evaluatedCondition))
             {
                 var exitData = InterpretBlock((BlockNode)whileNode.Block);
 
@@ -158,7 +208,6 @@ namespace SkimSkript.Interpretation
                     return exitData;
             }
 
-            // Upon reaching the termination condition
             return new BlockExitData(BlockExitType.StatementsExhausted);
         }
 
@@ -166,12 +215,13 @@ namespace SkimSkript.Interpretation
         /// <returns>True if the if structure executed a return statement while interpreting its block.</returns>
         private BlockExitData InterpretIfStructure(IfNode ifNode)
         {
-            if (EvaluateExpression(ifNode.Condition).ToBool())
+            var evaluatedCondition = EvaluateExpression(ifNode.Condition);
+
+            if (_coercionInterpreter.CoerceCondition(evaluatedCondition))
                 return InterpretBlock((BlockNode)ifNode.Block);
             else if (ifNode.ElseIfNode != null)
                 return InterpretIfStructure(ifNode.ElseIfNode);
 
-            // If the condition evaluates to false
             return new BlockExitData(BlockExitType.StatementsExhausted);
         }
         #endregion
@@ -186,12 +236,12 @@ namespace SkimSkript.Interpretation
             // Variable declarations can be assigned any expression type during parsing.
             var initVal = EvaluateExpression(declarationNode.AssignedExpression);
 
-            ValueNode coercedInitVal;
+            Node coercedInitVal;
 
             // Coerce the value to be the same type as the variable's data type.
             try
             {
-                coercedInitVal = CoerceValue(initVal, dataType);
+                coercedInitVal = _coercionInterpreter.CoerceNodeValue(initVal, dataType);
             }
             catch
             {
@@ -214,7 +264,7 @@ namespace SkimSkript.Interpretation
             var varDataType = _scope.GetVariableDataType(identifier);
 
             // Coerce the evaluated expression to the variable's data type
-            var coercedAssignVal = CoerceValue(rawAssignVal, varDataType);
+            var coercedAssignVal = _coercionInterpreter.CoerceNodeValue(rawAssignVal, varDataType);
 
             if (coercedAssignVal == null)
                 throw new InvalidDataException(
@@ -232,19 +282,9 @@ namespace SkimSkript.Interpretation
         {
             try
             {
-                var origExpression = (ConditionExpressionNode)assertionNode.Condition;
-                var interpretedExpression = EvaluateExpression(origExpression);
-
-                if (!interpretedExpression.ToBool())
-                {
-                    var rightEval = EvaluateExpression(origExpression.RightOperand);
-                    var leftEval = EvaluateExpression(origExpression.LeftOperand);
-
-                    throw new AssertionException(
-                        $"\nLeft: {origExpression.LeftOperand} yielded {leftEval}\n" +
-                        $"Right: {origExpression.RightOperand} yielded {rightEval}\n");
-                }
-                    
+                var interpretedExpression = EvaluateExpression(assertionNode.Condition);
+                if (!_coercionInterpreter.CoerceLogicOperand(interpretedExpression, out _))
+                    throw new AssertionException("Expression evaluated to false");        
             }
             catch(Exception ex)
             {
@@ -254,62 +294,16 @@ namespace SkimSkript.Interpretation
         #endregion
         #endregion
 
-        #region Functions
-        private ValueNode? InterpretUserFunction(FunctionNode functionNode, List<ArgData> interpretedArgs)
-        {
-            _scope.EnterFunctionScope();
-
-            AddParametersToScope(functionNode.Parameters, interpretedArgs);
-
-            // TODO: Add return checking to functions in semantic analysis
-            var bodyExitData = InterpretBlock(functionNode.Block);
-
-            _scope.ExitFunctionScope();
-
-            ValueNode? returnVal = null;
-
-            // If this function returns data coerce the data from the return statement to the function's type
-            if (bodyExitData.IsReturnData)
-                returnVal = CoerceValue(bodyExitData.ReturnData, functionNode.ReturnType!);
-
-            return returnVal;
-        }
-
-        private ValueNode? InterpretBuiltInFunction(
-            BuiltInFunctionNode builtInNode, List<ArgData> interpretedArgs)
-        {
-            var returnValue = builtInNode.Call(interpretedArgs);
-            return returnValue != null ? (ValueNode)returnValue : null;
-        }
-
-        /// <summary> Evaluates parameter nodes and adds parameters to scope. </summary>
-        private void AddParametersToScope(List<Node> parameterDeclarations, List<ArgData> args)
-        {
-            for (int i = 0; i < parameterDeclarations.Count; i++)
-            {
-                var paramNode = (ParameterNode)parameterDeclarations[i];
-                var identifier = GetIdentifier(paramNode.IdentifierNode);
-                Node validatedValueNode;
-
-                /* Value type arguments are coerced to match the type of the parameter while referenced 
-                 * variable pointers must maintain their type and be the same as the parameter type */
-                if (!args[i].isRef)
-                    validatedValueNode = CoerceValue((ValueNode)args[i].source, paramNode.DataType);
-                else
-                    validatedValueNode = args[i].source; // TODO: Add reference var type checking to semantic analysis
-
-                _scope.AddVariable(identifier, validatedValueNode, paramNode.DataType);
-            }
-        }
-        #endregion
-
         #region Expressions
         /// <summary>Evaluates an expression node and returns its computed ValueNode.</summary>
         /// <returns>The result of the evaluated expression as a <see cref="ValueNode"/>.</returns>
-        private ValueNode EvaluateExpression(Node node)
+        private Node EvaluateExpression(Node node)
         {
-            if (node is ConditionExpressionNode conditionExpr)
-                return EvaluateConditionExpression(conditionExpr);
+            if (node is LogicExpressionNode logicNode)
+                return EvaluateLogicExpression(logicNode);
+
+            if(node is ComparisonExpressionNode comparisonNode)
+                return EvaluateComparisonExpression(comparisonNode);
 
             if (node is MathExpressionNode mathExpr)
                 return EvaluateMathExpression(mathExpr);
@@ -317,58 +311,48 @@ namespace SkimSkript.Interpretation
             return EvaluateFactor(node);
         }
 
-        private ValueNode EvaluateMathExpression(MathExpressionNode expression)
+        private Node EvaluateMathExpression(MathExpressionNode expression)
         {
-            ValueNode left = EvaluateExpression(expression.LeftOperand);
-            ValueNode right = EvaluateExpression(expression.RightOperand);
+            var left = EvaluateExpression(expression.LeftOperand);
+            var right = EvaluateExpression(expression.RightOperand);
 
-            // If a conditional is inside an expression, convert to int nodes if necessary
-            if (left is BoolValueNode)
-                left = new IntValueNode(left.ToInt());
-
-            if (right is BoolValueNode)
-                right = new IntValueNode(right.ToInt());
-
-            return OperationUtilities.PerformMathOperation(left, right, expression.MathOperator); ;
+            _coercionInterpreter.CoerceOperands(left, right, out var coercedLeft, out var coercedRight);
+            return _operationInterpreter.PerformMathOperation(coercedLeft, coercedRight, expression.Operator);
         }
 
-        private ValueNode EvaluateConditionExpression(ConditionExpressionNode expression)
+        private Node EvaluateLogicExpression(LogicExpressionNode expression)
         {
-            ValueNode left, right;
-            bool result;
+            var left = EvaluateExpression(expression.LeftOperand);
 
-            if (expression.IsLogical)
-            {
-                left = new BoolValueNode(EvaluateExpression(expression.LeftOperand).ToBool());
+            // Coerces node to boolean node and returns the node's stored value
+            var isLeftTrue = _coercionInterpreter.CoerceLogicOperand(left, out var coercedLeft);
 
-                // TODO: Add short circuiting for and operator
-                if (expression.LogicalOperator == LogicalOperator.Or && left.ToBool()) 
-                    return new BoolValueNode(true); //Short circuit.
+            if (expression.IsShortCircuit(isLeftTrue))
+                return coercedLeft;
 
-                right = new BoolValueNode(EvaluateExpression(expression.RightOperand).ToBool());
-                result = OperationUtilities.PerformLogicalOperation(left.ToBool(), right.ToBool(), expression.LogicalOperator);
-                return new BoolValueNode(result);
-            }
+            var right = EvaluateExpression(expression);
 
-            left = EvaluateExpression(expression.LeftOperand);
-            right = EvaluateExpression(expression.RightOperand);
-            result = OperationUtilities.PerformComparisonOperation(left, right, expression.ComparisonOperator);
+            _coercionInterpreter.CoerceLogicOperand(right, out var coercedRight);
+            return _operationInterpreter.PerformLogicOperation(coercedLeft, coercedRight, expression.Operator);
+        }
 
-            return new BoolValueNode(result);
+        private Node EvaluateComparisonExpression(ComparisonExpressionNode expression)
+        {
+            var left = EvaluateExpression(expression.LeftOperand);
+            var right = EvaluateExpression(expression.RightOperand);
+
+            _coercionInterpreter.CoerceOperands(left, right, out var coercedLeft, out var coercedRight);
+            return _operationInterpreter.PerformComparisonOperation(coercedLeft, coercedRight, expression.Operator);
         }
 
         /// <summary>Processes a factor node and returns its corresponding ValueNode.</summary>
         /// <returns>A <see cref="ValueNode"/> representing the factor’s computed value.</returns>
-        private ValueNode EvaluateFactor(Node node) =>
+        private Node EvaluateFactor(Node node) =>
             node switch
-            {
-                IntValueNode val => new IntValueNode(val.ToInt()),
-                BoolValueNode val => new BoolValueNode(val.ToBool()),
-                FloatValueNode val => new FloatValueNode(val.ToFloat()),                
-                StringValueNode val => new StringValueNode(val.ToString()),               
+            {      
                 FunctionCallNode callNode => InterpretFunctionCall(callNode),
                 IdentifierNode idNode => _scope.GetVariableValueCopy(idNode.ToString()),
-                _ => throw new InvalidDataException($"\"{node}\" is not a valid factor data type.")
+                _ => node
             };
         #endregion
 
@@ -382,17 +366,6 @@ namespace SkimSkript.Interpretation
 
             return ((IdentifierNode)identifierNode).Lexeme;
         }
-
-        private ValueNode CoerceValue(ValueNode value, Type castType) =>
-
-            castType switch
-            {
-                Type t when t == typeof(IntValueNode) => new IntValueNode(value.ToInt()),
-                Type t when t == typeof(FloatValueNode) => new FloatValueNode(value.ToFloat()),
-                Type t when t == typeof(StringValueNode) => new StringValueNode(value.ToString()),
-                Type t when t == typeof(BoolValueNode) => new BoolValueNode(value.ToBool()),
-                _ => throw new InvalidCastException($"Attempted invalid cast from {value.GetType().Name} to {castType.Name}.")
-            };
         #endregion
     }
 }

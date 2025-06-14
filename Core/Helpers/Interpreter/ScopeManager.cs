@@ -1,5 +1,4 @@
 ﻿using SkimSkript.Nodes.Runtime;
-using SkimSkript.Nodes.ValueNodes;
 using SkimSkript.Nodes;
 using SkimSkript.ErrorHandling;
 
@@ -31,7 +30,7 @@ namespace SkimSkript.Interpretation.Helpers
         public void AddVariable(string identifier, Node value, Type dataType) => 
             CurrentStackFrame.AddVariable(identifier, value, dataType);
 
-        public void AssignValueToVariable(string identifier, ValueNode value)
+        public void AssignValueToVariable(string identifier, Node value)
         {
             if (CurrentStackFrame.GetVariablePointer(identifier) is not null)
             {
@@ -48,7 +47,7 @@ namespace SkimSkript.Interpretation.Helpers
             throw new UnknownIdentifierError(identifier);
         }
 
-        public ValueNode GetVariableValueCopy(string identifier)
+        public Node GetVariableValueCopy(string identifier)
         {
             var valueCopy = CurrentStackFrame.GetVariableValueCopy(identifier);
             if (valueCopy != null) return valueCopy;

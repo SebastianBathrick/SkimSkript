@@ -15,10 +15,7 @@
         /// <param name="returnTypeNode">Instance of the type of node to be returned to the caller.</param>
         /// <param name="parameters">List of nodes representing parameter declarations.</param>
         /// <param name="block">Block of code to be executed during a function call.</param>
-        public FunctionNode(string identifier, Node? returnTypeNode, List<Node> parameters, Node block) : base(identifier, parameters)
-        {
-            _returnTypeNode = returnTypeNode;
+        public FunctionNode(string identifier, Type? returnType, List<Node> parameters, Node block) : base(identifier, parameters, returnType) =>
             _block = block;
-        }
     }
 }

@@ -8,7 +8,7 @@
         private List<Node> _parameters;
 
         protected bool isVariadic = false;
-        protected Node? _returnTypeNode; // TODO: Change the _returnTypeNode to Type instead of Node
+        protected Type? _returnTypeNode; // TODO: Change the _returnTypeNode to Type instead of Node
 
         /// <summary>The identifier to be referenced to call the subroutine.</summary>
         public string Identifier => _identifier;
@@ -25,18 +25,16 @@
         /// indicates the paramter data type and whether it's pass-by-reference.</summary>
         public List<Node> Parameters => _parameters;
 
+        public bool IsVoid => _returnTypeNode == null;
+
         /// <summary>An instance of a ValueNode that's indicitive of the return type.</summary>
-        public Type? ReturnType => _returnTypeNode != null ? _returnTypeNode.GetType() : null;
+        public Type ReturnType => _returnTypeNode!;
 
-
-        /// <summary>Base constructor for child classes that represent subroutines.</summary>
-        /// <param name="identifier">The identifier to be referenced to call this subroutine.</param>
-        /// <param name="parameters">A list of nodes that represent the parameters the subroutine accepts/requires. Each node
-        /// indicates the paramter data type and whether it's pass-by-reference.</param>
-        public CallableNode(string identifier, List<Node>? parameters)
+        public CallableNode(string identifier, List<Node>? parameters, Type? returnType)
         {
             _identifier = identifier;
             _parameters = parameters == null ? new List<Node>() : parameters;
+            _returnTypeNode = returnType;
         }
 
         public override string ToString() => $"{_identifier} CallableNode";

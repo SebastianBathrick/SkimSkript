@@ -6,8 +6,7 @@ namespace SkimSkript.Nodes.Runtime
     /// <summary>Class representing a built-in function node for reading user input and returning it as a string.</summary>
     public class ReadNode : BuiltInFunctionNode
     {
-        public ReadNode() : base(BuiltInFunctionID.Read) =>
-            _returnTypeNode = new StringValueNode(String.Empty);
+        public ReadNode() : base(BuiltInFunctionID.Read, typeof(StringValueNode)) { }
 
         /// <summary>Called to retrieve keyboard input via the console window.</summary>
         /// <returns>Node containing the string value of the keyboard input entered.</returns>

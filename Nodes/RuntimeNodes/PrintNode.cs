@@ -8,7 +8,7 @@ namespace SkimSkript.Nodes.Runtime
     {
         StringBuilder _stringBuilder = new StringBuilder();
 
-        public PrintNode() : base(BuiltInFunctionID.Print)
+        public PrintNode() : base(BuiltInFunctionID.Print, null)
         {
             _returnTypeNode = null;
             isVariadic = true;

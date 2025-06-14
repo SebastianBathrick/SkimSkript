@@ -42,7 +42,7 @@ namespace SkimSkript.Interpretation.Helpers
             return variable?.Value;
         }
 
-        public ValueNode? GetVariableValueCopy(string identifier)
+        public Node? GetVariableValueCopy(string identifier)
         {
             var variable = GetVariable(identifier);
             if (variable?.Value is ValueNode pointer)
@@ -80,12 +80,21 @@ namespace SkimSkript.Interpretation.Helpers
         public void AddVariable(string identifier, Node value, Type dataType) =>
             FrameDictionary.Add((_currBlockLevel, identifier), new VariableNode(value, dataType));
 
-        /// <summary> Updates value of a variable in the current scope. </summary>
-        /// <remarks>Maintains the same value node pointer.</remarks>
-        public void AssignValueToVariable(string identifier, ValueNode value)
+        /// <summary> Updates assignNode of a variable in the current scope. </summary>
+        /// <remarks>Maintains the same assignNode node pointer.</remarks>
+        public void AssignValueToVariable(string identifier, Node assignNode)
         {
-            var pointer = (ValueNode)GetVariable(identifier).Value; 
-            pointer.AssignValue(value);
+            var variable = GetVariable(identifier);
+
+            if (variable == null)
+                throw new UnknownIdentifierError(identifier);
+
+            if (assignNode is not ValueNode valueNode)
+                throw new InvalidDataException($"Cannot assign {assignNode.GetType().Name} to variable {identifier}");
+
+            var pointer = (ValueNode)variable.Value;
+
+            pointer.AssignValue(valueNode);
         }
         #endregion
 

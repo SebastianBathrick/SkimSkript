@@ -15,6 +15,7 @@
 
         public override void AssignValue(ValueNode value) => _value = value.ToBool();
 
+
         public override ValueNode Copy() => new BoolValueNode(_value);
 
 

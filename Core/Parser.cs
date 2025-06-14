@@ -3,6 +3,7 @@ using SkimSkript.TokenManagement;
 using SkimSkript.ErrorHandling;
 using SkimSkript.Nodes;
 using SkimSkript.Nodes.StatementNodes;
+using SkimSkript.Nodes.ExpressionNodes;
 
 namespace SkimSkript.Parsing
 {
@@ -52,8 +53,9 @@ namespace SkimSkript.Parsing
         /// <summary>Parses a function definition along with its body.</summary>
         private FunctionNode GetFunctionNode()
         {
+            var typeToken = _tokens.RemoveAndGetType();
             //If return type is null that means its a void returning function.
-            ValueNode? returnTypeNode = GetFunctionReturnTypeNode();
+            var returnType = GetFunctionReturnType(typeToken);
 
             string functionIdentifier = _tokens.RemoveAndGetLexeme();
             List<Node> parameters = new();
@@ -74,7 +76,7 @@ namespace SkimSkript.Parsing
                 parameters.Add(new ParameterNode(isRef, dataType, paramIdentifierNode));
             }
 
-            return new FunctionNode(functionIdentifier, returnTypeNode, parameters, GetBlock(true));
+            return new FunctionNode(functionIdentifier, returnType, parameters, GetBlock(true));
         }
 
         /// <summary>Parses each statement within a block's scope.</summary>
@@ -262,7 +264,7 @@ namespace SkimSkript.Parsing
             {
                 _tokens.Remove();
                 Node rightTerm = ParseComparisonExpression();
-                leftTerm = new ConditionExpressionNode((LogicalOperator)tokenType, leftTerm, rightTerm);
+                leftTerm = new LogicExpressionNode((LogicOperator)tokenType, leftTerm, rightTerm);
             }
 
             return leftTerm;
@@ -278,7 +280,7 @@ namespace SkimSkript.Parsing
             {
                 _tokens.Remove();
                 Node rightNode = ParseArithmeticExpression(); // Comparison operators act on arithmetic expressions
-                leftNode = new ConditionExpressionNode((ComparisonOperator)tokenType, leftNode, rightNode);
+                leftNode = new ComparisonExpressionNode((ComparisonOperator)tokenType, leftNode, rightNode);
             }
 
             return leftNode;
@@ -400,13 +402,13 @@ namespace SkimSkript.Parsing
         #endregion
 
         #region Data Type Node Getters
-        private ValueNode? GetFunctionReturnTypeNode() =>
-            _tokens.RemoveAndGetType() switch
+        private Type? GetFunctionReturnType(TokenType tokenType) =>
+            tokenType switch
             {
-                TokenType.FunctionIntDefine => new IntValueNode(),
-                TokenType.FunctionFloatDefine => new FloatValueNode(),
-                TokenType.FunctionStringDefine => new StringValueNode(),
-                TokenType.FunctionBoolDefine => new BoolValueNode(),
+                TokenType.FunctionIntDefine => typeof(IntValueNode),
+                TokenType.FunctionFloatDefine => typeof(FloatValueNode),
+                TokenType.FunctionStringDefine => typeof(StringValueNode),
+                TokenType.FunctionBoolDefine => typeof(BoolValueNode),
                 _ => null
             };
 
