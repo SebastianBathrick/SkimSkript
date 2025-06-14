@@ -16,22 +16,14 @@ namespace SkimSkript
         ///<summary>Performs lexical analysis, parses, and executes the provided code.</summary>
         public void Execute(string[] linesOfCode, bool isDebugging = false)
         {
-            try
-            {
-                var lexer = new Lexer(linesOfCode);
-                var tokens = lexer.TokenContainer;
+            var lexer = new Lexer(linesOfCode);
+            var tokens = lexer.TokenContainer;
 
-                var parser = new Parser(tokens);
-                var astRoot = parser.AbstractSyntaxTreeRoot;
+            var parser = new Parser(tokens);
+            var astRoot = parser.ParseTokens();
 
-                var interpreter = new Interpreter(astRoot);
-                _wasExecutionSuccessful = true;
-            }
-            catch (Exception ex)
-            {
-                new ErrorHandler(ex);
-                _wasExecutionSuccessful = false;
-            }
+            var interpreter = new Interpreter(astRoot);
+            _wasExecutionSuccessful = true;
         }
     }
 }

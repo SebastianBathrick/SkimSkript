@@ -4,6 +4,7 @@ using SkimSkript.ErrorHandling;
 using SkimSkript.Nodes;
 using SkimSkript.Nodes.StatementNodes;
 using SkimSkript.Nodes.ExpressionNodes;
+using SkimSkript.Nodes.CallableNodes;
 
 namespace SkimSkript.Parsing
 {
@@ -12,13 +13,7 @@ namespace SkimSkript.Parsing
     ///object.</summary>
     public class Parser
     {
-        #region Data Members & Properties
-        private AbstractSyntaxTreeRoot _abstractSyntaxTreeRoot;
         private TokenContainer _tokens;        
-        
-        /// <summary>Represents an abstract syntax tree (AST) root created during parsing to be utilized runtime.</summary>
-        public AbstractSyntaxTreeRoot AbstractSyntaxTreeRoot => _abstractSyntaxTreeRoot;
-        #endregion
 
         #region Entry Point
         /// <summary>Constructor that builds AST.</summary>
@@ -26,15 +21,13 @@ namespace SkimSkript.Parsing
         public Parser(TokenContainer tokens)
         {
             _tokens = tokens;        
-            _abstractSyntaxTreeRoot = ParseTokens();
         }
 
-        /// <summary>Parses user-defined functions defintions & bodies alongside any top-level statements,
-        /// then stores them in a node representing the AST root.</summary>
-        private AbstractSyntaxTreeRoot ParseTokens()
+        /// <summary> Returns AST root with top-level statements and functions as childrern. </summary>
+        public AbstractSyntaxTreeRoot ParseTokens()
         {
-            List<Node> statements = new List<Node>();
-            List<Node> functions = new List<Node>();
+            List<Node> statements = new();
+            List<Node> functions = new ();
             
             while (_tokens.HasTokens)
             {
@@ -45,59 +38,60 @@ namespace SkimSkript.Parsing
                     functions.Add(GetFunctionNode()); 
             }
 
-            return new AbstractSyntaxTreeRoot(statements, functions);
+            return new AbstractSyntaxTreeRoot(statements.ToArray(), functions.ToArray());
         }
         #endregion
 
         #region Function Definitions & Blocks
-        /// <summary>Parses a function definition along with its body.</summary>
-        private FunctionNode GetFunctionNode()
+        /// <summary> Parses a function definition and body (block) and returns its data in a node. </summary>
+        private Node GetFunctionNode()
         {
-            var typeToken = _tokens.RemoveAndGetType();
-            //If return type is null that means its a void returning function.
-            var returnType = GetFunctionReturnType(typeToken);
-
-            string functionIdentifier = _tokens.RemoveAndGetLexeme();
-            List<Node> parameters = new();
+            var returnType = GetFunctionReturnType();
+            var functionIdentifier = GetIdentifier();     
 
             // Opening parenthesis to enclose parameter declarations
             _tokens.MatchAndRemove(TokenType.ParenthesisOpen);
+            List<Node>? parameters = null;
 
             // Keep reading parameters until the closing parenthesis
             while (!_tokens.TryMatchAndRemove(TokenType.ParenthesisClose))
             {
-                // Optional reference keyword(s) -> data type -> parameter identifier
-                var isRef = _tokens.TryMatchAndRemove(TokenType.PassByReference);
-                var dataType = GetValueNodeType(_tokens.RemoveAndGetType());
-
-                string paramIdentifier = _tokens.MatchRemoveAndGetLexeme(TokenType.Identifier);
-                IdentifierNode paramIdentifierNode = new(paramIdentifier);
-
-                parameters.Add(new ParameterNode(isRef, dataType, paramIdentifierNode));
+                parameters ??= new List<Node>();
+                parameters.Add(GetParameter());
             }
+                
+            var functionBlock = GetBlock();
 
-            return new FunctionNode(functionIdentifier, returnType, parameters, GetBlock(true));
+            return new FunctionNode(functionIdentifier, returnType, parameters?.ToArray(), functionBlock);
         }
 
-        /// <summary>Parses each statement within a block's scope.</summary>
-        /// <param name="isFunctionBlock">Indicates whether the statments are within the scope of a function.</param>
-        /// <remarks>If no opening block token is found and the block is not for a function it will then be 
-        /// implicit, only parsing one statement. Function blocks can be implied using a special token type.
-        /// Nested scopes are handled via indirect recursive calls.</remarks>
-        private BlockNode GetBlock(bool isFunctionBlock = false)
+        private Node GetParameter()
+        {
+            // Optional reference keyword(s) -> data type -> parameter identifierNode
+            var isRef = _tokens.TryMatchAndRemove(TokenType.PassByReference);
+            var dataType = GetValueNodeType();
+
+            return new ParameterNode(isRef, dataType, GetIdentifier());
+        }
+
+        private Node GetBlock()
         {
             //Implicit blocks will only add one statement to the list.
-            bool isImplicitBlock = !_tokens.TryMatchAndRemove(TokenType.BlockOpen) && !isFunctionBlock;
-            isImplicitBlock = isImplicitBlock || (isFunctionBlock && _tokens.TryMatchAndRemove(TokenType.FunctionImpliedBlock));
-            List<Node> statements = new List<Node>();
+            var isImplicitBlock = !_tokens.TryMatchAndRemove(TokenType.BlockOpen);
+            List<Node>? statements = null;
 
-            do
+            if(isImplicitBlock)
+                return new BlockNode([GetStatement()]);
+
+            while (!_tokens.TryMatchAndRemove(TokenType.BlockClose))
             {
+                statements ??= new List<Node>();
                 statements.Add(GetStatement());
+                
             }
-            while (!isImplicitBlock && !_tokens.TryMatchAndRemove(TokenType.BlockClose));
+            
 
-            return new BlockNode(statements);
+            return new BlockNode(statements?.ToArray());
         }
         #endregion
 
@@ -106,7 +100,7 @@ namespace SkimSkript.Parsing
         /// <summary>Determines using the front-most token what type of statement needs to be parsed
         /// next, and then parses that statement.</summary>
         /// <exception cref="SyntaxError"></exception>
-        private StatementNode GetStatement() =>
+        private Node GetStatement() =>
             _tokens.PeekType() switch
             {
                 TokenType.DeclarationStart or TokenType.IntegerKeyword or
@@ -122,10 +116,10 @@ namespace SkimSkript.Parsing
                 _ => throw new SyntaxError("Expected new statement but instead found an invalid token.", _tokens, ErrorTokenPosition.InPlace)
             };
 
-        /// <summary>Returns either a function call or a variable assignment statment where the first token is an identifier.</summary>
-        private StatementNode GetIdentifierStartStatement()
+        /// <summary>Returns either a function call or a variable assignment statment where the first token is an identifierNode.</summary>
+        private Node GetIdentifierStartStatement()
         {
-            if (_tokens.TryPeekAheadType(out TokenType tokenType) && tokenType == TokenType.AssignmentOperator)
+            if (_tokens.TryPeekAheadType(out var tokenType) && tokenType == TokenType.AssignmentOperator)
                 return GetAssignment();
 
             return GetFunctionCall();
@@ -134,34 +128,38 @@ namespace SkimSkript.Parsing
 
         #region Function Statements
         /// <summary>Parses function call and any potential arguments sent.</summary>
-        private StatementNode GetFunctionCall()
+        private Node GetFunctionCall()
         {
-            _tokens.TryMatchAndRemove(TokenType.FunctionCallStart);
-            _tokens.TryMatchAndRemove(TokenType.FunctionCallStartExpression);
+            _tokens.TryMatchAndRemove([TokenType.FunctionCallStart, TokenType.FunctionCallStartExpression]);
 
-            string identifier = _tokens.MatchRemoveAndGetLexeme(TokenType.Identifier);
+            var identifier = GetIdentifier();
+            List<Node>? args = null;
 
             _tokens.MatchAndRemove(TokenType.ParenthesisOpen);
-
-            var args = new List<(Node, bool)>();
-
+        
             while (!_tokens.TryMatchAndRemove(TokenType.ParenthesisClose))
-                args.Add(GetArgument());
+            {
+                // If a value argument then it's an condition, but if reference, it's an identifierNode
+                var isRef = _tokens.TryMatchAndRemove(TokenType.PassByReference);
+                var value = !isRef ? GetExpression() : GetIdentifier();
+                args ??= new List<Node>();
+                args.Add(new ArgumentNode(isRef, value));
+            }
 
-            return new FunctionCallNode(identifier, args);
+            return new FunctionCallNode(identifier, args?.ToArray());
         }
 
         /// <summary>Parses a return statement with or without an conditionalExpression.</summary>
-        private StatementNode GetReturnStatement()
+        private Node GetReturnStatement()
         {
             _tokens.MatchAndRemove(TokenType.Return);
-            return new ReturnNode(IsExpressionStartingToken(_tokens.PeekType()) ? GetExpression() : null);
+            return new ReturnNode(IsExpressionStartingToken() ? GetExpression() : null);
         }
         #endregion
 
         #region Variable Statements
         /// <summary>Parses a variable declaration and can potentially parse an initilization in the same statement.</summary>
-        private StatementNode GetVariableDeclaration()
+        private Node GetVariableDeclaration()
         {
             _tokens.TryMatchAndRemove(TokenType.DeclarationStart);
 
@@ -171,75 +169,91 @@ namespace SkimSkript.Parsing
             return GetValueTypeVariableDeclaration();
         }
 
-        private StatementNode GetCollectionDeclaration()
+        private Node GetCollectionDeclaration()
         {
             throw new NotImplementedException("Collection declarations are not yet implemented.");
         }
 
         /// <summary> Parses a variable or parameter declaration with a value data type. </summary>
-        private StatementNode GetValueTypeVariableDeclaration()
+        private Node GetValueTypeVariableDeclaration()
         {
-            var dataType = GetValueNodeType(_tokens.RemoveAndGetType());
-            var identifier = _tokens.MatchRemoveAndGetLexeme(TokenType.Identifier);
+            var dataType = GetValueNodeType();
+            var identifierNode = GetIdentifier();
 
             /* AssignmentOperator can be used for both initialization and assignment. However VariableInitialize
              * is only used for initialization which is why the tokens are seperate. */
-            var isInit = _tokens.TryMatchAndRemove(TokenType.VariableInitialize);
-            isInit = isInit || _tokens.TryMatchAndRemove(TokenType.AssignmentOperator);
+            var isInit = _tokens.TryMatchAndRemove([TokenType.VariableInitialize, TokenType.AssignmentOperator]);
 
-            /* If initialized get an expression (that will potetially be coerced runtime by the interpreter).
+            /* If initialized get an condition (that will potetially be coerced runtime by the interpreter).
              * Otherwise get a default value node for the data type in the declaration. */
             var initValue = isInit ? GetExpression() : GetValueNodeOfType(dataType);
 
-            return new VariableDeclarationNode(identifier, dataType, initValue);
+            return new VariableDeclarationNode(identifierNode, dataType, initValue);
         }
 
-        /// <summary>Parses an assignment statement where what is presumably a variable or parameter is assigned an expression.</summary>
-        private StatementNode GetAssignment()
+        /// <summary>Parses an assignment statement where what is presumably a variable or parameter is assigned an condition.</summary>
+        private Node GetAssignment()
         {
             _tokens.TryMatchAndRemove(TokenType.AssignmentStart);
-            string identifer = _tokens.MatchRemoveAndGetLexeme(TokenType.Identifier);
+            var identifierNode = GetIdentifier();
             _tokens.MatchAndRemove(TokenType.AssignmentOperator);
 
-            return new AssignmentNode(new IdentifierNode(identifer), GetExpression());
+            return new AssignmentNode(identifierNode, GetExpression());
         }
         #endregion
 
         #region Control Structure Statements
-        /// <summary>Parses an if statement along with recursively parsing else if, and else structures.</summary>
-        /// <param name="isSelfElse">Indicates whether the given call is recursive and for an else if or else structure.</param>
-        private StatementNode GetIfStatement(bool isSelfElse)
+        private Node GetIfStatement()
         {
-            //Could be if, else if, or else. Type already verified prior to call.
-            _tokens.Remove();
-            Node condition = !isSelfElse ? GetExpression() : new BoolValueNode(true);
+            _tokens.MatchAndRemove(TokenType.If);
+
+            var condition = GetExpression();
+
             _tokens.TryMatchAndRemove(TokenType.Then);
-            BlockNode block = GetBlock();
 
-            //If either case passes recursively parse the chained statement and then store it in this call's return node.
-            if(_tokens.HasTokens)
-                if (_tokens.PeekType() == TokenType.ElseIf)
-                    return new IfNode(condition, block, (IfNode)GetIfStatement(false));
-                else if(_tokens.PeekType() == TokenType.Else)
-                    return new IfNode(condition, block, (IfNode)GetIfStatement(true));
+            var block = GetBlock();
+            Node? chainedStructure = null;
 
-            //Return if statement with no else/else if.
-            return new IfNode(condition, block, null);
+            if (_tokens.TryMatchAndRemove(TokenType.ElseIf))
+                chainedStructure = GetElseIfStatement();
+            else if (_tokens.TryMatchAndRemove(TokenType.Else))
+                chainedStructure = GetElseStatement();
+
+            return new IfNode(condition, block, chainedStructure);
         }
 
-        /// <summary>Parses a while loop with its condition and associated block.</summary>
-        private StatementNode GetWhileLoop()
+        private Node GetElseIfStatement()
+        {
+            var condition = GetExpression();
+
+            _tokens.TryMatchAndRemove(TokenType.Then);
+
+            var block = GetBlock();
+            Node? chainedStructure = null;
+
+            if (_tokens.TryMatchAndRemove(TokenType.ElseIf))
+                chainedStructure = GetElseIfStatement();
+            else if (_tokens.TryMatchAndRemove(TokenType.Else))
+                chainedStructure = GetElseStatement();
+
+            return new ElseIfNode(condition, block, chainedStructure);
+        }
+
+        private Node GetElseStatement() => 
+            new ElseNode(GetBlock());
+
+        private Node GetWhileLoop()
         {
             _tokens.MatchAndRemove(TokenType.WhileLoop);
-            Node expression = GetExpression();
+            var condition = GetExpression();
             _tokens.TryMatchAndRemove(TokenType.Then);
-            return new WhileNode(expression, GetBlock());
+            return new WhileNode(condition, GetBlock());
         }
         #endregion
 
         #region Misc. Statements
         /// <summary>Parses an assertion statement with an conditional conditionalExpression.</summary>
-        private StatementNode GetAssertionStatement()
+        private Node GetAssertionStatement()
         {
             _tokens.MatchAndRemove(TokenType.Assertion);
             var conditionalExpression = GetExpression();
@@ -257,13 +271,12 @@ namespace SkimSkript.Parsing
         /// the entry point for parsing all expressions (conditionals AND mathematical).</summary>
         private Node ParseLogicalExpression()
         {
-            Node leftTerm = ParseComparisonExpression();
-            TokenType tokenType;
+            var leftTerm = ParseComparisonExpression();
 
-            while (_tokens.HasTokens && (tokenType = _tokens.PeekType()) >= TokenType.And && tokenType <= TokenType.Xor)
+            while (_tokens.TryPeek(out var tokenType) && tokenType >= TokenType.And && tokenType <= TokenType.Xor)
             {
                 _tokens.Remove();
-                Node rightTerm = ParseComparisonExpression();
+                var rightTerm = ParseComparisonExpression();
                 leftTerm = new LogicExpressionNode((LogicOperator)tokenType, leftTerm, rightTerm);
             }
 
@@ -273,10 +286,9 @@ namespace SkimSkript.Parsing
         /// <summary>Parses comparison expressions which are the second lowest precedence.</summary>
         private Node ParseComparisonExpression()
         {
-            Node leftNode = ParseArithmeticExpression();
-            TokenType tokenType;
+            var leftNode = ParseArithmeticExpression();
 
-            while (_tokens.HasTokens && (tokenType = _tokens.PeekType()) >= TokenType.Equals && tokenType <= TokenType.LessThanOrEqual)
+            while (_tokens.TryPeek(out var tokenType) && tokenType >= TokenType.Equals && tokenType <= TokenType.LessThanOrEqual)
             {
                 _tokens.Remove();
                 Node rightNode = ParseArithmeticExpression(); // Comparison operators act on arithmetic expressions
@@ -292,9 +304,8 @@ namespace SkimSkript.Parsing
         private Node ParseArithmeticExpression()
         {
             Node leftNode = ParseTerm();
-            TokenType tokenType;
 
-            while (_tokens.HasTokens && ((tokenType = _tokens.PeekType()) == TokenType.Add || tokenType == TokenType.Subtract))
+            while (_tokens.TryPeek(out var tokenType) && tokenType == TokenType.Add || tokenType == TokenType.Subtract)
             {
                 _tokens.Remove();
                 Node rightNode = ParseTerm(); // Low-precedence arithmetic (add/subtract) acts on terms
@@ -307,21 +318,20 @@ namespace SkimSkript.Parsing
         /// <summary>Parses an conditionalExpression enclosed by parenthesis.</summary>
         private Node ParseInnerExpression()
         {
-            Node expression = GetExpression();
+            var enclosedExpression = GetExpression();
             _tokens.MatchAndRemove(TokenType.ParenthesisClose);
-            return expression;
+            return enclosedExpression;
         }
 
         /// <summary>Handles a term which could possibly contain embedded expressions, terms, or factors.</summary>
         private Node ParseTerm()
         {
-            Node leftFactor = ParseExponentTerm();
-            TokenType tokenType;
+            var leftFactor = ParseExponentTerm();
 
-            while (_tokens.HasTokens && (tokenType = _tokens.PeekType()) >= TokenType.Multiply && tokenType <= TokenType.Exponent)
+            while (_tokens.TryPeek(out var tokenType) && tokenType >= TokenType.Multiply && tokenType <= TokenType.Exponent)
             {
                 _tokens.Remove();
-                Node rightFactor = ParseExponentTerm();
+                var rightFactor = ParseExponentTerm();
                 leftFactor = new MathExpressionNode((MathOperator)tokenType, leftFactor, rightFactor);
             }
 
@@ -331,10 +341,9 @@ namespace SkimSkript.Parsing
         /// <summary>Handles exponent that happens to be of highest precedence.</summary>
         private Node ParseExponentTerm()
         {
-            Node baseFactor = ParseFactor();
-            TokenType tokenType;
+            var baseFactor = ParseFactor();
 
-            while (_tokens.HasTokens && (tokenType = _tokens.PeekType()) == TokenType.Exponent)
+            while (_tokens.TryPeek(out var tokenType) && tokenType == TokenType.Exponent)
             {
                 _tokens.Remove();
                 Node exponent = ParseExponentTerm(); // Recursive call for right associativity
@@ -347,7 +356,7 @@ namespace SkimSkript.Parsing
         /// <summary>Handles a factor of varying types like literals, variable identifiers, and function calls.</summary>
         private Node ParseFactor()
         {
-            TokenType tokenType = _tokens.PeekType();
+            var tokenType = _tokens.PeekType();
 
             if(tokenType == TokenType.Identifier)
                 return GetIdentifierFactor();
@@ -368,21 +377,12 @@ namespace SkimSkript.Parsing
             } 
         }
 
-        /// <summary>Returns a factor in the form of a variable identfier or a function call.</summary>
-        private Node GetIdentifierFactor()
-        {
-            if (_tokens.TryPeekAheadType(out TokenType aheadType) && aheadType == TokenType.ParenthesisOpen)
-                return GetFunctionCall();
 
-            return new IdentifierNode(_tokens.RemoveAndGetLexeme());
-        }
         #endregion
 
-        #region Utility Methods
-        #region Token Type Checkers
+        #region Helper Methods
         private bool IsCollectionDataType(TokenType tokenType) => tokenType == TokenType.ListKeyword;
 
-        // TODO: Refactor token type checkers to accept token type parameter instead of using PeekType() directly and potentially split methods into seperate class.
         private bool IsFunctionDefNext() =>
             _tokens.PeekType() switch
             {
@@ -391,19 +391,17 @@ namespace SkimSkript.Parsing
                 _ => false
             };
 
-        private bool IsExpressionStartingToken(TokenType tokenType) =>
-          tokenType switch
+        private bool IsExpressionStartingToken() =>
+          _tokens.PeekType() switch
           {
               TokenType.FunctionCallStartExpression or TokenType.Integer or
               TokenType.Float or TokenType.String or TokenType.ParenthesisOpen or
               TokenType.False or TokenType.True or TokenType.Subtract or TokenType.Identifier => true,
               _ => false
           };
-        #endregion
 
-        #region Data Type Node Getters
-        private Type? GetFunctionReturnType(TokenType tokenType) =>
-            tokenType switch
+        private Type? GetFunctionReturnType() =>
+            _tokens.RemoveAndGetType() switch
             {
                 TokenType.FunctionIntDefine => typeof(IntValueNode),
                 TokenType.FunctionFloatDefine => typeof(FloatValueNode),
@@ -412,20 +410,17 @@ namespace SkimSkript.Parsing
                 _ => null
             };
 
-
-        /// <summary> Returns value node that coorelates with the data-type keyword provided. </summary>
-        private Type GetValueNodeType(TokenType tokenType) =>
-            tokenType switch
+        private Type GetValueNodeType() =>
+            _tokens.RemoveAndGetType() switch
             {
                 TokenType.FloatKeyword => typeof(FloatValueNode),
                 TokenType.BoolKeyword => typeof(BoolValueNode),
                 TokenType.StringKeyword => typeof(StringValueNode),
                 TokenType.IntegerKeyword => typeof(IntValueNode),
-                _ => throw new SyntaxError($"Invalid data type token: {tokenType}.", _tokens, ErrorTokenPosition.Backward)
+                _ => throw new SyntaxError($"Invalid data type token", _tokens, ErrorTokenPosition.Backward)
             };
 
-        /// <summary> Returns value node instance of the type defined with a default value. </summary>
-        private ValueNode GetValueNodeOfType(Type valueNodeType) =>
+        private Node GetValueNodeOfType(Type valueNodeType) =>
             valueNodeType switch
             {
                 Type t when t == typeof(IntValueNode) => new IntValueNode(),
@@ -445,24 +440,18 @@ namespace SkimSkript.Parsing
 
             // The list keyword trails and can enclose the type
         }
-        #endregion
 
-        #region Misc. Methods
-        // TODO: Revisit this meth to check if it can be merged with its caller
-        private (Node, bool) GetArgument() 
+        private Node GetIdentifier() => 
+            new IdentifierNode(_tokens.MatchRemoveAndGetLexeme(TokenType.Identifier));
+
+        /// <summary>Returns a factor in the form of a variable identfier or a function call.</summary>
+        private Node GetIdentifierFactor()
         {
-            bool isRef = _tokens.TryMatchAndRemove(TokenType.PassByReference);
+            if (_tokens.TryPeekAheadType(out TokenType aheadType) && aheadType == TokenType.ParenthesisOpen)
+                return GetFunctionCall();
 
-            if(!isRef)
-                return (GetExpression(), false);
-            
-            //Pass by reference arguments can only be variable identifiers.
-            string varIdentifier = _tokens.MatchRemoveAndGetLexeme(TokenType.Identifier);
-            return (new IdentifierNode(varIdentifier), isRef);
+            return new IdentifierNode(_tokens.RemoveAndGetLexeme());
         }
-
-        private StatementNode GetIfStatement() => GetIfStatement(false);
-        #endregion
         #endregion
     }
 }

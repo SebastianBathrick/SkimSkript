@@ -1,117 +1,128 @@
-﻿using SkimSkript.Interpretation.Helpers;
+﻿using SkimSkript.ErrorHandling;
+using SkimSkript.Interpretation.Helpers;
 using SkimSkript.Nodes;
+using SkimSkript.Nodes.CallableNodes;
 using SkimSkript.Nodes.ExpressionNodes;
 using SkimSkript.Nodes.NodeExceptions;
 using SkimSkript.Nodes.Runtime;
 using SkimSkript.Nodes.StatementNodes;
+using System.Xml.Linq;
 
 namespace SkimSkript.Interpretation
 {
-    using ArgData = (Node source, bool isRef);
-
     /// <summary> The <c>Interpreter</c> class is responsible for executing the program represented by an
     ///  Abstract Syntax Tree (AST) generated from the parsed source code. It handles function calls, 
     ///  variable management, expressions,  and control structures (e.g., if, while) to produce 
     ///  runtime results. </summary>
     public class Interpreter
-    {        
-        private ScopeManager _scope = new();
-        private CoercionInterpreter _coercionInterpreter = new();
-        private OperationInterpreter _operationInterpreter = new();
-        private Dictionary<string, CallableNode> _callableFunctionsDict; 
+    {
+        private AbstractSyntaxTreeRoot _treeRoot;
+
+        private ScopeManager? _scope;
+        private CoercionInterpreter? _coercionInterpreter;
+        private OperationInterpreter? _operationInterpreter;
+        private Dictionary<string, CallableNode>? _callableFunctionsDict;
+
+        #region Properties
+
+        private ScopeManager Scope => _scope ??= new ScopeManager();
+
+        private CoercionInterpreter CoercionInterpreter =>
+            _coercionInterpreter ??= new CoercionInterpreter();
+
+        private OperationInterpreter OperationInterpreter =>
+            _operationInterpreter ??= new OperationInterpreter();
+
+        private Dictionary<string, CallableNode> CallableFunctions =>
+            _callableFunctionsDict ??= GetFunctionMap(_treeRoot.UserFunctions);
+        #endregion
 
         public Interpreter(AbstractSyntaxTreeRoot root)
         {
-            _callableFunctionsDict = AddCallableFunctionsToMap(root.Functions);
+            _treeRoot = root;
             InterpretBlock(root);
         }
 
         /// <summary> Interprets block and its executible statements then returns data about exit. </summary>
         private BlockExitData InterpretBlock(Node block)
-        {            
-            _scope.EnterScope();          
-            var statements = ((BlockNode)block).Statements;
+        {
+            var coercedBlock = (BlockNode)block;
             BlockExitData? exitData = null;
 
-            foreach (StatementNode statement in statements)
+            if(coercedBlock.Statements != null)
             {
-                exitData = InterpretStatement(statement);
+                Scope.EnterScope();
+                foreach (var statement in coercedBlock.Statements!)
+                {
+                    exitData = InterpretStatement(statement);
 
-                // If it has exit data but it wasn't a control structure that executed all statements
-                if (exitData != null && exitData.ExitType != BlockExitType.StatementsExhausted)
-                    break;
-            }
-
-            _scope.ExitScope();
+                    // If it has exit data but it wasn't a control structure that executed all statements
+                    if (exitData != null && exitData.ExitType != BlockExitType.StatementsExhausted)
+                        break;
+                }
+                Scope.ExitScope();
+            }    
+          
             return exitData ?? new BlockExitData(BlockExitType.StatementsExhausted);
         }
 
         /// <summary> Returns dictionary of built-in & user-defined functions mapped to their idenifiers. </summary>
-        private Dictionary<string, CallableNode> AddCallableFunctionsToMap(List<Node> functions)
+        private Dictionary<string, CallableNode> GetFunctionMap(Node[]? userDefinedFunctions)
         {
             var funcDict = new Dictionary<string, CallableNode>();
 
-            //Add built in functions
             foreach (BuiltInFunctionNode function in BuiltInFunctionNode.GetFunctionInstances())
-                funcDict.Add(function.Identifier, function);
+                funcDict.Add(GetIdentifier(function.IdentfierNode), function);
 
-            //Add user-defined functions
-            foreach (FunctionNode function in functions)
-                funcDict.Add(function.Identifier, function);
+            if (userDefinedFunctions != null)
+                foreach (FunctionNode function in userDefinedFunctions)
+                    funcDict.Add(GetIdentifier(function.IdentfierNode), function);
 
             return funcDict;
         }
 
         #region Functions
-        private Node? InterpretUserFunction(FunctionNode functionNode, List<ArgData> interpretedArgs)
+        private Node? InterpretUserFunction(FunctionNode functionNode, Node[]? evaluatedArgs)
         {
-            _scope.EnterFunctionScope();
+            Scope.EnterFunctionScope();
 
-            AddParametersToScope(functionNode.Parameters, interpretedArgs);
+            AddParametersToScope(functionNode.Parameters, evaluatedArgs);
 
             // TODO: Add return checking to functions in semantic analysis
             var bodyExitData = InterpretBlock(functionNode.Block);
 
-            _scope.ExitFunctionScope();
+            Scope.ExitFunctionScope();
 
             if (functionNode.IsVoid)
                 return null;
 
             // If this function returns data coerce the data from the return statement to the function's type
-            return _coercionInterpreter.CoerceNodeValue(bodyExitData.ReturnData, functionNode.ReturnType!);
+            return CoercionInterpreter.CoerceNodeValue(bodyExitData.ReturnData, functionNode.ReturnType!);
         }
 
-        private Node? InterpretBuiltInFunction(
-            BuiltInFunctionNode builtInNode, List<ArgData> interpretedArgs)
+        private Node? InterpretBuiltInFunction(BuiltInFunctionNode builtInNode, Node[]? arguments)
         {
-            var returnValue = builtInNode.Call(interpretedArgs);
+            var returnValue = builtInNode.Call(arguments);
             return returnValue != null ? returnValue : null;
         }
 
         /// <summary> Evaluates parameter nodes and adds parameters to scope. </summary>
-        private void AddParametersToScope(List<Node> parameterDeclarations, List<ArgData> args)
+        private void AddParametersToScope(Node[]? parameters, Node[]? evaluatedArgs)
         {
-            for (int i = 0; i < parameterDeclarations.Count; i++)
+            if (parameters == null)
+                return;
+
+            for(int i = 0; i < parameters.Length; i++)
             {
-                var paramNode = (ParameterNode)parameterDeclarations[i];
-                var identifier = GetIdentifier(paramNode.IdentifierNode);
-                Node validatedValueNode;
-
-                /* Value type arguments are coerced to match the type of the parameter while referenced 
-                 * variable pointers must maintain their type and be the same as the parameter type */
-                if (!args[i].isRef)
-                    validatedValueNode = _coercionInterpreter.CoerceNodeValue(args[i].source, paramNode.DataType);
-                else
-                    validatedValueNode = args[i].source; // TODO: Add reference var type checking to semantic analysis
-
-                _scope.AddVariable(identifier, validatedValueNode, paramNode.DataType);
+                var identifier = GetIdentifier(((ParameterNode)parameters[i]).IdentifierNode);
+                Scope.AddVariable(identifier, evaluatedArgs![i], evaluatedArgs![i].GetType());
             }
         }
         #endregion
 
         #region Statements
         /// <summary> Interprets a single statement node and returns any exit data if applicable. </summary>
-        private BlockExitData? InterpretStatement(StatementNode node)
+        private BlockExitData? InterpretStatement(Node node)
         {
             switch (node)
             {
@@ -135,51 +146,68 @@ namespace SkimSkript.Interpretation
         }
 
         #region Function Statements
-        /// <summary> Interprets function call by interpreting arguments, parameters, and the function body. </summary>
+        /// <summary> Interprets function call by interpreting args, parameters, and the function body. </summary>
         private Node? InterpretFunctionCall(FunctionCallNode functionCallNode)
         {
-            // Evaluates argument expressions (no coercion) and finds pointers to variable references 
-            var interpretedArgs = InterpretArguments(functionCallNode.Arguments);
+            var identifier = GetIdentifier(functionCallNode.IdentifierNode);
 
             //TODO: Handle function not found exception.
-            var callableNode = _callableFunctionsDict[functionCallNode.Identifier];
+            var callableNode = CallableFunctions[identifier];
+            var args = functionCallNode.Arguments;
+            var parameters = callableNode.Parameters;
 
-            if (callableNode is FunctionNode)
-                return InterpretUserFunction((FunctionNode)callableNode, interpretedArgs);
+            var evaluatedArgs = GetEvaluatedArguments(identifier, args, parameters, callableNode.IsVariadic);
 
-            return InterpretBuiltInFunction((BuiltInFunctionNode)callableNode, interpretedArgs);
+            if (callableNode is FunctionNode userFunction)
+                return InterpretUserFunction(userFunction, evaluatedArgs);
+            else
+                return InterpretBuiltInFunction((BuiltInFunctionNode)callableNode, evaluatedArgs);
         }
 
-        private List<ArgData> InterpretArguments(List<ArgData> rawArguments)
+        private Node[]? GetEvaluatedArguments(
+            string functionIdentifier, Node[]? args, Node[]? parameters, bool isVariadic)
         {
-            List<ArgData> evaluatedArguments = new();
+            if (args == null && parameters == null)
+                return null;
 
-            foreach (var arg in rawArguments)
+            if(!isVariadic)
             {
-                var rawArgNode = arg.source;
-                var isRefArg = arg.isRef;
+                var isInvalidArgCount = args == null && parameters != null || args != null && parameters == null;
+                isInvalidArgCount = isInvalidArgCount || args!.Length != parameters!.Length;
 
-                // Lexeme type rawArguments are just evaluated into a ValueNode
-                if (!isRefArg)
+                if(isInvalidArgCount)
                 {
-                    var evaluatedValueArg = EvaluateExpression(rawArgNode);
-
-                    // source = evaluatedValueArg & isRef = isRefArg
-                    evaluatedArguments.Add((evaluatedValueArg, isRefArg));
-                    continue;
+                    var argCount = args == null ? 0 : args.Length;
+                    var paramCount = parameters == null ? 0 : parameters.Length;
+                    throw new RuntimeError(RuntimeErrorCode.ArgumentInvalidCount, argCount, paramCount);
                 }
-
-                // Assumes this is an identifier node
-                var variableIdentifier = GetIdentifier(rawArgNode);
-
-                // Pointer will maintain ValueNode type, because coerced values are new instances of ValueNode.
-                var variablePointer = _scope.GetVariablePointer(variableIdentifier);
-
-                // source = variablePointer & isRef = isRefArg
-                evaluatedArguments.Add((variablePointer, isRefArg));
+                                          
             }
 
-            return evaluatedArguments;
+            var evaluatedArgs = new Node[args!.Length];
+
+            for(int i = 0; i < evaluatedArgs.Length; i++)
+            {
+                var rawArg = (ArgumentNode)args[i];
+
+                if (rawArg.IsReference)
+                    evaluatedArgs[i] = Scope.GetVariablePointer(GetIdentifier(rawArg.Value));
+                else
+                    evaluatedArgs[i] = EvaluateExpression(rawArg.Value);
+
+                if (parameters == null)
+                    continue;
+
+                var parameter = (ParameterNode)parameters[i];
+
+                if (parameter.IsReference != rawArg.IsReference)
+                    throw new RuntimeError(RuntimeErrorCode.ArgumentPassTypeMismatch);
+
+                if (parameter.DataType != evaluatedArgs[i].GetType())
+                    throw new RuntimeError(RuntimeErrorCode.ArgumentDataTypeMismatch);
+            }
+
+            return evaluatedArgs;
         }
 
         /// <summary>Handles return statement and sets the last returned value.</summary>
@@ -198,9 +226,9 @@ namespace SkimSkript.Interpretation
         /// <returns>True if the loop executed a return statement while interpreting its block.</returns>
         private BlockExitData InterpretWhileStructure(WhileNode whileNode)
         {
-            while (_coercionInterpreter.CoerceCondition(EvaluateExpression(whileNode.Condition)))
+            while (CoercionInterpreter.CoerceCondition(EvaluateExpression(whileNode.Condition)))
             {
-                var exitData = InterpretBlock((BlockNode)whileNode.Block);
+                var exitData = InterpretBlock(whileNode.Block);
 
                 if (exitData.ExitType != BlockExitType.StatementsExhausted)
                     return exitData;
@@ -215,13 +243,34 @@ namespace SkimSkript.Interpretation
         {
             var evaluatedCondition = EvaluateExpression(ifNode.Condition);
 
-            if (_coercionInterpreter.CoerceCondition(evaluatedCondition))
-                return InterpretBlock((BlockNode)ifNode.Block);
-            else if (ifNode.ElseIfNode != null)
-                return InterpretIfStructure(ifNode.ElseIfNode);
+            if (CoercionInterpreter.CoerceCondition(evaluatedCondition))
+                return InterpretBlock(ifNode.Block);
+            else if (ifNode.ChainedStructure != null)
+                if (ifNode.ChainedStructure is ElseIfNode elseIfNode)
+                    return InterpretElseIfStructure(elseIfNode);
+                else
+                    return InterpretElseStructure((ElseNode)ifNode.ChainedStructure);
 
             return new BlockExitData(BlockExitType.StatementsExhausted);
         }
+
+        private BlockExitData InterpretElseIfStructure(ElseIfNode elseIfNode)
+        {
+            var evaluatedCondition = EvaluateExpression(elseIfNode.Condition);
+
+            if (CoercionInterpreter.CoerceCondition(evaluatedCondition))
+                return InterpretBlock(elseIfNode.Block);
+            else if (elseIfNode.ChainedStructure != null)
+                if (elseIfNode.ChainedStructure is ElseIfNode elseIfNodeChained)
+                    return InterpretElseIfStructure(elseIfNodeChained);
+                else
+                    return InterpretElseStructure((ElseNode)elseIfNode.ChainedStructure);
+
+            return new BlockExitData(BlockExitType.StatementsExhausted);
+        }
+
+        private BlockExitData InterpretElseStructure(ElseNode elseNode) =>
+            InterpretBlock(elseNode.Block);
         #endregion
 
         #region Variable Statements
@@ -229,7 +278,7 @@ namespace SkimSkript.Interpretation
         private void InterpretVariableDeclaration(VariableDeclarationNode declarationNode)
         {          
             var dataType = declarationNode.DataType;
-            var identifier = declarationNode.Identifier;
+            var identifier = GetIdentifier(declarationNode.IdentifierNode);
 
             // Variable declarations can be assigned any expression type during parsing.
             var initVal = EvaluateExpression(declarationNode.AssignedExpression);
@@ -239,7 +288,7 @@ namespace SkimSkript.Interpretation
             // Coerce the value to be the same type as the variable's data type.
             try
             {
-                coercedInitVal = _coercionInterpreter.CoerceNodeValue(initVal, dataType);
+                coercedInitVal = CoercionInterpreter.CoerceNodeValue(initVal, dataType);
             }
             catch
             {
@@ -250,7 +299,7 @@ namespace SkimSkript.Interpretation
 
             /* Even if there was no explicit initialization, the parser will still store a value 
              * node with a default value in the declaration node. Works like C# primitives. */
-            _scope.AddVariable(identifier, coercedInitVal, dataType);
+            Scope.AddVariable(identifier, coercedInitVal, dataType);
         }
 
         private void AssignValueToVariable(AssignmentNode assignment)
@@ -259,17 +308,17 @@ namespace SkimSkript.Interpretation
             var rawAssignVal = EvaluateExpression(assignment.AssignedExpression);
 
             var identifier = assignment.IdentifierNode.ToString();
-            var varDataType = _scope.GetVariableDataType(identifier);
+            var varDataType = Scope.GetVariableDataType(identifier);
 
             // Coerce the evaluated expression to the variable's data type
-            var coercedAssignVal = _coercionInterpreter.CoerceNodeValue(rawAssignVal, varDataType);
+            var coercedAssignVal = CoercionInterpreter.CoerceNodeValue(rawAssignVal, varDataType);
 
             if (coercedAssignVal == null)
                 throw new InvalidDataException(
                     $"Variable \"{assignment.IdentifierNode}\" cannot be assigned a value of type {rawAssignVal.GetType().Name}.\n" +
                     $"Expected type: {varDataType.Name}.");
 
-            _scope.AssignValueToVariable(identifier, coercedAssignVal);
+            Scope.AssignValueToVariable(identifier, coercedAssignVal);
         }
         #endregion
 
@@ -281,7 +330,7 @@ namespace SkimSkript.Interpretation
             try
             {
                 var interpretedExpression = EvaluateExpression(assertionNode.Condition);
-                if (!_coercionInterpreter.CoerceLogicOperand(interpretedExpression, out _))
+                if (!CoercionInterpreter.CoerceLogicOperand(interpretedExpression, out _))
                     throw new AssertionException("Expression evaluated to false");        
             }
             catch(Exception ex)
@@ -314,8 +363,8 @@ namespace SkimSkript.Interpretation
             var left = EvaluateExpression(expression.LeftOperand);
             var right = EvaluateExpression(expression.RightOperand);
 
-            _coercionInterpreter.CoerceOperands(left, right, out var coercedLeft, out var coercedRight);
-            return _operationInterpreter.PerformMathOperation(coercedLeft, coercedRight, expression.Operator);
+            CoercionInterpreter.CoerceOperands(left, right, out var coercedLeft, out var coercedRight);
+            return OperationInterpreter.PerformMathOperation(coercedLeft, coercedRight, expression.Operator);
         }
 
         private Node EvaluateLogicExpression(LogicExpressionNode expression)
@@ -323,15 +372,15 @@ namespace SkimSkript.Interpretation
             var left = EvaluateExpression(expression.LeftOperand);
 
             // Coerces node to boolean node and returns the node's stored value
-            var isLeftTrue = _coercionInterpreter.CoerceLogicOperand(left, out var coercedLeft);
+            var isLeftTrue = CoercionInterpreter.CoerceLogicOperand(left, out var coercedLeft);
 
             if (expression.IsShortCircuit(isLeftTrue))
                 return coercedLeft;
 
             var right = EvaluateExpression(expression.RightOperand);
 
-            _coercionInterpreter.CoerceLogicOperand(right, out var coercedRight);
-            return _operationInterpreter.PerformLogicOperation(coercedLeft, coercedRight, expression.Operator);
+            CoercionInterpreter.CoerceLogicOperand(right, out var coercedRight);
+            return OperationInterpreter.PerformLogicOperation(coercedLeft, coercedRight, expression.Operator);
         }
 
         private Node EvaluateComparisonExpression(ComparisonExpressionNode expression)
@@ -339,8 +388,8 @@ namespace SkimSkript.Interpretation
             var left = EvaluateExpression(expression.LeftOperand);
             var right = EvaluateExpression(expression.RightOperand);
 
-            _coercionInterpreter.CoerceOperands(left, right, out var coercedLeft, out var coercedRight);
-            return _operationInterpreter.PerformComparisonOperation(coercedLeft, coercedRight, expression.Operator);
+            CoercionInterpreter.CoerceOperands(left, right, out var coercedLeft, out var coercedRight);
+            return OperationInterpreter.PerformComparisonOperation(coercedLeft, coercedRight, expression.Operator);
         }
 
         /// <summary>Processes a factor node and returns its corresponding ValueNode.</summary>

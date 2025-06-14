@@ -30,6 +30,19 @@ namespace SkimSkript.TokenManagement
             return ThrowEndOfFileError();
         }
 
+        public bool TryPeek(out TokenType tokenType)
+        {
+            tokenType = TokenType.Undefined;
+
+            if(HasTokens)
+            {
+                tokenType = _tokenList[_currentTokenIndex].Type;
+                return true;
+            }
+
+            return false;
+        }
+
         /// <summary>Peeks at token at a specified forward offset from the current token pointer position.</summary>
         /// <returns>Returns true if the offset is within the bounds of the container.</returns>
         public bool TryPeekAheadType(out TokenType tokenType, int offset = 1)
@@ -46,10 +59,10 @@ namespace SkimSkript.TokenManagement
 
         /// <summary>Removes the frontmost token</summary>
         /// <exception cref="SyntaxError"/>
-        public void Remove()
+        public void Remove(TokenType expectedType = TokenType.Undefined)
         {
             if (!HasTokens)
-                ThrowEndOfFileError();
+                ThrowEndOfFileError(expectedType);
 
             _currentTokenIndex++;
         }
@@ -76,7 +89,7 @@ namespace SkimSkript.TokenManagement
             if (_tokenList[_currentTokenIndex].Type != tokenType)
                 throw new SyntaxError(tokenType, this, ErrorTokenPosition.InPlace);
 
-            Remove();
+            Remove(tokenType);
         }
 
         /// <summary>Checks if the frontmost token is of a given <see cref="TokenType"/>, and if so, remove said token.</summary>
@@ -86,9 +99,18 @@ namespace SkimSkript.TokenManagement
         {
             if (HasTokens && _tokenList[_currentTokenIndex].Type == tokenType)
             {
-                _currentTokenIndex++;
+                Remove(tokenType);
                 return true;
             }
+
+            return false;
+        }
+
+        public bool TryMatchAndRemove(TokenType[] tokenTypes)
+        {
+            foreach (var tokenType in tokenTypes)
+                if (TryMatchAndRemove(tokenType))
+                    return true;
 
             return false;
         }
@@ -136,7 +158,8 @@ namespace SkimSkript.TokenManagement
             return 0;
         }
 
-        private TokenType ThrowEndOfFileError() => throw new SyntaxError("Expected token but instead reached the end of file.", this, ErrorTokenPosition.Backward);
+        private TokenType ThrowEndOfFileError(TokenType tokenType = TokenType.Undefined) => 
+            throw new SyntaxError($"Expected {tokenType} token but instead reached the end of file.", this, ErrorTokenPosition.Backward);
         #endregion
     }
 }

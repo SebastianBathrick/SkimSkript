@@ -1,18 +1,34 @@
-﻿using SkimSkript.Syntax;
-using SkimSkript.Nodes.ValueNodes;
+﻿using SkimSkript.Nodes.ValueNodes;
+using SkimSkript.Syntax;
+using System.Text;
 
 namespace SkimSkript.Nodes.Runtime
 {
     /// <summary>Class representing a built-in function node for reading user input and returning it as a string.</summary>
     public class ReadNode : BuiltInFunctionNode
     {
-        public ReadNode() : base(BuiltInFunctionID.Read, typeof(StringValueNode)) { }
+        StringBuilder? _stringBuilder = new StringBuilder();
+
+        private StringBuilder StringBuilder => _stringBuilder ??= new StringBuilder();
+
+        public ReadNode() : base(BuiltInFunctionID.Read, typeof(StringValueNode), isVariadic:true) { }
 
         /// <summary>Called to retrieve keyboard input via the console window.</summary>
         /// <returns>Node containing the string value of the keyboard input entered.</returns>
-        public override Node? Call(List<(Node source, bool isRef)>? arguments)
+        public override Node? Call(Node[]? arguments)
         {
-            string? inputValue = Console.ReadLine();
+            if(arguments != null)
+            {
+                if (StringBuilder.Length != 0)
+                    StringBuilder.Clear();
+
+                foreach (var node in arguments)
+                    StringBuilder.Append(node.ToString()).Append('\n');
+
+                Console.Write(value: StringBuilder.ToString());
+            }
+                
+            var inputValue = Console.ReadLine();
             inputValue ??= string.Empty;
             return new StringValueNode(inputValue);
         }

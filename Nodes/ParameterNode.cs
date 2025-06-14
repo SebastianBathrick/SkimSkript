@@ -11,7 +11,7 @@
         /// <summary>Indicates whether the parameter is meant to be passed by reference or value.</summary>
         public bool IsReference => _isReference;
 
-        /// <summary>Identifier used to reference the parameter within its function scope.</summary>
+        /// <summary>IdentfierNode used to reference the parameter within its function scope.</summary>
         public Node IdentifierNode => _identifierNode;
 
         public Type DataType => _dataType;

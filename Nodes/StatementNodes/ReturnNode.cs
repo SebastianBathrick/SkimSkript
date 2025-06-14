@@ -6,19 +6,16 @@
     {
         private Node? _expression;
 
-        /// <summary>Expression meant to represent the value being returned to the caller.</summary>
-        public Node? Expression => _expression;
-
-        /// <summary>Whether an expression is present after the return reserved word(s).</summary>
         public bool IsExpression => _expression != null;
 
-        /// <param name="expression">Expression meant to represent the value being returned to the caller.</param>
+        public Node? Expression => _expression;
+
         public ReturnNode(Node? expression)
         {
             _expression = expression;
         }
 
         public override string ToString() =>
-            $"return {_expression.ToString()}";
+            $"return {_expression?.ToString()}";
     }
 }

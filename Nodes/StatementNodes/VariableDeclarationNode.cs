@@ -1,14 +1,16 @@
-﻿namespace SkimSkript.Nodes
+﻿
+
+namespace SkimSkript.Nodes
 {
     /// <summary>Class representing the declaration of a statically typed variable.</summary>
     public class VariableDeclarationNode : StatementNode
     {
-        private string _identifier;   
+        private Node _identifierNode;   
         private Node _assignedExpression;
         private Type _dataType;
 
         /// <summary>Represents identifier of the variable.</summary>
-        public string Identifier => _identifier;
+        public Node IdentifierNode => _identifierNode;
 
         /// <summary>Whether the variable has a value assigned/intialized.</summary>
         /// <remarks>This is primarily used during the parameter declaration where this can return false.</remarks>
@@ -21,18 +23,16 @@
         /// <summary> Data type of variable. </summary>
         public Type DataType => _dataType;
 
-        /// <param name="identifier">Represents identifier of the variable.</param>
-        /// <param name="dataType">Data type of the variable.</param>
-        /// <param name="assignedExpression">Expression that will be assigned to the variable potentially to later be coerced 
-        /// depending on the data type of the variable.</param>
-        public VariableDeclarationNode(string identifier, Type dataType, Node assignedExpression)
+
+
+        public VariableDeclarationNode(Node identifierNode, Type dataType, Node assignedExpression)
         {
             _assignedExpression = assignedExpression;
             _dataType = dataType;
-            _identifier = identifier;
+            _identifierNode = identifierNode;
         }
 
         public override string ToString() =>
-            _assignedExpression == null ? $"{Identifier}" : $"{Identifier} = {_assignedExpression.ToString()}";
+            _assignedExpression == null ? $"{IdentifierNode}" : $"{IdentifierNode} = {_assignedExpression.ToString()}";
     }
 }

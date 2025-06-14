@@ -1,4 +1,5 @@
-﻿using SkimSkript.Syntax;
+﻿using SkimSkript.Nodes.ValueNodes;
+using SkimSkript.Syntax;
 
 namespace SkimSkript.Nodes.Runtime
 {
@@ -6,18 +7,26 @@ namespace SkimSkript.Nodes.Runtime
     public abstract class BuiltInFunctionNode : CallableNode
     {
         /// <summary>Base constructor for child class objects.</summary>
-        /// <param name="functionType">Enum representing the type/ID for a given built-in-function. This allows for
+        /// <param name="builtInFunctionId">Enum representing the type/ID for a given built-in-function. This allows for
         /// the associated function identifier to be retrieved from the <see cref="SyntaxSpec">.</param>
-        public BuiltInFunctionNode(BuiltInFunctionID functionType, Type returnType) :
-            base(SyntaxSpec.BuiltInFunctionIdentifiers[(byte)functionType], null, returnType) { }
+        public BuiltInFunctionNode(
+            BuiltInFunctionID builtInFunctionId, 
+            Type? returnType = null, 
+            Node[]? parameters = null, bool isVariadic = false) 
+            : base(
+                  new IdentifierNode(SyntaxSpec.BuiltInFunctionIdentifiers[(byte)builtInFunctionId]), 
+                  parameters, returnType, isVariadic) { } // TODO: Replace hardcoded identifier node
 
-        /// <summary>Returns an array containing a single instance of each built-in function node currently defined.</summary>
         public static BuiltInFunctionNode[] GetFunctionInstances() =>  new BuiltInFunctionNode[] { new PrintNode(), new ReadNode(), new ClearNode() } ;
 
-        /// <summary>Calls, sends arguments, and executes the built-in function</summary>
-        /// <param name="arguments">List containing argument data with the source of the parameter's
-        /// value and whether or not the argument is marked as reference.</param>
-        /// <returns>The interpreted return value of the built-in-function.</returns>
-        public abstract Node? Call(List<(Node source, bool isRef)>? arguments);
+        public abstract Node? Call(Node[]? arguments);
+
+        protected ValueNode[] ConvertArgumentsToValue(Node[] arguments)
+        {
+            var valueNodes = new ValueNode[arguments.Length];
+            for(int i = 0; i < arguments.Length; i++)
+                valueNodes[i] = (ValueNode)arguments[i];   
+            return valueNodes;
+        }
     }
 }

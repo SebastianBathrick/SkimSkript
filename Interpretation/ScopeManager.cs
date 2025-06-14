@@ -90,7 +90,7 @@ namespace SkimSkript.Interpretation.Helpers
         /// <summary> Goes to the previous function scope level and removes the current level. </summary>
         public void ExitFunctionScope()
         {
-            _functionCallStackFrames.Pop();
+             _functionCallStackFrames.Pop();
             _isTopLevel = _functionCallStackFrames.Count == 0;
         }
 

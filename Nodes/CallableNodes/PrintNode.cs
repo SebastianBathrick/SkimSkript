@@ -6,12 +6,13 @@ namespace SkimSkript.Nodes.Runtime
     /// <summary>Class representing a built-in function node for printing a string on a single line, or multiple strings on separate lines.</summary>
     public class PrintNode : BuiltInFunctionNode
     {
-        StringBuilder _stringBuilder = new StringBuilder();
+        StringBuilder? _stringBuilder = new StringBuilder();
 
-        public PrintNode() : base(BuiltInFunctionID.Print, null)
+        private StringBuilder StringBuilder => _stringBuilder ??= new StringBuilder();
+
+        public PrintNode() : base(builtInFunctionId:BuiltInFunctionID.Print, isVariadic:true)
         {
-            _returnTypeNode = null;
-            isVariadic = true;
+
         }
 
         /// <summary>Called to print each argument on a seperate line and accepts a variable number of 
@@ -19,13 +20,21 @@ namespace SkimSkript.Nodes.Runtime
         /// <param name="arguments">List containing argument data with the source of the parameter's
         /// value and whether or not the argument is marked as reference. Each argument that is not
         /// of type string will be coerced prior to the call.</param>
-        public override Node? Call(List<(Node source, bool isRef)>? arguments)
+        public override Node? Call(Node[]? arguments)
         {          
-            for(int i = 0; i < arguments.Count; i++)
-                _stringBuilder.Append(arguments[i].source.ToString()).Append('\n');
+            if(arguments == null)
+            {
+                Console.WriteLine();
+                return null;
+            }
 
-            Console.Write(value: _stringBuilder.ToString());
-            _stringBuilder.Clear();
+            if (StringBuilder.Length != 0)
+                StringBuilder.Clear();
+
+            foreach(var node in arguments)
+                StringBuilder.Append(node.ToString()).Append('\n');
+
+            Console.Write(value: StringBuilder.ToString());
             return null;
         }
     }

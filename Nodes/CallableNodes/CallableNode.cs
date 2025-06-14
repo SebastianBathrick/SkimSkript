@@ -1,43 +1,47 @@
 ﻿namespace SkimSkript.Nodes
 {
     /// <summary>Abstract class representing a node containing data associated with a subroutine. That data
-    /// includes the subroutine's identifier, parameters it accepts, a return type, and whether or not it's variadic.</summary>
+    /// includes the subroutine's identifierNode, parameters it accepts, a return type, and whether or not it's variadic.</summary>
     public abstract class CallableNode : Node
     {
-        private string _identifier; // TODO: Change string callable identifier to a node
-        private List<Node> _parameters;
+        private readonly Node _identifierNode;
+        private readonly Node[]? _parameters;
+        private readonly Type? _returnTypeNode;
+        private readonly bool _isVariadic = false;
 
-        protected bool isVariadic = false;
-        protected Type? _returnTypeNode; // TODO: Change the _returnTypeNode to Type instead of Node
+        #region Properties
+        /// <summary> Node containing unique identifier for object. </summary>
+        public Node IdentfierNode => _identifierNode;
 
-        /// <summary>The identifier to be referenced to call the subroutine.</summary>
-        public string Identifier => _identifier;
+        /// <summary> Nodes containing parameter declaration info if not null. </summary>
+        public Node[]? Parameters => _parameters;
 
-        /// <summary>Flag indicating whether an object can accept a variable number of parameters.</summary>
-        /// <remarks>Note: This is not indicitive of the minimum number of statements. That is defined on a
-        /// class-by-class basis.</remarks>
-        public bool IsVariadic => isVariadic;
+        /// <summary> Defined return type if not null. </summary>
+        public Type? ReturnType => _returnTypeNode;
 
-        /// <summary>Number of parameters the subroutine accepts.</summary> 
-        public int ParameterCount => _parameters.Count;
-
-        /// <summary>A list of nodes that represent the parameters the subroutine accepts/requires. Each node
-        /// indicates the paramter data type and whether it's pass-by-reference.</summary>
-        public List<Node> Parameters => _parameters;
-
+        /// <summary> Whether it's no return type was defined. </summary>
         public bool IsVoid => _returnTypeNode == null;
 
-        /// <summary>An instance of a ValueNode that's indicitive of the return type.</summary>
-        public Type ReturnType => _returnTypeNode!;
+        /// <summary> Can except zero or more arguments in a single call. </summary>
+        public bool IsVariadic => _isVariadic;
 
-        public CallableNode(string identifier, List<Node>? parameters, Type? returnType)
+        /// <summary> If callable requires one or more parameters or is variadic. </summary>
+        public bool IsParameters => _parameters != null || _isVariadic;
+
+        /// <summary> Number of arguments that need to be sent to call this object. </summary>>
+        public int RequiredArgCount =>  IsParameters ? _parameters!.Length : 0;
+        
+        #endregion
+
+        public CallableNode(Node identifierNode, Node[]? parameters, Type? returnType=null, bool isVariadic=false)
         {
-            _identifier = identifier;
-            _parameters = parameters == null ? new List<Node>() : parameters;
+            _identifierNode = identifierNode;
+            _parameters = parameters;
             _returnTypeNode = returnType;
+            _isVariadic = isVariadic;
         }
 
-        public override string ToString() => $"{_identifier} CallableNode";
+        public override string ToString() => $"{_identifierNode} CallableNode";
     }
 }
  
