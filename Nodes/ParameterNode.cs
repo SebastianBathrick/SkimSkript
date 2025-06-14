@@ -14,11 +14,9 @@
         /// <summary>IdentfierNode used to reference the parameter within its function scope.</summary>
         public Node IdentifierNode => _identifierNode;
 
+        /// <summary>Data type of the declared parameter.</summary>
         public Type DataType => _dataType;
 
-        /// <param name="isReference">Indicates whether the parameter is meant to be passed by reference or value.</param>
-        /// <param name="identifierNode">Node containing the identifier of the parameter.</param>
-        /// <param name="dataType">Data type of the declared parameter.</param>
         public ParameterNode(bool isReference, Type dataType, Node identifierNode)
         {
             _isReference = isReference;

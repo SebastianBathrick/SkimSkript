@@ -6,8 +6,7 @@
     {
         private Node[]? _functions;
 
-        public bool IsUserDefinedFunctions => _functions != null;
-
+        /// <summary> Nodes containing definitions and bodies of user-defined functions. </summary>
         public Node[]? UserFunctions => _functions;
 
         public AbstractSyntaxTreeRoot(Node[] topLevelStatements, Node[] userDefinedFunctions) : base(topLevelStatements) =>

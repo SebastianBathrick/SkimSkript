@@ -6,25 +6,26 @@ using SkimSkript.Nodes.ExpressionNodes;
 using SkimSkript.Nodes.NodeExceptions;
 using SkimSkript.Nodes.Runtime;
 using SkimSkript.Nodes.StatementNodes;
-using System.Xml.Linq;
 
 namespace SkimSkript.Interpretation
 {
-    /// <summary> The <c>Interpreter</c> class is responsible for executing the program represented by an
-    ///  Abstract Syntax Tree (AST) generated from the parsed source code. It handles function calls, 
-    ///  variable management, expressions,  and control structures (e.g., if, while) to produce 
-    ///  runtime results. </summary>
+    /// <summary> 
+    /// Responsible for executing the program represented by an Abstract Syntax Tree (AST) generated 
+    /// from the parsed source code. It handles function calls, variable management, expressions, and 
+    /// control structures (e.g., if, while) to produce runtime results. 
+    /// </summary>
     public class Interpreter
     {
+        #region Data Members
         private AbstractSyntaxTreeRoot _treeRoot;
 
         private ScopeManager? _scope;
         private CoercionInterpreter? _coercionInterpreter;
         private OperationInterpreter? _operationInterpreter;
         private Dictionary<string, CallableNode>? _callableFunctionsDict;
+        #endregion
 
         #region Properties
-
         private ScopeManager Scope => _scope ??= new ScopeManager();
 
         private CoercionInterpreter CoercionInterpreter =>
@@ -37,13 +38,12 @@ namespace SkimSkript.Interpretation
             _callableFunctionsDict ??= GetFunctionMap(_treeRoot.UserFunctions);
         #endregion
 
-        public Interpreter(AbstractSyntaxTreeRoot root)
-        {
-            _treeRoot = root;
-            InterpretBlock(root);
-        }
+        #region Execution
+        public Interpreter(AbstractSyntaxTreeRoot treeRoot) => _treeRoot = treeRoot;
 
-        /// <summary> Interprets block and its executible statements then returns data about exit. </summary>
+        public void Execute() => InterpretBlock(_treeRoot);
+
+        /// <summary> Interprets block, executes its statements, and returns info about how the block exited. </summary>
         private BlockExitData InterpretBlock(Node block)
         {
             var coercedBlock = (BlockNode)block;
@@ -56,7 +56,7 @@ namespace SkimSkript.Interpretation
                 {
                     exitData = InterpretStatement(statement);
 
-                    // If it has exit data but it wasn't a control structure that executed all statements
+                    // If the block is forcefully being exited
                     if (exitData != null && exitData.ExitType != BlockExitType.StatementsExhausted)
                         break;
                 }
@@ -65,28 +65,18 @@ namespace SkimSkript.Interpretation
           
             return exitData ?? new BlockExitData(BlockExitType.StatementsExhausted);
         }
-
-        /// <summary> Returns dictionary of built-in & user-defined functions mapped to their idenifiers. </summary>
-        private Dictionary<string, CallableNode> GetFunctionMap(Node[]? userDefinedFunctions)
-        {
-            var funcDict = new Dictionary<string, CallableNode>();
-
-            foreach (BuiltInFunctionNode function in BuiltInFunctionNode.GetFunctionInstances())
-                funcDict.Add(GetIdentifier(function.IdentfierNode), function);
-
-            if (userDefinedFunctions != null)
-                foreach (FunctionNode function in userDefinedFunctions)
-                    funcDict.Add(GetIdentifier(function.IdentfierNode), function);
-
-            return funcDict;
-        }
+        #endregion
 
         #region Functions
+        /// <summary>
+        /// Interprets user-defined function call by entering function's scope, initializing its parameters
+        /// with provided evaluated args, interpreting it's block, and returning any resulting data from the block's exit.
+        /// </summary>
         private Node? InterpretUserFunction(FunctionNode functionNode, Node[]? evaluatedArgs)
         {
             Scope.EnterFunctionScope();
 
-            AddParametersToScope(functionNode.Parameters, evaluatedArgs);
+            InitializeParameters(functionNode.Parameters, evaluatedArgs);
 
             // TODO: Add return checking to functions in semantic analysis
             var bodyExitData = InterpretBlock(functionNode.Block);
@@ -100,14 +90,15 @@ namespace SkimSkript.Interpretation
             return CoercionInterpreter.CoerceNodeValue(bodyExitData.ReturnData, functionNode.ReturnType!);
         }
 
+        /// <summary> Interprets built-in function call by calling the C# class method with the evaluated call args. </summary>
         private Node? InterpretBuiltInFunction(BuiltInFunctionNode builtInNode, Node[]? arguments)
         {
             var returnValue = builtInNode.Call(arguments);
             return returnValue != null ? returnValue : null;
         }
 
-        /// <summary> Evaluates parameter nodes and adds parameters to scope. </summary>
-        private void AddParametersToScope(Node[]? parameters, Node[]? evaluatedArgs)
+        /// <summary> Adds previously evaluated parameters to current scope. </summary>
+        private void InitializeParameters(Node[]? parameters, Node[]? evaluatedArgs)
         {
             if (parameters == null)
                 return;
@@ -155,8 +146,19 @@ namespace SkimSkript.Interpretation
             var callableNode = CallableFunctions[identifier];
             var args = functionCallNode.Arguments;
             var parameters = callableNode.Parameters;
+            Node[]? evaluatedArgs = null;
 
-            var evaluatedArgs = GetEvaluatedArguments(identifier, args, parameters, callableNode.IsVariadic);
+            if(parameters != null || args != null)
+            {
+                var isVariadic = callableNode.IsVariadic;
+
+                // Throw an exception if the argument to parameter ratio is invalid.
+                ValidateArgCount(args, parameters, isVariadic);
+
+                // For each pass-by-value arg evaluate the expression and coerce it to the parameter's data type.
+                evaluatedArgs = GetEvaluatedArguments(identifier, args, parameters, isVariadic);
+            }
+
 
             if (callableNode is FunctionNode userFunction)
                 return InterpretUserFunction(userFunction, evaluatedArgs);
@@ -164,32 +166,20 @@ namespace SkimSkript.Interpretation
                 return InterpretBuiltInFunction((BuiltInFunctionNode)callableNode, evaluatedArgs);
         }
 
+        /// <summary> 
+        /// Returns array containing coerced and evaluated pass-by-value arguments and pointers to variables
+        /// in pass-byrerence arguments.
+        /// </summary>
         private Node[]? GetEvaluatedArguments(
             string functionIdentifier, Node[]? args, Node[]? parameters, bool isVariadic)
         {
-            if (args == null && parameters == null)
-                return null;
-
-            if(!isVariadic)
-            {
-                var isInvalidArgCount = args == null && parameters != null || args != null && parameters == null;
-                isInvalidArgCount = isInvalidArgCount || args!.Length != parameters!.Length;
-
-                if(isInvalidArgCount)
-                {
-                    var argCount = args == null ? 0 : args.Length;
-                    var paramCount = parameters == null ? 0 : parameters.Length;
-                    throw new RuntimeError(RuntimeErrorCode.ArgumentInvalidCount, argCount, paramCount);
-                }
-                                          
-            }
-
             var evaluatedArgs = new Node[args!.Length];
 
             for(int i = 0; i < evaluatedArgs.Length; i++)
             {
                 var rawArg = (ArgumentNode)args[i];
 
+                // If reference get the variable pointer, otherwise evaluate the expression.
                 if (rawArg.IsReference)
                     evaluatedArgs[i] = Scope.GetVariablePointer(GetIdentifier(rawArg.Value));
                 else
@@ -205,6 +195,11 @@ namespace SkimSkript.Interpretation
 
                 if (parameter.DataType != evaluatedArgs[i].GetType())
                     throw new RuntimeError(RuntimeErrorCode.ArgumentDataTypeMismatch);
+
+                // If pass-by-value coerce the evaluated argument to the parameter's data type.
+                if (!rawArg.IsReference)
+                    evaluatedArgs[i] = CoercionInterpreter.CoerceNodeValue(
+                        evaluatedArgs[i], parameter.DataType);
             }
 
             return evaluatedArgs;
@@ -219,11 +214,26 @@ namespace SkimSkript.Interpretation
 
             return new BlockExitData(BlockExitType.ReturnStatement, returnData);
         }
+
+        /// <summary> Validates the argument count against the parameters of the function being called. </summary>
+        private void ValidateArgCount(Node[]? args, Node[]? parameters, bool isVariadic)
+        {
+            if (!isVariadic)
+            {
+                var isInvalidArgCount = args == null && parameters != null || args != null && parameters == null;
+                isInvalidArgCount = isInvalidArgCount || args!.Length != parameters!.Length;
+
+                if (isInvalidArgCount)
+                {
+                    var argCount = args == null ? 0 : args.Length;
+                    var paramCount = parameters == null ? 0 : parameters.Length;
+                    throw new RuntimeError(RuntimeErrorCode.ArgumentInvalidCount, argCount, paramCount);
+                }
+            }
+        }
         #endregion
 
         #region Control Structures
-        /// <summary>Evaluates a while loop, executing its block while the condition is true.</summary>
-        /// <returns>True if the loop executed a return statement while interpreting its block.</returns>
         private BlockExitData InterpretWhileStructure(WhileNode whileNode)
         {
             while (CoercionInterpreter.CoerceCondition(EvaluateExpression(whileNode.Condition)))
@@ -237,8 +247,6 @@ namespace SkimSkript.Interpretation
             return new BlockExitData(BlockExitType.StatementsExhausted);
         }
 
-        /// <summary>Evaluates an if statement, executing its block if the condition is true, and any else-if or else blocks as appropriate.</summary>
-        /// <returns>True if the if structure executed a return statement while interpreting its block.</returns>
         private BlockExitData InterpretIfStructure(IfNode ifNode)
         {
             var evaluatedCondition = EvaluateExpression(ifNode.Condition);
@@ -274,7 +282,7 @@ namespace SkimSkript.Interpretation
         #endregion
 
         #region Variable Statements
-        /// <summary>Declares a new variable in the current scope.</summary>
+        /// <summary> Declares a new variable in the current scope. </summary>
         private void InterpretVariableDeclaration(VariableDeclarationNode declarationNode)
         {          
             var dataType = declarationNode.DataType;
@@ -342,8 +350,7 @@ namespace SkimSkript.Interpretation
         #endregion
 
         #region Expressions
-        /// <summary>Evaluates an expression node and returns its computed ValueNode.</summary>
-        /// <returns>The result of the evaluated expression as a <see cref="ValueNode"/>.</returns>
+        /// <summary> Evaluates math, comparison, or logic expression.</summary>
         private Node EvaluateExpression(Node node)
         {
             if (node is LogicExpressionNode logicNode)
@@ -412,6 +419,21 @@ namespace SkimSkript.Interpretation
                 throw new InvalidDataException($"Expected {typeof(IdentifierNode).Name} but found {nodeType.Name}");
 
             return ((IdentifierNode)identifierNode).Lexeme;
+        }
+
+        /// <summary> Returns dictionary of built-in & user-defined functions mapped to their idenifiers. </summary>
+        private Dictionary<string, CallableNode> GetFunctionMap(Node[]? userDefinedFunctions)
+        {
+            var funcDict = new Dictionary<string, CallableNode>();
+
+            foreach (BuiltInFunctionNode function in BuiltInFunctionNode.GetFunctionInstances())
+                funcDict.Add(GetIdentifier(function.IdentfierNode), function);
+
+            if (userDefinedFunctions != null)
+                foreach (FunctionNode function in userDefinedFunctions)
+                    funcDict.Add(GetIdentifier(function.IdentfierNode), function);
+
+            return funcDict;
         }
         #endregion
     }
