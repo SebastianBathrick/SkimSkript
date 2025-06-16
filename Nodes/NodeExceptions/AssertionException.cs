@@ -1,4 +1,4 @@
-﻿namespace SkimSkript.Nodes.NodeExceptions
+﻿namespace SkimSkript.Nodes
 {
     /// <summary>
     /// Exception thrown by <see cref="Interpretation.Interpreter"/> and meant to be caught by

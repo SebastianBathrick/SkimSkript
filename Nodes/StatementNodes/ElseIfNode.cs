@@ -1,19 +1,9 @@
-﻿namespace SkimSkript.Nodes.StatementNodes
+﻿namespace SkimSkript.Nodes
 {
-    internal class ElseIfNode : ControlStructNode
+    internal class ElseIfNode : IfNode
     {
-        private Node _condition;
-        private Node? _chainedStructure;
-
-        public Node Condition => _condition;
-
-        public Node? ChainedStructure => _chainedStructure;
-
-        public ElseIfNode(Node condition, Node block, Node? chainedStructure) : base(block)
-        {
-            _condition = condition;
-            _chainedStructure = chainedStructure;
-        }
+        public ElseIfNode(Node condition, Node body, Node? chainedStructure)
+            : base(condition, body, chainedStructure) { }
 
         public override string ToString() => $"else if {base.ToString()}";
     }

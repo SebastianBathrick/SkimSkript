@@ -8,7 +8,7 @@ namespace SkimSkript.ErrorHandling
     public enum ErrorTokenPosition { Forward, Backward, InPlace }
 
     /// <summary> <see cref="LanguageError"/> specific to the parsing phase, during which it will be thrown. </summary>
-    public class SyntaxError : LanguageError
+    internal class SyntaxError : LanguageError
     {
         private const string ERROR_LABEL = "Syntax Error: ";
 

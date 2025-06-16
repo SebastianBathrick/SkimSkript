@@ -1,5 +1,4 @@
 ﻿using SkimSkript.Nodes;
-using SkimSkript.Nodes.ValueNodes;
 
 namespace SkimSkript.Interpretation.Helpers
 {
@@ -28,18 +27,22 @@ namespace SkimSkript.Interpretation.Helpers
             var lType = left.GetType();
             var rType = right.GetType();
 
+            if(lType == rType)
+            {
+                // If both operands are the same type, no coercion is needed
+                coercedLeft = leftValNode;
+                coercedRight = rightValNode;
+                return lType;
+            }
+
             // Check if an operator has precidence over the other or if their already the same type
             foreach (var type in _expressionTypePrecidence)
                 if (TryOperandCoercionOfType(
                     type, leftValNode, rightValNode, lType, rType, out coercedLeft, out coercedRight))
                     return type;
 
-            if (lType != rType)
-                throw new InvalidCastException(
-                    $"Invalid operand coercion. Different types but no rules defined for {left.GetType().Name}  and {right.GetType().Name}");
-
-            coercedLeft = left; coercedRight = right;
-            return lType;
+            throw new InvalidCastException(
+                $"Invalid operand coercion. Different types but no rules defined for {left.GetType().Name}  and {right.GetType().Name}");
         }
 
         /// <summary> Coerces evaluated operand to <see cref="BoolValueNode"/> and returns its stored bool value. </summary>

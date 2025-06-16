@@ -1,6 +1,4 @@
-﻿
-
-namespace SkimSkript.Nodes
+﻿namespace SkimSkript.Nodes
 {
     /// <summary>Class representing the declaration of a statically typed variable.</summary>
     public class VariableDeclarationNode : StatementNode

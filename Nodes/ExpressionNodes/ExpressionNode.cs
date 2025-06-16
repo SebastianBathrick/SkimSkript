@@ -1,7 +1,4 @@
-﻿using SkimSkript.Syntax;
-using SkimSkript.TokenManagement;
-
-namespace SkimSkript.Nodes
+﻿namespace SkimSkript.Nodes
 {
     /// <summary> Represents an expression with an operator, left and right operands used to model operations. </summary>
     public abstract class ExpressionNode<T> : Node where T : Enum

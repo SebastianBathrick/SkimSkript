@@ -1,4 +1,4 @@
-﻿namespace SkimSkript.Nodes.CallableNodes
+﻿namespace SkimSkript.Nodes
 {
     internal class ArgumentNode : Node
     {

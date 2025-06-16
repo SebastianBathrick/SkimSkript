@@ -1,6 +1,6 @@
 ﻿using SkimSkript.Syntax;
 
-namespace SkimSkript.Nodes.Runtime
+namespace SkimSkript.Nodes
 {
     /// <summary>Class representing a built-in-function node for clearing the console buffer.</summary>
     public class ClearNode : BuiltInFunctionNode

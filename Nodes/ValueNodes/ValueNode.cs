@@ -1,4 +1,4 @@
-﻿namespace SkimSkript.Nodes.ValueNodes
+﻿namespace SkimSkript.Nodes
 {
     /// <summary>Abstract class used to dynamically store values and handle the coercion between various defined data types.</summary>
     /// <remarks>Values can be those stored during runtime in variables, function returns, or literals.</remarks>

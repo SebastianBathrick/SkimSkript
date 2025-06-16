@@ -1,8 +1,7 @@
-﻿using SkimSkript.Nodes.ValueNodes;
-using SkimSkript.Syntax;
+﻿using SkimSkript.Syntax;
 using System.Text;
 
-namespace SkimSkript.Nodes.Runtime
+namespace SkimSkript.Nodes
 {
     /// <summary>Class representing a built-in function node for reading user input and returning it as a string.</summary>
     public class ReadNode : BuiltInFunctionNode

@@ -4,12 +4,13 @@
     internal enum LogLevel
     {
         None = 0,
-        Fatal = 1,
-        Error = 2,
-        Warning = 3,
-        Information = 4,
-        Debug = 5,
-        Verbose = 6,
+        UserInterface = 1,
+        Fatal = 2,
+        Error = 3,
+        Warning = 4,
+        Information = 5,
+        Debug = 6,
+        Verbose = 7,
     }
 
     /// <summary> Represents ANSI color codes for terminal output. </summary>

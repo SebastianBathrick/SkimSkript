@@ -1,4 +1,4 @@
-﻿namespace SkimSkript.Nodes.ExpressionNodes
+﻿namespace SkimSkript.Nodes
 {
     internal class LogicExpressionNode : ExpressionNode<LogicOperator>
     {

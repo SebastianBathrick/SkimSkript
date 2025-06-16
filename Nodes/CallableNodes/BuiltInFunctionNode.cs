@@ -1,7 +1,6 @@
-﻿using SkimSkript.Nodes.ValueNodes;
-using SkimSkript.Syntax;
+﻿using SkimSkript.Syntax;
 
-namespace SkimSkript.Nodes.Runtime
+namespace SkimSkript.Nodes
 {
     /// <summary>Abstract class representing a built-in function node with predefined behavior and parameters.</summary>
     public abstract class BuiltInFunctionNode : CallableNode

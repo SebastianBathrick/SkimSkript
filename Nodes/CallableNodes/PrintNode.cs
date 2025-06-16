@@ -1,7 +1,7 @@
 ﻿using SkimSkript.Syntax;
 using System.Text;
 
-namespace SkimSkript.Nodes.Runtime
+namespace SkimSkript.Nodes
 {
     /// <summary>Class representing a built-in function node for printing a string on a single line, or multiple strings on separate lines.</summary>
     public class PrintNode : BuiltInFunctionNode

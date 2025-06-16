@@ -1,6 +1,4 @@
-﻿using SkimSkript.Nodes.ValueNodes;
-
-namespace SkimSkript.Nodes
+﻿namespace SkimSkript.Nodes
 {
     /// <summary>
     /// Class meant to represent a single node within an abstract syntax tree (AST). Every node within an 

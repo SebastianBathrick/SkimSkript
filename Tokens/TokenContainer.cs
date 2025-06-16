@@ -1,22 +1,22 @@
 ﻿using SkimSkript.TokenManagement.Tokens;
 using SkimSkript.ErrorHandling;
+using SkimSkript.CoreHelpers.LexicalAnalysis;
+using System.Text;
 
 namespace SkimSkript.TokenManagement
 {
     /// <summary>Class that represents a queue-like token stream that is populated with tokens during lexical analysis
     /// for later use during parsing.</summary>
-    public class TokenContainer
+    internal class TokenContainer
     {
-        private List<Token> _tokenList = new List<Token>();
+        private List<Token> _tokenList = new();
+        private LexemeContainer _lexemes;
         private int _currentTokenIndex = 0;
 
-        #region Properties
         /// <summary>Indicates whether there are currently any tokens.</summary>
         public bool HasTokens => _currentTokenIndex != _tokenList.Count;
 
-        /// <summary>Gets the line number of the frontmost token.</summary>
-        public int CurrentLineNumber => _tokenList[_currentTokenIndex].LineNumber;
-        #endregion
+        public TokenContainer(LexemeContainer lexemeContainer) => _lexemes = lexemeContainer;
 
         /// <summary>Adds token to the rear of the container structure.</summary>
         public void Add(Token token) => _tokenList.Add(token);
@@ -34,7 +34,7 @@ namespace SkimSkript.TokenManagement
         {
             tokenType = TokenType.Undefined;
 
-            if(HasTokens)
+            if (HasTokens)
             {
                 tokenType = _tokenList[_currentTokenIndex].Type;
                 return true;
@@ -78,7 +78,7 @@ namespace SkimSkript.TokenManagement
         public string RemoveAndGetLexeme()
         {
             Remove();
-            return _tokenList[_currentTokenIndex - 1].Lexeme;
+            return GetLexemeFromToken(_currentTokenIndex - 1);
         }
 
         /// <summary>Checks if the frontmost token is of a given <see cref="TokenType"/>, and if so,
@@ -90,6 +90,19 @@ namespace SkimSkript.TokenManagement
                 throw new SyntaxError(tokenType, this, ErrorTokenPosition.InPlace);
 
             Remove(tokenType);
+        }
+
+        public void MatchAndRemove(TokenType[] tokenTypes)
+        {
+            foreach (var tokenType in tokenTypes)
+            {
+                if (_tokenList[_currentTokenIndex].Type == tokenType)
+                {
+                    Remove(tokenType);
+                    return;
+                }
+            }
+            throw new SyntaxError($"Expected one of the following tokens: {string.Join(", ", tokenTypes)}", this, ErrorTokenPosition.InPlace);
         }
 
         /// <summary>Checks if the frontmost token is of a given <see cref="TokenType"/>, and if so, remove said token.</summary>
@@ -122,31 +135,11 @@ namespace SkimSkript.TokenManagement
         public string MatchRemoveAndGetLexeme(TokenType tokenType)
         {
             MatchAndRemove(tokenType);
-            return _tokenList[_currentTokenIndex - 1].Lexeme;
+            return GetLexemeFromToken(_currentTokenIndex - 1);
         }
 
-        #region Error Handling Methods
-        /// <summary>Moves the token pointer one position towards the front of the structure.</summary>
-        public void MovePointerTowardsFront() => --_currentTokenIndex;
-
-        /// <summary>Moves the token pointer one position towards the back of the structure.</summary>
-        public void MovePointerTowardsRear() => ++_currentTokenIndex;
-
-        /// <summary>Gets every stored <see cref="Token"/> found within a specific line in the source language input file.</summary>
-        public List<Token> GetTokensOnLine(out int errorTokenIndex)
-        {
-            int targetLineNumber = _tokenList[_currentTokenIndex].LineNumber;
-
-            List<Token> tokens = new List<Token>();
-            foreach (Token token in _tokenList)
-                if (token.LineNumber == targetLineNumber)
-                    tokens.Add(token);
-                else if (token.LineNumber > targetLineNumber)
-                    break;
-
-            errorTokenIndex = GetCurrentTokenLineIndex(tokens);
-            return tokens;
-        }
+        private string GetLexemeFromToken(int index) =>
+            _lexemes.GetLexemesAsString(_tokenList[index].LexemeStartIndex, _tokenList[index].LexemeEndIndex);
 
         /// <summary>Gets line number associated with the token at the pointer's position.</summary>
         private int GetCurrentTokenLineIndex(List<Token> tokensOnLine)
@@ -158,8 +151,32 @@ namespace SkimSkript.TokenManagement
             return 0;
         }
 
-        private TokenType ThrowEndOfFileError(TokenType tokenType = TokenType.Undefined) => 
+        private TokenType ThrowEndOfFileError(TokenType tokenType = TokenType.Undefined) =>
             throw new SyntaxError($"Expected {tokenType} token but instead reached the end of file.", this, ErrorTokenPosition.Backward);
-        #endregion
+
+        public override string ToString()
+        {
+            if (!HasTokens)
+                return "TokenContainer is empty.";
+            var sb = new StringBuilder();
+            sb.AppendLine("TokenContainer:");
+            for (int i = _currentTokenIndex; i < _tokenList.Count; i++)
+            {
+                sb.AppendLine($"[{i}] {_tokenList[i].Type} - {GetLexemeFromToken(i)}");
+            }
+            return sb.ToString();
+        }
+
+
+
+        public string GetLabeledFileContents()
+        {
+            var sb = new StringBuilder();
+
+            foreach (var token in _tokenList)
+                sb.Append(_lexemes.GetLexemesAsStringLines(token.LexemeStartIndex, token.LexemeEndIndex) + $"{token.Type}");
+
+            return sb.ToString();
+        }
     }
 }

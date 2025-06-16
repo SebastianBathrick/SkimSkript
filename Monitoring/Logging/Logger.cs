@@ -16,8 +16,10 @@ namespace SkimSkript.Logging
         private LogLevel _logLevel = DEFAULT_LOG_LEVEL;
         private bool _labelsEnabled = DEFAULT_LOG_LABELS_ENABLED;
 
-        public LogLevel LogLevel => _logLevel;
+        public LogLevel LogLevel;
         #endregion
+
+        public Logger() => SetMinimumLogLevel(DEFAULT_LOG_LEVEL);
 
         #region Data Members Public Interface
         /// <summary>Returns true if the provided log level is enabled for output.</summary>
@@ -41,6 +43,12 @@ namespace SkimSkript.Logging
         #endregion
 
         #region Logging Methods
+        public void UserInterface(string message, params object[] properties)
+        {
+            if (!IsLevelEnabled(LogLevel.UserInterface)) return;
+            ProcessMessage(message, LogLevel.UserInterface, properties);
+        }
+
         /// <summary>Logs an information message.</summary>
         public void Info(string message, params object[] properties)
         {

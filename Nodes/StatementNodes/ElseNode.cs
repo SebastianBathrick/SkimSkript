@@ -1,4 +1,4 @@
-﻿namespace SkimSkript.Nodes.StatementNodes
+﻿namespace SkimSkript.Nodes
 {
     internal class ElseNode : ControlStructNode
     {

@@ -2,7 +2,7 @@
   "profiles": {
     "SkimSkript": {
       "commandName": "Project",
-      "commandLineArgs": "C:\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\Users\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\Sebastian\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\Desktop\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\SkimSkript\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\UnitTests\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ConditionExpressionTests.skim C:\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\Users\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\Sebastian\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\Desktop\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\SkimSkript\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\UnitTests\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\DeclarationAssignTests.skim C:\\\\\\\\\\\\\\\\Users\\\\\\\\\\\\\\\\Sebastian\\\\\\\\\\\\\\\\Desktop\\\\\\\\\\\\\\\\SkimSkript\\\\\\\\\\\\\\\\UnitTests\\\\\\\\\\\\\\\\FunctionTests.skim C:\\\\\\\\Users\\\\\\\\Sebastian\\\\\\\\Desktop\\\\\\\\SkimSkript\\\\\\\\UnitTests\\\\\\\\IfStatementTests.skim C:\\\\Users\\\\Sebastian\\\\Desktop\\\\SkimSkript\\\\UnitTests\\\\NumericExpressionsTests.skim C:\\Users\\Sebastian\\Desktop\\SkimSkript\\UnitTests\\ScopeTests.skim"
+      "commandLineArgs": "C:\\Users\\sebas\\OneDrive\\Documents\\GitHub\\SkimSkript\\UnitTests\\ScopeTests.skim"
     }
   }
 }

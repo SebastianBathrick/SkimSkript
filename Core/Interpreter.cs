@@ -1,11 +1,6 @@
 ﻿using SkimSkript.ErrorHandling;
 using SkimSkript.Interpretation.Helpers;
 using SkimSkript.Nodes;
-using SkimSkript.Nodes.CallableNodes;
-using SkimSkript.Nodes.ExpressionNodes;
-using SkimSkript.Nodes.NodeExceptions;
-using SkimSkript.Nodes.Runtime;
-using SkimSkript.Nodes.StatementNodes;
 
 namespace SkimSkript.Interpretation
 {
@@ -17,17 +12,14 @@ namespace SkimSkript.Interpretation
     public class Interpreter
     {
         #region Data Members
-        private AbstractSyntaxTreeRoot _treeRoot;
-
-        private ScopeManager? _scope;
+        private ScopeManager _scope = new();
         private CoercionInterpreter? _coercionInterpreter;
         private OperationInterpreter? _operationInterpreter;
         private Dictionary<string, CallableNode>? _callableFunctionsDict;
+        private Node[]? _userFunctions;
         #endregion
 
         #region Properties
-        private ScopeManager Scope => _scope ??= new ScopeManager();
-
         private CoercionInterpreter CoercionInterpreter =>
             _coercionInterpreter ??= new CoercionInterpreter();
 
@@ -35,13 +27,15 @@ namespace SkimSkript.Interpretation
             _operationInterpreter ??= new OperationInterpreter();
 
         private Dictionary<string, CallableNode> CallableFunctions =>
-            _callableFunctionsDict ??= GetFunctionMap(_treeRoot.UserFunctions);
+            _callableFunctionsDict ??= GetFunctionMap(_userFunctions);
         #endregion
 
         #region Execution
-        public Interpreter(AbstractSyntaxTreeRoot treeRoot) => _treeRoot = treeRoot;
-
-        public void Execute() => InterpretBlock(_treeRoot);
+        public void Execute(AbstractSyntaxTreeRoot treeRoot)
+        {
+            _userFunctions = treeRoot.UserFunctions;
+            InterpretBlock(treeRoot);
+        }
 
         /// <summary> Interprets block, executes its statements, and returns info about how the block exited. </summary>
         private BlockExitData InterpretBlock(Node block)
@@ -51,7 +45,7 @@ namespace SkimSkript.Interpretation
 
             if(coercedBlock.Statements != null)
             {
-                Scope.EnterScope();
+                _scope.EnterScope();
                 foreach (var statement in coercedBlock.Statements!)
                 {
                     exitData = InterpretStatement(statement);
@@ -60,7 +54,7 @@ namespace SkimSkript.Interpretation
                     if (exitData != null && exitData.ExitType != BlockExitType.StatementsExhausted)
                         break;
                 }
-                Scope.ExitScope();
+                _scope.ExitScope();
             }    
           
             return exitData ?? new BlockExitData(BlockExitType.StatementsExhausted);
@@ -74,14 +68,14 @@ namespace SkimSkript.Interpretation
         /// </summary>
         private Node? InterpretUserFunction(FunctionNode functionNode, Node[]? evaluatedArgs)
         {
-            Scope.EnterFunctionScope();
+            _scope.EnterFunctionScope();
 
             InitializeParameters(functionNode.Parameters, evaluatedArgs);
 
             // TODO: Add return checking to functions in semantic analysis
             var bodyExitData = InterpretBlock(functionNode.Block);
 
-            Scope.ExitFunctionScope();
+            _scope.ExitFunctionScope();
 
             if (functionNode.IsVoid)
                 return null;
@@ -106,7 +100,7 @@ namespace SkimSkript.Interpretation
             for(int i = 0; i < parameters.Length; i++)
             {
                 var identifier = GetIdentifier(((ParameterNode)parameters[i]).IdentifierNode);
-                Scope.AddVariable(identifier, evaluatedArgs![i], evaluatedArgs![i].GetType());
+                _scope.AddVariable(identifier, evaluatedArgs![i], evaluatedArgs![i].GetType());
             }
         }
         #endregion
@@ -181,7 +175,7 @@ namespace SkimSkript.Interpretation
 
                 // If reference get the variable pointer, otherwise evaluate the expression.
                 if (rawArg.IsReference)
-                    evaluatedArgs[i] = Scope.GetVariablePointer(GetIdentifier(rawArg.Value));
+                    evaluatedArgs[i] = _scope.GetVariablePointer(GetIdentifier(rawArg.Value));
                 else
                     evaluatedArgs[i] = EvaluateExpression(rawArg.Value);
 
@@ -307,7 +301,7 @@ namespace SkimSkript.Interpretation
 
             /* Even if there was no explicit initialization, the parser will still store a value 
              * node with a default value in the declaration node. Works like C# primitives. */
-            Scope.AddVariable(identifier, coercedInitVal, dataType);
+            _scope.AddVariable(identifier, coercedInitVal, dataType);
         }
 
         private void AssignValueToVariable(AssignmentNode assignment)
@@ -316,7 +310,7 @@ namespace SkimSkript.Interpretation
             var rawAssignVal = EvaluateExpression(assignment.AssignedExpression);
 
             var identifier = assignment.IdentifierNode.ToString();
-            var varDataType = Scope.GetVariableDataType(identifier);
+            var varDataType = _scope.GetVariableDataType(identifier);
 
             // Coerce the evaluated expression to the variable's data type
             var coercedAssignVal = CoercionInterpreter.CoerceNodeValue(rawAssignVal, varDataType);
@@ -326,7 +320,7 @@ namespace SkimSkript.Interpretation
                     $"Variable \"{assignment.IdentifierNode}\" cannot be assigned a value of type {rawAssignVal.GetType().Name}.\n" +
                     $"Expected type: {varDataType.Name}.");
 
-            Scope.AssignValueToVariable(identifier, coercedAssignVal);
+            _scope.AssignValueToVariable(identifier, coercedAssignVal);
         }
         #endregion
 

@@ -1,5 +1,4 @@
 ﻿using SkimSkript;
-using SkimSkript.EntryPoint;
 using SkimSkript.Logging;
 
 class Program
@@ -17,16 +16,16 @@ class Program
             return -1;
         }
 
-        var core = new SkimSkriptCore();
-        var fileReader = new FileReader();
+        
 
         foreach(var filepath in args)
         {
+            var core = new SkimSkriptCore();
             string[]? linesOfCode = null;
 
             try
             {
-                linesOfCode = fileReader.GetLinesOfCode(filepath);
+                linesOfCode = GetLinesOfCode(filepath);
             }
             catch (Exception ex)
             {
@@ -37,6 +36,14 @@ class Program
             core.Execute(linesOfCode!); // Interpret the lines of code
         }
 
-        return core.WasExecutionSuccessful ? 0 : -1;
+        return 0;
+    }
+
+    private static string[] GetLinesOfCode(string filePath)
+    {
+        if (!File.Exists(filePath))
+            throw new FileNotFoundException($"File not found");
+
+        return File.ReadLines(filePath).ToArray();
     }
 }

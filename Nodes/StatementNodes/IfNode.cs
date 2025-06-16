@@ -1,21 +1,17 @@
-﻿namespace SkimSkript.Nodes
+﻿using SkimSkript.Nodes.StatementNodes;
+
+namespace SkimSkript.Nodes
 {
     /// <summary>Class representing an if statement control structure potentially storing a child else
     /// if or else statement of the same class type.</summary>
-    public class IfNode : ControlStructNode
+    internal class IfNode : ConditionStructNode
     {
         private Node? _chainedStructure;
-        private Node _condition;
-
-        public Node Condition => _condition;
 
         public Node? ChainedStructure => _chainedStructure;
 
-        public IfNode(Node condition, Node block, Node? chainedStructure) : base(block)
-        {
-            _condition = condition;
+        public IfNode(Node condition, Node block, Node? chainedStructure) : base(condition, block) =>
             _chainedStructure = chainedStructure;
-        }
 
         public override string ToString() => $"if{base.ToString()}";
     }

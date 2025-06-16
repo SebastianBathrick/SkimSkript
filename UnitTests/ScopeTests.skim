@@ -10,7 +10,7 @@ float globalFloat = 3.14
 
 # Verify global variables are accessible
 assert globalVar == 10
-assert globalString == "global"
+assert ~~~~~~~~~~~~~~~~~~~~~~ globalString == "global"
 assert globalBool == true
 assert globalFloat == 3.14
 
@@ -53,7 +53,7 @@ print("Function local scope tests passed!")
 print("Testing block scope...")
 # Block scope variables
 int blockVar = 30
-
+    
 if true
 {
     int innerVar = 40
