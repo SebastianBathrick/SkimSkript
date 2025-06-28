@@ -63,15 +63,6 @@ The SkimSkript interpreter utilizes no third-party libraries, so while it posses
 
 A prime example of this occurs during lexical analysis. After scanning each character in the source code, any alphabetic lexemes are fed into a trie structure. If a single alphabetic lexeme is a partial match for a phrase, the next lexeme is analyzed to check if it is part of that phrase as well. If a group of lexemes reaches a trie node containing a token type, those lexemes are grouped as a single token (assuming the following word does not continue a phrase). However, if the lexemes that form a partial match do not complete a phrase, then each of those lexemes is marked as an identifier. This unconventional approach allows for multi-word tokens, simplifies parsing, and accommodates multiple syntactic styles.
 
-## Is the Codebase Overcomplicated?
-
-Not at all. SkimSkript was built with maintainability and clarity in mind. The bulk of the interpreter was developed between October and December 2024 with a strong focus on clean architecture and minimal dependencies.
-
-As of May 2025:
-- ~800 lines of executable code
-- Maintainability Index: 88
-- No third-party libraries used
-
 ## What Features Does it Have?
 As of now, SkimSkript has the following:
 - Statically typed variable declarations & assignments.
