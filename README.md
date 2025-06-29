@@ -35,7 +35,7 @@ With support for multiple syntactic styles, it serves as a stepping stone to mor
 		```
 
 	- You may want something more verbose, academic, or closer to written English. In that case, SkimSkript has got you covered:   
-		```csharp
+		```
 		Declare int iterator as 1.
 		 
 		Run print("Please enter a number to find its square root:").
@@ -76,80 +76,80 @@ With support for multiple syntactic styles, it serves as a stepping stone to mor
 	|String Escape Sequences|Optimized Scopes|Custom Code Editor
 
 # Setup Guide
-## 1.) Building
-1. Assuming you have the **.NET 8 SDK** and have downloaded the **SkimSkript repository**, set the current working directory to the repository folder that contains ```SkimSkript.csproj``` using the terminal of your choosing. Your terminal should look something like this:
-	##### Windows PowerShell:
-	```powershell
-	PS C:\User\Sebastian> cd SkimSkript
-	```
-   
-	##### Bash:
-	```bash
-	sebastian@computer:~$ cd SkimSkript
-	```
-2. Once in the same directory as the C# project file, type ```dotnet build``` and enter.
-	##### Windows PowerShell:
-	```powershell
-	PS C:\User\Sebastian\SkimSkript> dotnet build
-	```
+- ## 1.) Building
+	1. Assuming you have the **.NET 8 SDK** and have downloaded the **SkimSkript repository**, set the current working directory to the repository folder that contains ```SkimSkript.csproj``` using the terminal of your choosing. Your terminal should look something like this:
+		##### Windows PowerShell:
+		```powershell
+		PS C:\User\Sebastian> cd SkimSkript
+		```
+	   
+		##### Bash:
+		```bash
+		sebastian@computer:~$ cd SkimSkript
+		```
+	2. Once in the same directory as the C# project file, type ```dotnet build``` and enter.
+		##### Windows PowerShell:
+		```powershell
+		PS C:\User\Sebastian\SkimSkript> dotnet build
+		```
+		
+		##### Bash:
+		```bash
+		sebastian@computer:~/SkimSkript$ dotnet build
+		```
 	
-	##### Bash:
-	```bash
-	sebastian@computer:~/SkimSkript$ dotnet build
-	```
+	3. If the interpreter compiled correctly, you should see a message in your terminal that resembles the following:
+		```powershell
+		  Determining projects to restore...
+		  All projects are up-to-date for restore.
+		  SkimSkript -> 	 C:\User\Sebastian\SkimSkript\bin\Debug\net8.0\skimskript.dll
+		
+		Build succeeded.
+		    0 Warning(s)
+		    0 Error(s)
+		
+		Time Elapsed 00:00:00.74
+		```
+		**Note**: If any yellow warning text appears in the terminal after executing the command, there is no need to fear. So long as you can see ```Build succeeded``` (possibly among the warning(s)) and ```Time Elapsed XX:XX:XX.XX``` at the bottom of the message; then, the interpreter should be compiled and ready to go. 
+	<br><br>
+	**Congrats!** You can now use the SkimSkript interpreter! We'll discuss the two different approaches in the next section, where we create your first SkimSkript program.
 
-3. If the interpreter compiled correctly, you should see a message in your terminal that resembles the following:
-	```powershell
-	  Determining projects to restore...
-	  All projects are up-to-date for restore.
-	  SkimSkript -> 	 C:\User\Sebastian\SkimSkript\bin\Debug\net8.0\skimskript.dll
+
+- ## 2.) Your First Program
+	1. First create a **.skim** file. For the sake of this tutorial we're calling the file ```HelloWorld.skim```. This file will contain your SkimSkript code.
+	   
+	2. Open ```HelloWorld.skim``` in your IDE of choice.
+	 
+	3. Now with the file open, you can write a classic "Hello World" program by writing ```print``` followed by an open parenthesis, then ```"Hello World"``` (include the double quotes), and finish with a closing parenthesis:	
+		```python
+		print("Hello World")
+		```
+	 
+	4. Save your modified ```HelloWorld.skim```
+	 
+	5. Now let's run ```HelloWorld.skim``` in the interpreter.
 	
-	Build succeeded.
-	    0 Warning(s)
-	    0 Error(s)
+		Set your current working directory to the repository folder that contains ```SkimSkript.csproj```. Then, use the ```dotnet run``` command and pass the ```HelloWorld.skim path``` as an argument.
+		##### Windows PowerShell:
+		```powershell
+		PS C:\User\Sebastian\SkimSkript> dotnet run -- HelloWorld.skim
+		```
+		
+		##### Bash:
+		```bash
+		sebastian@computer:~/SkimSkript$ dotnet run -- HelloWorld.skim
+		```
+		**(If HelloWorld.skim is located elsewhere, use the full or relative path to the file instead.)**
+	   
+	6. If you see what's below then congratuations! You coded your first SkimSkript program!
+		```powershell
+	 	Hello World
 	
-	Time Elapsed 00:00:00.74
-	```
-	**Note**: If any yellow warning text appears in the terminal after executing the command, there is no need to fear. So long as you can see ```Build succeeded``` (possibly among the warning(s)) and ```Time Elapsed XX:XX:XX.XX``` at the bottom of the message; then, the interpreter should be compiled and ready to go. 
-<br><br>
-**Congrats!** You can now use the SkimSkript interpreter! We'll discuss the two different approaches in the next section, where we create your first SkimSkript program.
-
-
-# Your First Program
-1. First create a **.skim** file. For the sake of this tutorial we're calling the file ```HelloWorld.skim```. This file will contain your SkimSkript code.
-   
-2. Open ```HelloWorld.skim``` in your IDE of choice.
- 
-3. Now with the file open, you can write a classic "Hello World" program by writing ```print``` followed by an open parenthesis, then ```"Hello World"``` (include the double quotes), and finish with a closing parenthesis:	
-	```python
-	print("Hello World")
-	```
- 
-4. Save your modified ```HelloWorld.skim```
- 
-5. Now let's run ```HelloWorld.skim``` in the interpreter.
-
-	Set your current working directory to the repository folder that contains ```SkimSkript.csproj```. Then, use the ```dotnet run``` command and pass the ```HelloWorld.skim path``` as an argument.
-	##### Windows PowerShell:
-	```powershell
-	PS C:\User\Sebastian\SkimSkript> dotnet run -- HelloWorld.skim
-	```
-	
-	##### Bash:
-	```bash
-	sebastian@computer:~/SkimSkript$ dotnet run -- HelloWorld.skim
-	```
-	**(If HelloWorld.skim is located elsewhere, use the full or relative path to the file instead.)**
-   
-6. If you see what's below then congratuations! You coded your first SkimSkript program!
-	```powershell
- 	Hello World
-
-	C:\Users\Sebastian\Desktop\SkimSkript\bin\Debug\net8.0\skimskript.exe (process 27136) exited with code 0 (0x0).
-	To automatically close the console when debugging stops, enable Tools->Options->Debugging->Automatically close
- 	the console when debugging stops.
-	Press any key to close this window . . .
- 	```
+		C:\Users\Sebastian\Desktop\SkimSkript\bin\Debug\net8.0\skimskript.exe (process 27136) exited with code 0 (0x0).
+		To automatically close the console when debugging stops, enable Tools->Options->Debugging->Automatically close
+	 	the console when debugging stops.
+		Press any key to close this window . . .
+	 	```
 
 # Syntax Guide 
 
@@ -436,8 +436,6 @@ SkimSkript contains scoped variables declared in top-level, function, or control
 		```
 ## 6. ) Functions
 SkimSkript offers statically typed support for both user-defined and built-in functions.
-
-**Note: Definitions without a return type are void.**
 - ### 6.1 ) Function Definitions
 	- #### Brief
 		A brief function definition begins with the keyword ```def```, followed by an optional ``` data type```, a case-sensitive ```identifier```, parentheses ```()``` (even if empty), and a ```block```.
@@ -510,86 +508,86 @@ SkimSkript offers statically typed support for both user-defined and built-in fu
 		}
 		```
 
-- #### Value-Returning Function
-	If a function is defined to return a value, it must use return or give back followed by an ```expression``` before exiting. That expression must match the declared return type or be coercible to it at runtime. If it doesn't, the interpreter will raise an error.
-	```python
-	def int ReturnOnePlusOne()
-	{
-		# Returns an integer value of 2
-		return 1 + 1
-	}
-	
-	def float ReturnMyVariable()
-	{
-		float myVar = 32.0
-	
-		# Returns value of variable which is the float 32.0
-		return myVar
-	}
-	
-	def float ReturnStringAsFloat()
-	{
-		# Coerces the string to a float value of 132.12
-		return "132.12"
-	}
-	
-	def int FailToReturnValue()
-	{
-		# Will throw an exception because the string does not match the pattern of an int
-		return "This string literal cannot be coerced into an int"
-	}
-	```
+	- #### Value-Returning Function
+		If a function is defined to return a value, it must use return or give back followed by an ```expression``` before exiting. That expression must match the declared return type or be coercible to it at runtime. If it doesn't, the interpreter will raise an error.
+		```python
+		def int ReturnOnePlusOne()
+		{
+			# Returns an integer value of 2
+			return 1 + 1
+		}
+		
+		def float ReturnMyVariable()
+		{
+			float myVar = 32.0
+		
+			# Returns value of variable which is the float 32.0
+			return myVar
+		}
+		
+		def float ReturnStringAsFloat()
+		{
+			# Coerces the string to a float value of 132.12
+			return "132.12"
+		}
+		
+		def int FailToReturnValue()
+		{
+			# Will throw an exception because the string does not match the pattern of an int
+			return "This string literal cannot be coerced into an int"
+		}
+		```
 
 - ### 6.2 ) Function Parameters
-Functions accept both statically typed pass-by-value and pass-by-reference parameters.
+	Functions accept both statically typed pass-by-value and pass-by-reference parameters.
 
-- #### Pass-by-Value Parameters
-	Parameter declarations appear inside the parentheses to the left of the identifier. A ```data type``` followed by an ```identifier``` denotes a pass-by-value parameter. To declare multiple parameters, repeat this pattern to the right of the first.
-	```python
-	def PrintString(int stringParameter) {
-		print("String argument: " + stringParameter)
-	}
-	
-	def int GetSum(int left int right) {
-		return left + right
-	}
-	```
-- #### Pass-by-Reference Parameters
-	Pass-by-reference parameters follow the same rules as pass-by-value, with one key difference: pass-by-reference declarations require the use of ```ref``` or ```reference to``` before the data type.
-	```python
-	def IncrementInts(ref int int1 ref int int2) {
-		int1 = int1 + 1
-		int2 = int2 + 1
-	}
-	
-	def IncrementFloats(reference to float float1 reference to float float2) {
-		float1 = float1 + 1
-		float2 = float2 + 1
-	}
-	```
+	- #### Pass-by-Value Parameters
+		Parameter declarations appear inside the parentheses to the left of the identifier. A ```data type``` followed by an ```identifier``` denotes a pass-by-value parameter. To declare multiple parameters, repeat this pattern to the right of the first.
+		```python
+		def PrintString(int stringParameter) {
+			print("String argument: " + stringParameter)
+		}
+		
+		def int GetSum(int left int right) {
+			return left + right
+		}
+		```
+	- #### Pass-by-Reference Parameters
+		Pass-by-reference parameters follow the same rules as pass-by-value, with one key difference: pass-by-reference declarations require the use of ```ref``` or ```reference to``` before the data type.
+		```python
+		def IncrementInts(ref int int1 ref int int2) {
+			int1 = int1 + 1
+			int2 = int2 + 1
+		}
+		
+		def IncrementFloats(reference to float float1 reference to float float2) {
+			float1 = float1 + 1
+			float2 = float2 + 1
+		}
+		```
 - ### 6.3 ) Function Calls + Arguments
-To call a function, use its identifier followed by opening and closing parenthesis. If it has parameters, list the expressions or identifiers you'd like to send as arguments inside the parenthesis. If a parameter is passed by reference, the argument forwarded **must be an identifier** and must be labeled using ```ref``` or ```reference to```.
-- #### Brief
-	```csharp
-	PrintString("This is a string argument!")
-	
-	int myInt1 = 1
-	int myInt2 = 2
-	
-	int sum = GetSum(myInt1 myInt2) + 5
-	
-	IncrementInts(ref myInt1 ref myInt2)
-	```
- Optionally when calling a function outside an expression you can use ```run``` before the identifier. Inside an expression you optionally use ```value from```.
- - #### Verbose
-	```csharp
-	run PrintString("This is a string argument!")
-	
-	int myInt1 = 1
-	int myInt2 = 2
-	
-	int sum = value from GetSum(myInt1 myInt2) + 5
-	
-	run IncrementInts(reference to myInt1 reference to myInt2)
-	```
-Function calls can appear **before or after** their definitions. Functions can also be **recursive**, calling themselves within their own body.
+	To call a function, use its identifier followed by opening and closing parenthesis. If it has parameters, list the expressions or identifiers you'd like to send as arguments inside the parenthesis. If a parameter is passed by reference, the argument forwarded **must be an identifier** and must be labeled using ```ref``` or ```reference to```.
+	- #### Brief
+		```csharp
+		PrintString("This is a string argument!")
+		
+		int myInt1 = 1
+		int myInt2 = 2
+		
+		int sum = GetSum(myInt1 myInt2) + 5
+		
+		IncrementInts(ref myInt1 ref myInt2)
+		```
+	 Optionally when calling a function outside an expression you can use ```run``` before the identifier. Inside an expression you optionally use ```value from```.
+	 - #### Verbose
+		```csharp
+		run PrintString("This is a string argument!")
+		
+		int myInt1 = 1
+		int myInt2 = 2
+		
+		int sum = value from GetSum(myInt1 myInt2) + 5
+		
+		run IncrementInts(reference to myInt1 reference to myInt2)
+		```
+	- Function calls can appear **before or after** their definitions. Functions can also be **recursive**, calling themselves within their own body.
