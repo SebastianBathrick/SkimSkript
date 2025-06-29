@@ -1,70 +1,100 @@
-# What is SkimSkript?
+
+
+# Table of Contents
+### Introduction
+- [What's SkimSkript]
+- [Building the Interpreter]
+- [Your First Program]
+### Syntax Guide
+1. [Comments](#1--comments)
+2. [Syntax Flexibility](#2--syntax-flexibility)
+	- 2.1 [Symbols](#21--symbols)
+ 	- 2.2 [Float Period/Decimal Rules](#22--float-perioddecimal-rules)
+	- 2.3 [Whitespace and Lines](#23--whitespace-and-lines)
+ 	- 2.4 [Keywords/Phrases](#24--keywordsphrases)
+3. [Data Types](md#3--data-types)
+	- 3.1 [Integers](#31--integers)
+ 	- 3.2 [Floating-Points](#32--floating-points)
+  	- 3.3 [Booleans](#33--booleans)
+   	- 3.4 [Strings](#34--strings)
+4. [Variables]
+	- 4.1 [Identifiers]
+ 	- 4.2 [Variable Declarations]
+  	- 4.3 [Variable Assignments]
+   	- 4.4 [Variable Scope]
+5. [Control Structures]
+	- 5.1 [If Statements]
+ 	- 5.2 [If-Else Statements]
+  	- 5.3 [Else-If Statements]
+  
+# Introduction
+
+## What is SkimSkript?
 SkimSkript is an interpreted language designed for beginners. It features flexible, forgiving syntax and enforced typing with runtime coercion, allowing users to write in C-style braces, Python-like keywords, or even natural-language pseudocode. SkimSkript adapts to the programmer — not the other way around.
 
 With support for multiple syntactic styles, it serves as a stepping stone to more advanced languages. Beginners can experiment with static types, recursion, and procedural logic without being boxed into rigid syntax rules or overwhelmed by compiler errors.
 
 ### Programmer Freedom
-- Would you like to stick to something more reminiscent of the C family of languages? You can!
-	```csharp
-	int i = 1;
-	
-	while(i <= 100)
-	{
-	    if(i % 15 == 0)
-		print("FizzBuzz");
-	    else if(i % 3 == 0)
-		print("Fizz");
-	    else if(i % 5 == 0)
-		print("Buzz");
-	    else
-		print(i);
-		
-	 i = i + 1;
-	}
-	```
+Would you like to stick to something more reminiscent of the **C family of languages**? You can!
+```csharp
+int i = 1;
 
-- Maybe you want to mix in a little Python syntax:
-	```python
-	def int factorial(int n) =>
-	    if n == 0:
-		return 1
-	    else:
-		return n * factorial(n - 1)
+while(i <= 100)
+{
+    if(i % 15 == 0)
+	print("FizzBuzz");
+    else if(i % 3 == 0)
+	print("Fizz");
+    else if(i % 5 == 0)
+	print("Buzz");
+    else
+	print(i);
 	
-	print(factorial(5))  # Output: 120
-	```
+ i = i + 1;
+}
+```
 
-- You may want something more verbose, academic, or closer to written English. In that case, SkimSkript has got you covered:   
-	```
-	Declare int iterator as 1.
-	 
-	Run print("Please enter a number to find its square root:").
-	Declare integer input as value of read().
+Maybe you want to mix in a little **Pythonic** syntax:
+```python
+def int factorial(int n) =>
+    if n == 0:
+	return 1
+    else:
+	return n * factorial(n - 1)
+
+print(factorial(5))  # Output: 120
+```
+
+You may want something more **verbose, academic, or closer to written English**. In that case, SkimSkript has got you covered:   
+```
+Declare int iterator as 1.
+ 
+Run print("Please enter a number to find its square root:").
+Declare integer input as value of read().
+
+Invoke print:("Square root" plus value of SquareRoot(input))
+
+Define integer function SquareRoot(integer number):
+{
+	Declare integer odd as 1. Declare integer count as 0.
 	
-	Invoke print:("Square root" plus value of SquareRoot(input))
-	
-	Define integer function SquareRoot(integer number):
+	Repeat while number is at least 0:
 	{
-		Declare integer odd as 1. Declare integer count as 0.
-		
-		Repeat while number is at least 0:
-		{
-			 Set number to number minus odd.
-			 Set odd to odd plus 2. 
-			 Set count to count plus 1.
-		}
-	
-		Give back count minus 1.
+		 Set number to number minus odd.
+		 Set odd to odd plus 2. 
+		 Set count to count plus 1.
 	}
-	```
+
+	Give back count minus 1.
+}
+```
 
 ### How Does It Work?
 The SkimSkript interpreter utilizes no third-party libraries, so while it possesses the typical lexical analysis, AST parsing, and interpretation that many other tree interpreters have, it also has some quirks that enable its unique syntactic style.
 
 A prime example of this occurs during lexical analysis. After scanning each character in the source code, any alphabetic lexemes are fed into a trie structure. If a single alphabetic lexeme is a partial match for a phrase, the next lexeme is analyzed to check if it is part of that phrase as well. If a group of lexemes reaches a trie node containing a token type, those lexemes are grouped as a single token (assuming the following word does not continue a phrase). However, if the lexemes that form a partial match do not complete a phrase, then each of those lexemes is marked as an identifier. This unconventional approach allows for multi-word tokens, simplifies parsing, and accommodates multiple syntactic styles.
 
-# Setup Guide
-## 1.) Building
+## 1.) Building the Interpreter
 1. Assuming you have the **.NET 8 SDK** and have downloaded the **SkimSkript repository**, set the current working directory to the repository folder that contains ```SkimSkript.csproj``` using the terminal of your choosing. Your terminal should look something like this:
 	##### Windows PowerShell:
 	```powershell
@@ -139,33 +169,6 @@ A prime example of this occurs during lexical analysis. After scanning each char
 	the console when debugging stops.
 	Press any key to close this window . . .
 	```
-
-# Table of Contents
-### Introduction
-- [What's SkimSkript]
-- [Building the Interpreter]
-- [Your First Program]
-### Syntax Guide
-1. [Comments](#1--comments)
-2. [Syntax Flexibility](#2--syntax-flexibility)
-	- 2.1 [Symbols](#21--symbols)
- 	- 2.2 [Float Period/Decimal Rules](#22--float-perioddecimal-rules)
-	- 2.3 [Whitespace and Lines](#23--whitespace-and-lines)
- 	- 2.4 [Keywords/Phrases](#24--keywordsphrases)
-3. [Data Types](md#3--data-types)
-	- 3.1 [Integers](#31--integers)
- 	- 3.2 [Floating-Points](#32--floating-points)
-  	- 3.3 [Booleans](#33--booleans)
-   	- 3.4 [Strings](#34--strings)
-4. [Variables]
-	- 4.1 [Identifiers]
- 	- 4.2 [Variable Declarations]
-  	- 4.3 [Variable Assignments]
-   	- 4.4 [Variable Scope]
-5. [Control Structures]
-	- 5.1 [If Statements]
- 	- 5.2 [If-Else Statements]
-  	- 5.3 [Else-If Statements] 
 ## 1. ) Comments
  - To comment, use the pound sign (i.e., ```#```) at the end of a line followed by your comment:
 
