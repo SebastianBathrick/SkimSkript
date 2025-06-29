@@ -2,7 +2,7 @@
 
 # Table of Contents
 ### Introduction
-- [What's SkimSkript]
+- [What's SkimSkript](#what-is-skimskript)
 - [Building the Interpreter]
 - [Your First Program]
 ### Syntax Guide
@@ -94,7 +94,7 @@ The SkimSkript interpreter utilizes no third-party libraries, so while it posses
 
 A prime example of this occurs during lexical analysis. After scanning each character in the source code, any alphabetic lexemes are fed into a trie structure. If a single alphabetic lexeme is a partial match for a phrase, the next lexeme is analyzed to check if it is part of that phrase as well. If a group of lexemes reaches a trie node containing a token type, those lexemes are grouped as a single token (assuming the following word does not continue a phrase). However, if the lexemes that form a partial match do not complete a phrase, then each of those lexemes is marked as an identifier. This unconventional approach allows for multi-word tokens, simplifies parsing, and accommodates multiple syntactic styles.
 
-## 1.) Building the Interpreter
+## Building the Interpreter
 1. Assuming you have the **.NET 8 SDK** and have downloaded the **SkimSkript repository**, set the current working directory to the repository folder that contains ```SkimSkript.csproj``` using the terminal of your choosing. Your terminal should look something like this:
 	##### Windows PowerShell:
 	```powershell
@@ -133,7 +133,7 @@ A prime example of this occurs during lexical analysis. After scanning each char
 **Congrats!** You can now use the SkimSkript interpreter! We'll discuss the two different approaches in the next section, where we create your first SkimSkript program.
 
 
-## 2.) Your First Program
+## Your First Program
 1. First create a **.skim** file. For the sake of this tutorial we're calling the file ```HelloWorld.skim```. This file will contain your SkimSkript code.
    
 2. Open ```HelloWorld.skim``` in your IDE of choice.
