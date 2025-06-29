@@ -12,20 +12,22 @@
  	- 2.2 [Float Period/Decimal Rules](#22--float-perioddecimal-rules)
 	- 2.3 [Whitespace and Lines](#23--whitespace-and-lines)
  	- 2.4 [Keywords/Phrases](#24--keywordsphrases)
-3. [Data Types](md#3--data-types)
+3. [Data Types](#3--data-types)
 	- 3.1 [Integers](#31--integers)
  	- 3.2 [Floating-Points](#32--floating-points)
   	- 3.3 [Booleans](#33--booleans)
    	- 3.4 [Strings](#34--strings)
-4. [Variables]
+4. [Variables](#4--variables)
 	- 4.1 [Identifiers](#41--identifiers)
  	- 4.2 [Variable Declarations](#42--variable-declarations)
-  	- 4.3 [Variable Assignments]
-   	- 4.4 [Variable Scope]
-5. [Control Structures]
-	- 5.1 [If Statements]
- 	- 5.2 [If-Else Statements]
-  	- 5.3 [Else-If Statements]
+  	- 4.3 [Variable Assignments](#43--variable-assignments)
+   	- 4.4 [Variable Scope](#44--variable-scopes)
+5. [Control Structures](#5--control-structures)
+	- 5.1 [Conditional Statements](#51--conditional-statements)
+ 	- 5.2 [Loops](#52--loops)
+  	- 5.3 [Else-If Statements](#53--control-structure-blocks)
+6. [Functions](#6--functions)
+	- 6.1 [
   
 # Introduction
 
@@ -398,7 +400,7 @@ SkimSkript contains scoped variables declared in top-level, function, or control
 			print("Selection outside of valid range")
 		```
  
- - ### 5.4 ) While Loops
+ - ### 5.2 ) Loops
 	While loops provide three different syntactic options to choose from before your loop condition. ```while```, ```repeat while```, and ```repeat code while```.
 
 	```python
@@ -427,7 +429,7 @@ SkimSkript contains scoped variables declared in top-level, function, or control
 	}
 	```
  
-- ### 5.5 ) Control Structure Blocks
+- ### 5.3 ) Control Structure Blocks
 	Control structures have two separate "types" or "styles" of blocks you can choose depending on your preference.
 
 	- #### Explicit Blocks
