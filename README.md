@@ -153,17 +153,18 @@ With support for multiple syntactic styles, it serves as a stepping stone to mor
 	```
 
 # Syntax Guide 
-
-
-## 2. ) Ignored Content
-- ### 2.1 ) Comments
-	To comment, use the pound sign (i.e., ```#```) at the end of a line followed by your comment:
+## Table of Contents
+1. [Comments](#1--comments)
+2. [SyntaxFlexibility
+## 1. ) Comments
+ - To comment, use the pound sign (i.e., ```#```) at the end of a line followed by your comment:
 
 	```python
 	# This is a comment
 	```
-	
-- ### 2.2 ) Symbols
+
+## 2. ) Syntax Flexibility	
+- ### 2.1 ) Symbols
 	When it comes to non-alphabetic and non-numeric symbols, SkimSkript gives you quite a bit of leeway. You can use any symbol not on this table without interfering with your program.
 
 	#### Reserved Symbols
@@ -172,14 +173,14 @@ With support for multiple syntactic styles, it serves as a stepping stone to mor
 	|  < |=   | !=  |==   |&#124;&#124;   |&&   |
 	| ^^  | "|
 	
-- ### 2.3 ) Float Period/Decimal Rules
+- ### 2.2 ) Float Period/Decimal Rules
 	**Periods can affect your program if not used correctly.** Periods/decimals are used in floating-point numbers, but in most cases are ignored. 
 	- Single float --> ```1.0``` --> Expected Syntax
 	- Single float --> ```1.0...``` --> Extra periods are ignored
 	- Single integer --> ```.1``` --> Floats start with digits
 	- Two integers --> ```1..0``` --> Second periods are interpreted as trailing an int
 
-- ### 2.4 ) Whitespace and Lines
+- ### 2.3 ) Whitespace and Lines
 	As long as there is at least a single space between alphabetic and numeric lexemes, the interpreter ignores spacing and break lines:
 	```csharp
 	    int      myVar =      20
@@ -188,7 +189,7 @@ With support for multiple syntactic styles, it serves as a stepping stone to mor
 	 ==        50) {print("My Variable is 50")}
 	```
 
-- ### 2.5 ) Keywords/Phrases
+- ### 2.4 ) Keywords/Phrases
 	SkimSkript keywords have some quirks:
 	- **Only complete phrases and singular keywords are reserved.** Meaning using a single word from a reserved phrase is allowed as an identifier unless the whole phrase is present. For example, ```give back``` is reserved, but you can use ```give``` and ```back``` as variable names.
 	- **Reserved words and phrases are NOT case-sensitive**. So, ```Give back``` , ```iF```, and ```INTEGER``` are all valid.
@@ -217,6 +218,7 @@ With support for multiple syntactic styles, it serves as a stepping stone to mor
 
 ## 4. ) Variables
 SkimSkript contains scoped variables declared in top-level, function, or control structure blocks.
+
 - ### 4.1 ) Identifiers
 	Identifiers are tokens at least one character long that start with an alphabetic character. Following the first character can be digits or alphabetic characters until whitespace. **Identifiers ARE case sensitive.**
 
@@ -267,10 +269,9 @@ SkimSkript contains scoped variables declared in top-level, function, or control
 		 int myInt as 5
 		 myInt to myFloat
 		```
+  
 - ### 4.4 ) Variable Scopes
-	SkimSkript contains three separate scope types that determine where you can use certain variables and parameters.
-
-	 - #### Global Scope
+ 	- #### Global Scope
 		Variables declared on the top level are considered global. So you can access the variable from anywhere (including functions.))
 
 		```python
@@ -312,7 +313,7 @@ SkimSkript contains scoped variables declared in top-level, function, or control
 
 		```python
 		print("Please enter a positive number to multiply by -1:")
-		int userNumber = input()
+		int userNumber = read()
 		
 		if userNumber >= 1
 		{
@@ -561,7 +562,7 @@ SkimSkript offers statically typed support for both user-defined and built-in fu
 		}
 		```
 
-- ### 6.2 ) Function Parameters
+- ### 6.3 ) Function Parameters
 	Functions accept both statically typed pass-by-value and pass-by-reference parameters.
 
 	- #### Pass-by-Value Parameters
