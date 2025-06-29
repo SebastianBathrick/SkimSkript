@@ -25,7 +25,10 @@
  	- 5.2 [Loops](#52--loops)
   	- 5.3 [Else-If Statements](#53--control-structure-blocks)
 6. [Functions](#6--functions)
-	- 6.1 [
+	- 6.1 [Function Definitions](#61--function-definitions)
+ 	- 6.2 [Return Statements](#62--return-statements)
+  	- 6.3 [Function Parameters](#63--function-parameters)
+  	- 6.4 [Function Calls](#64--function-calls)
   
 # Introduction
 
@@ -609,7 +612,7 @@ SkimSkript offers statically typed support for both user-defined and built-in fu
 			float2 = float2 + 1
 		}
 		```
-- ### 6.3 ) Function Calls + Arguments
+- ### 6.4 ) Function Calls
 	To call a function, use its identifier followed by opening and closing parenthesis. If it has parameters, list the expressions or identifiers you'd like to send as arguments inside the parenthesis. If a parameter is passed by reference, the argument forwarded **must be an identifier** and must be labeled using ```ref``` or ```reference to```.
 
 	- #### Brief
