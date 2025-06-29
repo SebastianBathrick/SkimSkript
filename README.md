@@ -77,79 +77,80 @@ With support for multiple syntactic styles, it serves as a stepping stone to mor
 
 # Setup Guide
 - ## 1.) Building
-	1. Assuming you have the **.NET 8 SDK** and have downloaded the **SkimSkript repository**, set the current working directory to the repository folder that contains ```SkimSkript.csproj``` using the terminal of your choosing. Your terminal should look something like this:
-		##### Windows PowerShell:
-		```powershell
-		PS C:\User\Sebastian> cd SkimSkript
-		```
-	   
-		##### Bash:
-		```bash
-		sebastian@computer:~$ cd SkimSkript
-		```
-	2. Once in the same directory as the C# project file, type ```dotnet build``` and enter.
-		##### Windows PowerShell:
-		```powershell
-		PS C:\User\Sebastian\SkimSkript> dotnet build
-		```
-		
-		##### Bash:
-		```bash
-		sebastian@computer:~/SkimSkript$ dotnet build
-		```
+1. Assuming you have the **.NET 8 SDK** and have downloaded the **SkimSkript repository**, set the current working directory to the repository folder that contains ```SkimSkript.csproj``` using the terminal of your choosing. Your terminal should look something like this:
+	##### Windows PowerShell:
+	```powershell
+	PS C:\User\Sebastian> cd SkimSkript
+	```
+   
+	##### Bash:
+	```bash
+	sebastian@computer:~$ cd SkimSkript
+	```
+2. Once in the same directory as the C# project file, type ```dotnet build``` and enter.
+	##### Windows PowerShell:
+	```powershell
+	PS C:\User\Sebastian\SkimSkript> dotnet build
+	```
 	
-	3. If the interpreter compiled correctly, you should see a message in your terminal that resembles the following:
-		```powershell
-		  Determining projects to restore...
-		  All projects are up-to-date for restore.
-		  SkimSkript -> 	 C:\User\Sebastian\SkimSkript\bin\Debug\net8.0\skimskript.dll
-		
-		Build succeeded.
-		    0 Warning(s)
-		    0 Error(s)
-		
-		Time Elapsed 00:00:00.74
-		```
-		**Note**: If any yellow warning text appears in the terminal after executing the command, there is no need to fear. So long as you can see ```Build succeeded``` (possibly among the warning(s)) and ```Time Elapsed XX:XX:XX.XX``` at the bottom of the message; then, the interpreter should be compiled and ready to go. 
-	<br><br>
-	**Congrats!** You can now use the SkimSkript interpreter! We'll discuss the two different approaches in the next section, where we create your first SkimSkript program.
+	##### Bash:
+	```bash
+	sebastian@computer:~/SkimSkript$ dotnet build
+	```
+
+3. If the interpreter compiled correctly, you should see a message in your terminal that resembles the following:
+	```powershell
+	  Determining projects to restore...
+	  All projects are up-to-date for restore.
+	  SkimSkript -> 	 C:\User\Sebastian\SkimSkript\bin\Debug\net8.0\skimskript.dll
+	
+	Build succeeded.
+	    0 Warning(s)
+	    0 Error(s)
+	
+	Time Elapsed 00:00:00.74
+	```
+	**Note**: If any yellow warning text appears in the terminal after executing the command, there is no need to fear. So long as you can see ```Build succeeded``` (possibly among the warning(s)) and ```Time Elapsed XX:XX:XX.XX``` at the bottom of the message; then, the interpreter should be compiled and ready to go. 
+<br><br>
+**Congrats!** You can now use the SkimSkript interpreter! We'll discuss the two different approaches in the next section, where we create your first SkimSkript program.
 
 
 - ## 2.) Your First Program
-	1. First create a **.skim** file. For the sake of this tutorial we're calling the file ```HelloWorld.skim```. This file will contain your SkimSkript code.
-	   
-	2. Open ```HelloWorld.skim``` in your IDE of choice.
-	 
-	3. Now with the file open, you can write a classic "Hello World" program by writing ```print``` followed by an open parenthesis, then ```"Hello World"``` (include the double quotes), and finish with a closing parenthesis:	
-		```python
-		print("Hello World")
-		```
-	 
-	4. Save your modified ```HelloWorld.skim```
-	 
-	5. Now let's run ```HelloWorld.skim``` in the interpreter.
+1. First create a **.skim** file. For the sake of this tutorial we're calling the file ```HelloWorld.skim```. This file will contain your SkimSkript code.
+   
+2. Open ```HelloWorld.skim``` in your IDE of choice.
+ 
+3. Now with the file open, you can write a classic "Hello World" program by writing ```print``` followed by an open parenthesis, then ```"Hello World"``` (include the double quotes), and finish with a closing parenthesis:	
+	```python
+	print("Hello World")
+	```
+ 
+4. Save your modified ```HelloWorld.skim```
+ 
+5. Now let's run ```HelloWorld.skim``` in the interpreter.
+
+	Set your current working directory to the repository folder that contains ```SkimSkript.csproj```. Then, use the ```dotnet run``` command and pass the ```HelloWorld.skim path``` as an argument.
+
+	##### Windows PowerShell:
+	```powershell
+	PS C:\User\Sebastian\SkimSkript> dotnet run -- HelloWorld.skim
+	```
 	
-		Set your current working directory to the repository folder that contains ```SkimSkript.csproj```. Then, use the ```dotnet run``` command and pass the ```HelloWorld.skim path``` as an argument.
-		##### Windows PowerShell:
-		```powershell
-		PS C:\User\Sebastian\SkimSkript> dotnet run -- HelloWorld.skim
-		```
-		
-		##### Bash:
-		```bash
-		sebastian@computer:~/SkimSkript$ dotnet run -- HelloWorld.skim
-		```
-		**(If HelloWorld.skim is located elsewhere, use the full or relative path to the file instead.)**
-	   
-	6. If you see what's below then congratuations! You coded your first SkimSkript program!
-		```powershell
-	 	Hello World
-	
-		C:\Users\Sebastian\Desktop\SkimSkript\bin\Debug\net8.0\skimskript.exe (process 27136) exited with code 0 (0x0).
-		To automatically close the console when debugging stops, enable Tools->Options->Debugging->Automatically close
-	 	the console when debugging stops.
-		Press any key to close this window . . .
-	 	```
+	##### Bash:
+	```bash
+	sebastian@computer:~/SkimSkript$ dotnet run -- HelloWorld.skim
+	```
+	**(If HelloWorld.skim is located elsewhere, use the full or relative path to the file instead.)**
+   
+7. If you see what's below then congratuations! You coded your first SkimSkript program!
+	```powershell
+	Hello World
+
+	C:\Users\Sebastian\Desktop\SkimSkript\bin\Debug\net8.0\skimskript.exe (process 27136) exited with code 0 (0x0).
+	To automatically close the console when debugging stops, enable Tools->Options->Debugging->Automatically close
+	the console when debugging stops.
+	Press any key to close this window . . .
+	```
 
 # Syntax Guide 
 
@@ -157,12 +158,14 @@ With support for multiple syntactic styles, it serves as a stepping stone to mor
 ## 2. ) Ignored Content
 - ### 2.1 ) Comments
 	To comment, use the pound sign (i.e., ```#```) at the end of a line followed by your comment:
+
 	```python
 	# This is a comment
 	```
 	
 - ### 2.2 ) Symbols
 	When it comes to non-alphabetic and non-numeric symbols, SkimSkript gives you quite a bit of leeway. You can use any symbol not on this table without interfering with your program.
+
 	#### Reserved Symbols
 	|+   | -  |*   | /  |%   | >  |
 	| ------------ | ------------ | ------------ | ------------ | ------------ | ------------ |
@@ -199,19 +202,24 @@ With support for multiple syntactic styles, it serves as a stepping stone to mor
 	|  float | bool  | boolean  |  string | is  |  or | 
 	|  and | then  | minus  |  plus |   
 ## 3. ) Data Types
+
 - ### 3.1 ) Integers
 	Whole numbers that truncate digits to the right of the decimal point. The data type can be written as ```int``` or ```integer```. Literals can be purely digits or a negative sign followed by digits. Examples: ```29```, ```5```, and ```-300```.
 
 - ### 3.2 ) Floating-Points
 	Numbers with digits to the right of a single decimal point. The data type can be written as ```float``` or ```floating point```. The literals are an optional negative sign followed by one or more digits, a single decimal, and trailing digit(s). Examples: ```1.0```, ```432.992```, and ```-32.12```.
+
 - ### 3.3 ) Booleans
 	True or false values. The data type can be written as ```bool``` or ```boolean```. The literals are either ```true``` or ```false```.
+
 - ### 3.4 ) Strings
 	Stored text that can be appended to, printed, or read in through user input. The data type can be written as ```string``` The literals are characters enclosed in double parenthesis. Example: ```"This is a string literal!"```
+
 ## 4. ) Variables
 SkimSkript contains scoped variables declared in top-level, function, or control structure blocks.
 - ### 4.1 ) Identifiers
-	Identifiers are tokens at least one character long that start with an alphabetic character. Following the first character can be digits or alphabetic characters until whitespace. **Identifiers ARE case sensitive.** 
+	Identifiers are tokens at least one character long that start with an alphabetic character. Following the first character can be digits or alphabetic characters until whitespace. **Identifiers ARE case sensitive.**
+
 	- ```a``` -->Valid identifier
 	- ```myVar2``` --> Valid identifier
 	- ```2Var``` --> Invalid identifier
@@ -219,6 +227,7 @@ SkimSkript contains scoped variables declared in top-level, function, or control
 
 - ### 4.2 ) Variable Declarations
 	You can declare variables by identifying a type and, optionally, an initial value.
+
 	 - #### Verbose
 		```csharp
 		declare integer myVariable as 10
@@ -263,6 +272,7 @@ SkimSkript contains scoped variables declared in top-level, function, or control
 
 	 - #### Global Scope
 		Variables declared on the top level are considered global. So you can access the variable from anywhere (including functions.))
+
 		```python
 		string globalVar = "I can be accessed anywhere after my declaration!"
 		ModifyGlobalVar()
@@ -276,6 +286,7 @@ SkimSkript contains scoped variables declared in top-level, function, or control
  
 	- #### Local Scope
 		Variables declared in a function body are only accessible within that body (the function's block and nested blocks). Similarly, parameters of a function are only accessible within that function's body but, conversely, are declared in the function definition.
+
 		```python
 		# Parameter "rightOperand" can only be used inside the block below
 		def AddFiveAndPrint(int rightOperand) 
@@ -298,6 +309,7 @@ SkimSkript contains scoped variables declared in top-level, function, or control
 
 	- #### Block Scope
 		Inside control structure blocks, any variables declared are only to be accessed from that block or a nested block.
+
 		```python
 		print("Please enter a positive number to multiply by -1:")
 		int userNumber = input()
@@ -323,6 +335,7 @@ SkimSkript contains scoped variables declared in top-level, function, or control
 ## 5. ) Control Structures
 - ### 5.1 ) If Statements
 	If statements work virtually the same as any other language, but you have the option to use the ```then``` keyword.
+
 	```csharp
 	if myCondition is true then
 		print("myCondition is true")
@@ -333,6 +346,7 @@ SkimSkript contains scoped variables declared in top-level, function, or control
 
 - ### 5.2 ) If-Else Statements
 	If-else statements give you a choice of two different keywords to serve as "else." ```else``` and ```otherwise``` that can be used interchangably.
+
 	```python
 	# This can either be the verbose or brief "if." The interpreter will accept either.
 	if myCondition is true 
@@ -347,6 +361,7 @@ SkimSkript contains scoped variables declared in top-level, function, or control
 	```
 - ### 5.3 ) Else-If Statements
 	Else-if statements have many variants to choose from. You can use ```else if```, ```elif```, ```instead if```, ```alternatively if```, and ```otherwise if```.
+
 	```python
 	print("Please pick a number from 0-5:")
 	int userSelection = read()
@@ -368,6 +383,7 @@ SkimSkript contains scoped variables declared in top-level, function, or control
 	```
  - ### 5.4 ) While Loops
 	While loops provide three different syntactic options to choose from before your loop condition. ```while```, ```repeat while```, and ```repeat code while```.
+
 	```python
 	int iterator1 = 0
 	
@@ -395,8 +411,10 @@ SkimSkript contains scoped variables declared in top-level, function, or control
 	```
 - ### 5.5 ) Control Structure Blocks
 	Control structures have two separate "types" or "styles" of blocks you can choose depending on your preference.
+
 	- #### Explicit Blocks
 		You can define an explicit block by an opening and closing curly brace (i.e., ```{``` and ```}```.) Explicit blocks can contain one or more statements. However, a block must be explicit if it includes more than one statement (as mentioned in the implicit blocks section).
+
 		```python
 		bool isRunning = true
 		
@@ -415,6 +433,7 @@ SkimSkript contains scoped variables declared in top-level, function, or control
 		```
 	- #### Implicit Blocks
 		If not defined by opening and closing curly braces, then the interpreter will treat an expected block as implicit. Unlike explicit blocks, only singular statements are allowed by the interpreter in implicit blocks.
+
 		```python
 		bool isRunning = true
 		int iterator = 0
@@ -436,6 +455,7 @@ SkimSkript contains scoped variables declared in top-level, function, or control
 		```
 ## 6. ) Functions
 SkimSkript offers statically typed support for both user-defined and built-in functions.
+
 - ### 6.1 ) Function Definitions
 	- #### Brief
 		A brief function definition begins with the keyword ```def```, followed by an optional ``` data type```, a case-sensitive ```identifier```, parentheses ```()``` (even if empty), and a ```block```.
@@ -468,6 +488,7 @@ SkimSkript offers statically typed support for both user-defined and built-in fu
 		```
 	 - #### Mix
 		And of course, you can combine the syntaxes.
+
 		```python
 		def integer GetMeaningOfLife() { give back 42 }
 		
@@ -481,6 +502,7 @@ SkimSkript offers statically typed support for both user-defined and built-in fu
 - ### 6.2 ) Return Statements
 	- #### Void Functions
 		A function can exit at any point in its body using a return statement — either the keyword ```return``` or the phrase ```give back```. For void functions (functions that don't return a value), return statements are optional but can still be used for clarity or early exits.
+
 		```python
 		def ExitEarly()
 		{
@@ -510,6 +532,7 @@ SkimSkript offers statically typed support for both user-defined and built-in fu
 
 	- #### Value-Returning Function
 		If a function is defined to return a value, it must use return or give back followed by an ```expression``` before exiting. That expression must match the declared return type or be coercible to it at runtime. If it doesn't, the interpreter will raise an error.
+
 		```python
 		def int ReturnOnePlusOne()
 		{
@@ -543,6 +566,7 @@ SkimSkript offers statically typed support for both user-defined and built-in fu
 
 	- #### Pass-by-Value Parameters
 		Parameter declarations appear inside the parentheses to the left of the identifier. A ```data type``` followed by an ```identifier``` denotes a pass-by-value parameter. To declare multiple parameters, repeat this pattern to the right of the first.
+
 		```python
 		def PrintString(int stringParameter) {
 			print("String argument: " + stringParameter)
@@ -554,6 +578,7 @@ SkimSkript offers statically typed support for both user-defined and built-in fu
 		```
 	- #### Pass-by-Reference Parameters
 		Pass-by-reference parameters follow the same rules as pass-by-value, with one key difference: pass-by-reference declarations require the use of ```ref``` or ```reference to``` before the data type.
+
 		```python
 		def IncrementInts(ref int int1 ref int int2) {
 			int1 = int1 + 1
@@ -567,6 +592,7 @@ SkimSkript offers statically typed support for both user-defined and built-in fu
 		```
 - ### 6.3 ) Function Calls + Arguments
 	To call a function, use its identifier followed by opening and closing parenthesis. If it has parameters, list the expressions or identifiers you'd like to send as arguments inside the parenthesis. If a parameter is passed by reference, the argument forwarded **must be an identifier** and must be labeled using ```ref``` or ```reference to```.
+
 	- #### Brief
 		```csharp
 		PrintString("This is a string argument!")
@@ -577,9 +603,10 @@ SkimSkript offers statically typed support for both user-defined and built-in fu
 		int sum = GetSum(myInt1 myInt2) + 5
 		
 		IncrementInts(ref myInt1 ref myInt2)
-		```
-	 Optionally when calling a function outside an expression you can use ```run``` before the identifier. Inside an expression you optionally use ```value from```.
+		```	
 	 - #### Verbose
+ 		 Optionally when calling a function outside an expression you can use ```run``` before the identifier. Inside an expression you optionally use ```value from```.
+    
 		```csharp
 		run PrintString("This is a string argument!")
 		
@@ -590,4 +617,4 @@ SkimSkript offers statically typed support for both user-defined and built-in fu
 		
 		run IncrementInts(reference to myInt1 reference to myInt2)
 		```
-	- Function calls can appear **before or after** their definitions. Functions can also be **recursive**, calling themselves within their own body.
+	**Note:** Function calls can appear **before or after** their definitions. Functions can also be **recursive**, calling themselves within their own body.
