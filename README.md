@@ -63,39 +63,17 @@ With support for multiple syntactic styles, it serves as a stepping stone to mor
 
 	A prime example of this occurs during lexical analysis. After scanning each character in the source code, any alphabetic lexemes are fed into a trie structure. If a single alphabetic lexeme is a partial match for a phrase, the next lexeme is analyzed to check if it is part of that phrase as well. If a group of lexemes reaches a trie node containing a token type, those lexemes are grouped as a single token (assuming the following word does not continue a phrase). However, if the lexemes that form a partial match do not complete a phrase, then each of those lexemes is marked as an identifier. This unconventional approach allows for multi-word tokens, simplifies parsing, and accommodates multiple syntactic styles.
 
-## What Features Does it Have?
-As of now, SkimSkript has the following:
-- | Variables | Assignments  | Static Typing | Coercion | Nested Expressions
-| :------------: | :------------: | :------------: | :------------: |
-| Variables  | Assignments  | Loop Statements| Conditional Statements  |Different Scope Types
-| Value+Void Functions  | Value+Reference Parameters  |  Parameters
-- Statically typed variable declarations & assignments.
-- User-defined functions with optional statically typed return types.
-- Global, local, and block scopes.
-- Reference and value parameters.
-- Recursive functions
-- Nested expressions.
-- String concatenation.
-- Runtime coercion.
-- IO built-in functions
-- Exponents
-- Semantic analysis
-- Ignored Symbols
-- Implicit blocks
-- Assertion Statements
-  
-## What Features are Coming Next?
-**(More detailed and beginner-friendly guides coming soon!)**<br>
-The following features I'd like to add next are:
-- More in-depth + novice guides
-- More advanced semantic analysis
-- Increment operator
-- For loops
-- Do while loops
-- Switch control structure
-- Composite types
-- File IO built-in functions
-- String escape characters
+## What Features?
+|Current Features||||||
+| ------------ | ------------ | ------------ | ------------ | ------------ | ------------ |
+|Variables|Assignments|Static Typing|Runtime Coercion|Nested Expressions|Variables|
+|Value+Void Functions|Value+Reference Parameters|Recursion|String Concatenation|Explicit+Implicit Blocks|I\O Functions|
+|Assertion Statements|Comments|Brief+Verbose+Mix Syntax Styles|Ignored Characters
+
+|Coming Soon |(No Particular Order)||
+| ------------ | ------------ | ------------ |
+|In-Depth Guide| Novice Guide |Composite Types|  
+|String Escape Sequences|Optimized Scopes|Custom Code Editor
 
 # Building the Interpreter
 1. Assuming you have the **.NET 8 SDK** and have downloaded the **SkimSkript repository**, set the current working directory to the repository folder that contains ```SkimSkript.csproj``` using the terminal of your choosing. Your terminal should look something like this:
@@ -152,21 +130,19 @@ The following features I'd like to add next are:
 5. Save your modified ```HelloWorld.skim```
 	<br>
  
-6. You have two ways to execute ```HelloWorld.skim```.
-	- #### Option A
-		Set your current working directory to the repository folder that contains ```SkimSkript.csproj```. Then, use the ```dotnet run``` command and pass the ```HelloWorld.skim path``` as an argument.
-		##### Windows PowerShell:
-		```powershell
-		PS C:\User\Sebastian\SkimSkript> dotnet run -- HelloWorld.skim
-		```
-		
-		##### Bash:
-		```bash
-		sebastian@computer:~/SkimSkript$ dotnet run -- HelloWorld.skim
-		```
-	 	**(If HelloWorld.skim is located elsewhere, use the full or relative path to the file instead.)**
- 	#### Option B
+6. Now let's run ```HelloWorld.skim``` in the interpreter.
 
+	Set your current working directory to the repository folder that contains ```SkimSkript.csproj```. Then, use the ```dotnet run``` command and pass the ```HelloWorld.skim path``` as an argument.
+	##### Windows PowerShell:
+	```powershell
+	PS C:\User\Sebastian\SkimSkript> dotnet run -- HelloWorld.skim
+	```
+	
+	##### Bash:
+	```bash
+	sebastian@computer:~/SkimSkript$ dotnet run -- HelloWorld.skim
+	```
+	**(If HelloWorld.skim is located elsewhere, use the full or relative path to the file instead.)**
 
 # Syntax Guide 
 
