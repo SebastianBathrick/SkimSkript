@@ -27,7 +27,7 @@
 6. [Functions](#6--functions)
 	- 6.1 [Function Definitions](#61--function-definitions)
  	- 6.2 [Return Statements](#62--return-statements)
-  	- 6.3 [Function Parameters](#63--function-parameters)
+  	- 6.3 [Function Reference+Value Parameters](#63--function-referencevalue-parameters)
   	- 6.4 [Function Calls](#64--function-calls)
   
 # Introduction
@@ -95,7 +95,22 @@ Define integer function SquareRoot(integer number):
 ### How Does It Work?
 The SkimSkript interpreter utilizes no third-party libraries, so while it possesses the typical lexical analysis, AST parsing, and interpretation that many other tree interpreters have, it also has some quirks that enable its unique syntactic style.
 
-A prime example of this occurs during lexical analysis. After scanning each character in the source code, any alphabetic lexemes are fed into a trie structure. If a single alphabetic lexeme is a partial match for a phrase, the next lexeme is analyzed to check if it is part of that phrase as well. If a group of lexemes reaches a trie node containing a token type, those lexemes are grouped as a single token (assuming the following word does not continue a phrase). However, if the lexemes that form a partial match do not complete a phrase, then each of those lexemes is marked as an identifier. This unconventional approach allows for multi-word tokens, simplifies parsing, and accommodates multiple syntactic styles.
+A prime example of this occurs during lexical analysis. After scanning the source code and creating lexemes, the lexer's evaluator feeds alphabetic lexemes into a trie structure. If a single alphabetic lexeme is a partial match for a phrase, the next lexeme is analyzed to check if it is part of that phrase as well. If a group of lexemes reaches a trie node containing a token type, those lexemes are grouped as a single token (assuming the following word does not continue a phrase). However, if a partial match does not result in a full match with subsequent lexemes, the system will backtrack, mark the first lexeme as an identifier, and initiate a new trie search with the second lexeme.
+> ### First Search (at Trie Root):
+> 
+> "instead" (**Partial Match**) --> "else" (**STOP Invalid Phrase**) --> "if" (**Not Reached**)
+> 
+> ### Store First Lexeme:
+> 
+> "instead" becomes **Token of type Identifier**
+> 
+> ### Second Search (at Trie Root)
+> 
+> "else" (**Partial Match**) --> "If" (**Full Match**)
+> 
+> ### Store Full Phrase:
+> 
+> "else" & "if" becomes **Token of type ElseIf**
 
 ## Building the Interpreter
 1. Assuming you have the **.NET 8 SDK** and have downloaded the **SkimSkript repository**, set the current working directory to the repository folder that contains ```SkimSkript.csproj``` using the terminal of your choosing. Your terminal should look something like this:
@@ -583,7 +598,7 @@ SkimSkript offers statically typed support for both user-defined and built-in fu
 		}
 		```
 
-- ### 6.3 ) Function Parameters
+- ### 6.3 ) Function Reference+Value Parameters
 	Functions accept both statically typed pass-by-value and pass-by-reference parameters.
 
 	- #### Pass-by-Value Parameters
