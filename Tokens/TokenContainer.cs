@@ -1,6 +1,7 @@
 ﻿using SkimSkript.TokenManagement.Tokens;
 using SkimSkript.ErrorHandling;
 using SkimSkript.CoreHelpers.LexicalAnalysis;
+using SkimSkript.Monitoring.ErrorHandling;
 using System.Text;
 
 namespace SkimSkript.TokenManagement
@@ -87,7 +88,22 @@ namespace SkimSkript.TokenManagement
         public void MatchAndRemove(TokenType tokenType)
         {
             if (_tokenList[_currentTokenIndex].Type != tokenType)
-                throw new SyntaxError(tokenType, this, ErrorTokenPosition.InPlace);
+            {
+                var expected = SkimSkriptException.SplitPascalCaseManual(
+                       tokenType.ToString()).ToLower();
+
+                var received = SkimSkriptException.SplitPascalCaseManual(
+                        _tokenList[_currentTokenIndex].Type.ToString()).ToLower();
+
+                throw new TokenContainerException(
+                    TokenContainerError.TokenMismatch,
+                    _tokenList[_currentTokenIndex],
+                    _lexemes,
+                    expected,
+                    received
+                    );
+            }
+
 
             Remove(tokenType);
         }
@@ -102,7 +118,16 @@ namespace SkimSkript.TokenManagement
                     return;
                 }
             }
-            throw new SyntaxError($"Expected one of the following tokens: {string.Join(", ", tokenTypes)}", this, ErrorTokenPosition.InPlace);
+            var received = SkimSkriptException.SplitPascalCaseManual(
+                    _tokenList[_currentTokenIndex].Type.ToString());
+
+            throw new TokenContainerException(
+                TokenContainerError.TokenMismatch,
+                _tokenList[_currentTokenIndex],
+                _lexemes,
+                string.Join(", ", tokenTypes),
+                received
+                );
         }
 
         /// <summary>Checks if the frontmost token is of a given <see cref="TokenType"/>, and if so, remove said token.</summary>
@@ -141,16 +166,6 @@ namespace SkimSkript.TokenManagement
         private string GetLexemeFromToken(int index) =>
             _lexemes.GetLexemesAsString(_tokenList[index].LexemeStartIndex, _tokenList[index].LexemeEndIndex);
 
-        /// <summary>Gets line number associated with the token at the pointer's position.</summary>
-        private int GetCurrentTokenLineIndex(List<Token> tokensOnLine)
-        {
-            for (int i = 0; i < tokensOnLine.Count; i++)
-                if (tokensOnLine[i] == _tokenList[_currentTokenIndex])
-                    return i;
-
-            return 0;
-        }
-
         private TokenType ThrowEndOfFileError(TokenType tokenType = TokenType.Undefined) =>
             throw new SyntaxError($"Expected {tokenType} token but instead reached the end of file.", this, ErrorTokenPosition.Backward);
 
@@ -166,15 +181,12 @@ namespace SkimSkript.TokenManagement
             }
             return sb.ToString();
         }
-
-
-
         public string GetLabeledFileContents()
         {
             var sb = new StringBuilder();
 
             foreach (var token in _tokenList)
-                sb.Append(_lexemes.GetLexemesAsStringLines(token.LexemeStartIndex, token.LexemeEndIndex) + $"{token.Type}");
+                sb.Append(token.ToString() + ": " + _lexemes.GetLexemesAsStringLines(token.LexemeStartIndex, token.LexemeEndIndex));
 
             return sb.ToString();
         }

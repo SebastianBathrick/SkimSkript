@@ -31,7 +31,7 @@ class Program
                 return -1;
             }
 
-            core.Execute(linesOfCode!); // Interpret the lines of code
+            core.Execute(linesOfCode!, true); // Interpret the lines of code
         }
 
         return 0;

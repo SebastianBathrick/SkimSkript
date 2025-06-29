@@ -233,10 +233,10 @@ assert num % 5 == 0
 assert num % 7 == 3
 
 # Using 'left after dividing by' keyword
-assert num left after dividing by 2 is 0
-assert num left after dividing by 3 is 1
-assert num left after dividing by 5 is 0
-assert num left after dividing by 7 is 3
+assert num remainder after dividing by 2 is 0
+assert num remainder after dividing by 3 is 1
+assert num remainder after dividing by 5 is 0
+assert num remainder after dividing by 7 is 3
 
 print("Modulus comparisons passed!")
 

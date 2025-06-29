@@ -90,7 +90,7 @@ namespace SkimSkript.Parsing
         #endregion
 
         #region Statements
-        #region Primary Statement Parsing Methods
+        #region Primary Statement Methods
         /// <summary>Determines using the front-most token what type of statement needs to be parsed
         /// next, and then parses that statement.</summary>
         /// <exception cref="SyntaxError"></exception>
@@ -241,7 +241,7 @@ namespace SkimSkript.Parsing
         #endregion
 
         #region Expressions
-        #region Primary Expression Parsing
+        #region Expression -> Term -> Factors
         /// <summary>Parses a logical, comparison, and/or arithmetic expressions. Starting with
         /// logical expressions as they are the lowest precedence level.</summary>
         private Node GetExpression() => ParseLogicalExpression();
@@ -328,7 +328,7 @@ namespace SkimSkript.Parsing
         }
         #endregion
 
-        #region Extra Feature Expressions Parsing
+        #region Additional Expression Features
         private Node ParseInnerExpression()
         {
             var enclosedExpression = GetExpression();
@@ -401,17 +401,6 @@ namespace SkimSkript.Parsing
                 Type t when t == typeof(StringValueNode) => new StringValueNode(),
                 _ => throw new SyntaxError($"Invalid value node type: {valueNodeType}.", Tokens, ErrorTokenPosition.Backward)
             };
-
-        private void GetDeclaredType()
-        {
-            //var tokenType = _tokens.RemoveAndGetType();
-
-            //if (!IsCollectionDataType(_tokens.PeekType()))
-               // return GetTypeValueNode(tokenType);
-
-
-            // The list keyword trails and can enclose the type
-        }
 
         private Node GetIdentifier() => 
             new IdentifierNode(Tokens.MatchRemoveAndGetLexeme(TokenType.Identifier));

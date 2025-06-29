@@ -185,10 +185,10 @@ namespace SkimSkript.Interpretation
                 var parameter = (ParameterNode)parameters[i];
 
                 if (parameter.IsReference != rawArg.IsReference)
-                    throw new RuntimeError(RuntimeErrorCode.ArgumentPassTypeMismatch);
+                    throw new InterpreterError(RuntimeErrorCode.ArgumentPassTypeMismatch);
 
                 if (parameter.DataType != evaluatedArgs[i].GetType())
-                    throw new RuntimeError(RuntimeErrorCode.ArgumentDataTypeMismatch);
+                    throw new InterpreterError(RuntimeErrorCode.ArgumentDataTypeMismatch);
 
                 // If pass-by-value coerce the evaluated argument to the parameter's data type.
                 if (!rawArg.IsReference)
@@ -221,7 +221,7 @@ namespace SkimSkript.Interpretation
                 {
                     var argCount = args == null ? 0 : args.Length;
                     var paramCount = parameters == null ? 0 : parameters.Length;
-                    throw new RuntimeError(RuntimeErrorCode.ArgumentInvalidCount, argCount, paramCount);
+                    throw new InterpreterError(RuntimeErrorCode.ArgumentInvalidCount, argCount, paramCount);
                 }
             }
         }

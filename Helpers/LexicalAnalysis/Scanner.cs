@@ -1,6 +1,5 @@
 ﻿using SkimSkript.CoreHelpers.LexicalAnalysis;
 using SkimSkript.ErrorHandling;
-using SkimSkript.TokenManagement;
 using System.Text;
 
 namespace SkimSkript.LexicalAnalysis.Helpers
@@ -174,8 +173,6 @@ namespace SkimSkript.LexicalAnalysis.Helpers
             _columnIndex = Lines[_lineIndex].Length;
         }
         #endregion
-
-
 
         #region Helper Methods
         private CharType GetDequeuedCharType() => GetCharType(Lines[_lineIndex][_columnIndex - 1]);

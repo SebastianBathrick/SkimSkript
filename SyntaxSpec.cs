@@ -8,13 +8,15 @@ namespace SkimSkript.Syntax
         public static readonly (string text, TokenType key)[] reservedWords =
         {
             #region Function Related
+            // TODO: Convert function data types to use the same parsing as variables+parameters
+
             // Function Definitions (Shorthand)
             ("def", TokenType.FunctionVoidDefine), ("def int", TokenType.FunctionIntDefine),
             ("def float", TokenType.FunctionFloatDefine), ("def bool", TokenType.FunctionFloatDefine),
             ("def string", TokenType.FunctionStringDefine),
 
             ("def integer", TokenType.FunctionIntDefine),
-            ("def floating point", TokenType.FunctionFloatDefine), ("def boolean", TokenType.FunctionFloatDefine),
+            ("def floating point", TokenType.FunctionFloatDefine), ("def boolean", TokenType.FunctionFloatDefine), 
 
             // Define (Data Type) Function
             ("define function", TokenType.FunctionVoidDefine), ("define int function", TokenType.FunctionIntDefine),
@@ -34,12 +36,25 @@ namespace SkimSkript.Syntax
             ("as", TokenType.VariableInitialize),
             #endregion
 
+            ("int",TokenType.IntegerKeyword),
+            ("float",TokenType.FloatKeyword),
+            ("bool",TokenType.BoolKeyword),
+            ("string",TokenType.StringKeyword),
+
+            ("integer", TokenType.IntegerKeyword),
+            ("floating point", TokenType.FloatKeyword),
+            ("boolean", TokenType.BoolKeyword),
+
+            ("false",TokenType.False),
+            ("true",TokenType.True),
+
+
             ("run",TokenType.FunctionCallStart),
             ("value of",TokenType.FunctionCallStartExpression),
             ("return",TokenType.Return),
             ("give back", TokenType.Return),
-            ("false",TokenType.False),
-            ("true",TokenType.True),
+
+
             ("if",TokenType.If),
             ("else if",TokenType.ElseIf),
             ("instead if",TokenType.ElseIf),
@@ -47,17 +62,14 @@ namespace SkimSkript.Syntax
             ("elif", TokenType.ElseIf),
             ("else",TokenType.Else),
             ("otherwise", TokenType.Else),
+
             ("while",TokenType.WhileLoop),
             ("repeat code while",TokenType.WhileLoop),
-            ("repeat while", TokenType.WhileLoop),
-            ("int",TokenType.IntegerKeyword),
-            ("integer", TokenType.IntegerKeyword),
-            ("floating point", TokenType.FloatKeyword),
-            ("boolean", TokenType.BoolKeyword),
-            ("float",TokenType.FloatKeyword),
-            ("string",TokenType.StringKeyword),
-            ("bool",TokenType.BoolKeyword),
+            ("repeat while", TokenType.WhileLoop),         
+            
+           
             ("as follows", TokenType.FunctionImpliedBlock),
+
             ("is", TokenType.Equals),
             ("is not", TokenType.NotEquals),
             ("is at least", TokenType.GreaterThanOrEqual),
@@ -68,7 +80,8 @@ namespace SkimSkript.Syntax
             ("and", TokenType.And),
             ("or just", TokenType.Xor),
             ("then", TokenType.Then),
-            ("left after dividing by", TokenType.Modulus),
+
+            ("remainder after dividing by", TokenType.Modulus),
             ("assert", TokenType.Assertion)
         };
 

@@ -59,7 +59,7 @@ def bool IsTrue()
     return true
 }
 
-define boolean function IsFalse()
+define boolan function IsFalse()
 {
     give back false
 }

@@ -1,7 +1,8 @@
-﻿using SkimSkript.LexicalAnalysis;
-using SkimSkript.Interpretation;
-using SkimSkript.Parsing;
+﻿using SkimSkript.Interpretation;
+using SkimSkript.LexicalAnalysis;
 using SkimSkript.Logging;
+using SkimSkript.Monitoring.ErrorHandling;
+using SkimSkript.Parsing;
 
 namespace SkimSkript
 {
@@ -18,13 +19,21 @@ namespace SkimSkript
         ///<summary> Performs lexical analysis, parses, and executes the provided code. </summary>
         public void Execute(string[] sourceCode, bool isDebugging = false)
         {
-            var tokens = _lexer.Tokenize(sourceCode);
+            try
+            {
+                var tokens = _lexer.Tokenize(sourceCode);
 
-            var treeRoot = _parser.BuildAbstractSyntaxTree(tokens);
+                var treeRoot = _parser.BuildAbstractSyntaxTree(tokens);
 
-            _interpreter.Execute(treeRoot);
+                _interpreter.Execute(treeRoot);
 
-            _wasExecutionSuccessful = true;
+                _wasExecutionSuccessful = true;
+            }
+            catch (TokenContainerException ex)
+            {
+                var logger = new ConsoleLogger();
+                logger.Error(ex.Message, ex.Properties);
+            }
         }
     }
 }

@@ -37,6 +37,10 @@ namespace SkimSkript.CoreHelpers.LexicalAnalysis
             return true;
         }
 
+        public int GetLexemeLineByIndex(int lexemeIndex) => _lexemeList[lexemeIndex].lineIndex;
+
+        public int GetLexemeColumnByIndex(int lexemeIndex) => _lexemeList[lexemeIndex].startColumn;
+
         public string GetLexemesAsString(int startIndex, int endIndex)
         {
             var sb = new StringBuilder();
@@ -60,8 +64,6 @@ namespace SkimSkript.CoreHelpers.LexicalAnalysis
                     sb.Append((_lexemeList[startIndex].lineIndex + 1).ToString("D3") + "| ");
                     sb.Append(new string(' ', _lexemeList[startIndex].startColumn));
                 }
-
-
             }
             else
                 sb.Append((_lexemeList[startIndex].lineIndex + 1).ToString("D3") + "| ");
@@ -69,9 +71,7 @@ namespace SkimSkript.CoreHelpers.LexicalAnalysis
             for (int i = startIndex; i <= endIndex; i++)
             {
                 if (i - 1 > 0 && _lexemeList[i - 1].lineIndex != _lexemeList[i].lineIndex && i != startIndex)
-                {
                     sb.Append((_lexemeList[i].lineIndex + 1).ToString("D3") + "| ");
-                }
 
                 sb.Append(GetLexemeSpan(i).ToString());
 
@@ -79,12 +79,10 @@ namespace SkimSkript.CoreHelpers.LexicalAnalysis
                     sb.Append(GetLineBreaks(i, i + 1));
 
                 if (i != _lexemeList.Count - 1 && _lexemeList[i + 1].lineIndex == _lexemeList[i].lineIndex)
-                {
                     if (_lexemeList[i + 1].startColumn - _lexemeList[i].endColumn > 1)
                         sb.Append(' ');
-                }
-
             }
+
             return sb.ToString();
         }
 
@@ -103,7 +101,7 @@ namespace SkimSkript.CoreHelpers.LexicalAnalysis
             return _sourceCode[lexeme.lineIndex].AsSpan(lexeme.startColumn, lexeme.endColumn - lexeme.startColumn + 1);
         }
 
-        private ReadOnlySpan<char> GetLexemeSpan(int lexemeIndex)
+        public ReadOnlySpan<char> GetLexemeSpan(int lexemeIndex)
         {
             var lexeme = _lexemeList[lexemeIndex];
             return _sourceCode[lexeme.lineIndex].AsSpan(lexeme.startColumn, lexeme.endColumn - lexeme.startColumn + 1);
@@ -157,6 +155,21 @@ namespace SkimSkript.CoreHelpers.LexicalAnalysis
             }
 
             return sb.ToString();
+        }
+
+        public List<int> GetLexemeIndexesOnLine(int lineIndex)
+        {
+            var lines = new List<int>();
+
+            for(int i = 0; i < _lexemeList.Count; i++)
+                if (_lexemeList[i].lineIndex < lineIndex)
+                    continue;
+                else if (_lexemeList[i].lineIndex == lineIndex)
+                    lines.Add(i);
+                else
+                    return lines;
+
+            return lines;
         }
     }
 }
