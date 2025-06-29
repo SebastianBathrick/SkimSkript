@@ -155,7 +155,16 @@ With support for multiple syntactic styles, it serves as a stepping stone to mor
 # Syntax Guide 
 ## Table of Contents
 1. [Comments](#1--comments)
-2. [SyntaxFlexibility
+2. [Syntax Flexibility](#2--syntax-flexibility)
+	- 2.1 [Symbols](#21--symbols)
+ 	- 2.2 [Float Period/Decimal Rules](#22--float-perioddecimal-rules)
+	- 2.3 [Whitespace and Lines](#23--whitespace-and-lines)
+ 	- 2.4 [Keywords/Phrases](#24--keywordsphrases)
+3. [Data Types](md#3--data-types)
+	- 3.1 [Integers](#31--integers)
+ 	- 3.2 [Floating-Points](#32--floating-points)
+  	- 3.3 [Booleans](#33--booleans)
+   	- 3.4 [Strings](#34--strings)
 ## 1. ) Comments
  - To comment, use the pound sign (i.e., ```#```) at the end of a line followed by your comment:
 
