@@ -23,7 +23,7 @@
 5. [Control Structures](#5--control-structures)
 	- 5.1 [Conditional Statements](#51--conditional-statements)
  	- 5.2 [Loops](#52--loops)
-  	- 5.3 [Else-If Statements](#53--control-structure-blocks)
+  	- 5.3 [Control Structure Blocks](#53--control-structure-blocks)
 6. [Functions](#6--functions)
 	- 6.1 [Function Definitions](#61--function-definitions)
  	- 6.2 [Return Statements](#62--return-statements)
