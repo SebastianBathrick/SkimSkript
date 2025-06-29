@@ -3,80 +3,68 @@ SkimSkript is an interpreted language designed for beginners. It features flexib
 
 With support for multiple syntactic styles, it serves as a stepping stone to more advanced languages. Beginners can experiment with static types, recursion, and procedural logic without being boxed into rigid syntax rules or overwhelmed by compiler errors.
 
-- ## 1.) Programmer Freedom
-	- Would you like to stick to something more reminiscent of the C family of languages? You can!
-		```csharp
-		int i = 1;
-		
-		while(i <= 100)
-		{
-		    if(i % 15 == 0)
-		        print("FizzBuzz");
-		    else if(i % 3 == 0)
-		        print("Fizz");
-		    else if(i % 5 == 0)
-		        print("Buzz");
-		    else
-		        print(i);
-		        
-		 i = i + 1;
-		}
-		```
-
-	- Maybe you want to mix in a little Python syntax:
-		```python
-		def int factorial(int n) =>
-		    if n == 0:
-		        return 1
-		    else:
-		        return n * factorial(n - 1)
-		
-		print(factorial(5))  # Output: 120
-		```
-
-	- You may want something more verbose, academic, or closer to written English. In that case, SkimSkript has got you covered:   
-		```
-		Declare int iterator as 1.
-		 
-		Run print("Please enter a number to find its square root:").
-		Declare integer input as value of read().
-		
-		Invoke print:("Square root" plus value of SquareRoot(input))
-		
-		Define integer function SquareRoot(integer number):
-		{
-			Declare integer odd as 1. Declare integer count as 0.
-			
-			Repeat while number is at least 0:
-			{
-				 Set number to number minus odd.
-				 Set odd to odd plus 2. 
-				 Set count to count plus 1.
-			}
-		
-			Give back count minus 1.
-		}
-		```
-
-- ## 2.) How Does It Work?
-	- The SkimSkript interpreter utilizes no third-party libraries, so while it possesses the typical lexical analysis, AST parsing, and interpretation that many other tree interpreters have, it also has some quirks that enable its unique syntactic style.
+### Programmer Freedom
+- Would you like to stick to something more reminiscent of the C family of languages? You can!
+	```csharp
+	int i = 1;
 	
-		A prime example of this occurs during lexical analysis. After scanning each character in the source code, any alphabetic lexemes are fed into a trie structure. If a single alphabetic lexeme is a partial match for a phrase, the next lexeme is analyzed to check if it is part of that phrase as well. If a group of lexemes reaches a trie node containing a token type, those lexemes are grouped as a single token (assuming the following word does not continue a phrase). However, if the lexemes that form a partial match do not complete a phrase, then each of those lexemes is marked as an identifier. This unconventional approach allows for multi-word tokens, simplifies parsing, and accommodates multiple syntactic styles.
+	while(i <= 100)
+	{
+	    if(i % 15 == 0)
+		print("FizzBuzz");
+	    else if(i % 3 == 0)
+		print("Fizz");
+	    else if(i % 5 == 0)
+		print("Buzz");
+	    else
+		print(i);
+		
+	 i = i + 1;
+	}
+	```
 
-- ## 3.) What Features Are Included?
-	|Current||||||
-	| ------------ | ------------ | ------------ | ------------ | ------------ | ------------ |
-	|Variables|Assignments|Static Typing|Runtime Coercion|Nested Expressions|Variables|
-	|Value+Void Functions|Value+Reference Parameters|Recursion|String Concatenation|Explicit+Implicit Blocks|I\O Functions|
-	|Assertion Statements|Comments|Brief+Verbose+Mix Syntax Styles|Ignored Characters
+- Maybe you want to mix in a little Python syntax:
+	```python
+	def int factorial(int n) =>
+	    if n == 0:
+		return 1
+	    else:
+		return n * factorial(n - 1)
+	
+	print(factorial(5))  # Output: 120
+	```
 
-	|Coming Soon |(No Particular Order)||
-	| ------------ | ------------ | ------------ |
-	|In-Depth Guide| Novice Guide |Composite Types|  
-	|String Escape Sequences|Optimized Scopes|Custom Code Editor
+- You may want something more verbose, academic, or closer to written English. In that case, SkimSkript has got you covered:   
+	```
+	Declare int iterator as 1.
+	 
+	Run print("Please enter a number to find its square root:").
+	Declare integer input as value of read().
+	
+	Invoke print:("Square root" plus value of SquareRoot(input))
+	
+	Define integer function SquareRoot(integer number):
+	{
+		Declare integer odd as 1. Declare integer count as 0.
+		
+		Repeat while number is at least 0:
+		{
+			 Set number to number minus odd.
+			 Set odd to odd plus 2. 
+			 Set count to count plus 1.
+		}
+	
+		Give back count minus 1.
+	}
+	```
+
+### How Does It Work?
+The SkimSkript interpreter utilizes no third-party libraries, so while it possesses the typical lexical analysis, AST parsing, and interpretation that many other tree interpreters have, it also has some quirks that enable its unique syntactic style.
+
+A prime example of this occurs during lexical analysis. After scanning each character in the source code, any alphabetic lexemes are fed into a trie structure. If a single alphabetic lexeme is a partial match for a phrase, the next lexeme is analyzed to check if it is part of that phrase as well. If a group of lexemes reaches a trie node containing a token type, those lexemes are grouped as a single token (assuming the following word does not continue a phrase). However, if the lexemes that form a partial match do not complete a phrase, then each of those lexemes is marked as an identifier. This unconventional approach allows for multi-word tokens, simplifies parsing, and accommodates multiple syntactic styles.
 
 # Setup Guide
-- ## 1.) Building
+## 1.) Building
 1. Assuming you have the **.NET 8 SDK** and have downloaded the **SkimSkript repository**, set the current working directory to the repository folder that contains ```SkimSkript.csproj``` using the terminal of your choosing. Your terminal should look something like this:
 	##### Windows PowerShell:
 	```powershell
@@ -115,7 +103,7 @@ With support for multiple syntactic styles, it serves as a stepping stone to mor
 **Congrats!** You can now use the SkimSkript interpreter! We'll discuss the two different approaches in the next section, where we create your first SkimSkript program.
 
 
-- ## 2.) Your First Program
+## 2.) Your First Program
 1. First create a **.skim** file. For the sake of this tutorial we're calling the file ```HelloWorld.skim```. This file will contain your SkimSkript code.
    
 2. Open ```HelloWorld.skim``` in your IDE of choice.
@@ -143,7 +131,7 @@ With support for multiple syntactic styles, it serves as a stepping stone to mor
 	**(If HelloWorld.skim is located elsewhere, use the full or relative path to the file instead.)**
    
 7. If you see what's below then congratuations! You coded your first SkimSkript program!
-	```powershell
+	```
 	Hello World
 
 	C:\Users\Sebastian\Desktop\SkimSkript\bin\Debug\net8.0\skimskript.exe (process 27136) exited with code 0 (0x0).
@@ -152,8 +140,12 @@ With support for multiple syntactic styles, it serves as a stepping stone to mor
 	Press any key to close this window . . .
 	```
 
-# Syntax Guide 
-## Table of Contents
+# Table of Contents
+### Introduction
+- [What's SkimSkript]
+- [Building the Interpreter]
+- [Your First Program]
+### Syntax Guide
 1. [Comments](#1--comments)
 2. [Syntax Flexibility](#2--syntax-flexibility)
 	- 2.1 [Symbols](#21--symbols)
@@ -165,6 +157,15 @@ With support for multiple syntactic styles, it serves as a stepping stone to mor
  	- 3.2 [Floating-Points](#32--floating-points)
   	- 3.3 [Booleans](#33--booleans)
    	- 3.4 [Strings](#34--strings)
+4. [Variables]
+	- 4.1 [Identifiers]
+ 	- 4.2 [Variable Declarations]
+  	- 4.3 [Variable Assignments]
+   	- 4.4 [Variable Scope]
+5. [Control Structures]
+	- 5.1 [If Statements]
+ 	- 5.2 [If-Else Statements]
+  	- 5.3 [Else-If Statements] 
 ## 1. ) Comments
  - To comment, use the pound sign (i.e., ```#```) at the end of a line followed by your comment:
 
@@ -343,54 +344,57 @@ SkimSkript contains scoped variables declared in top-level, function, or control
 		```
  
 ## 5. ) Control Structures
-- ### 5.1 ) If Statements
-	If statements work virtually the same as any other language, but you have the option to use the ```then``` keyword.
-
-	```csharp
-	if myCondition is true then
-		print("myCondition is true")
+- ### 5.1 ) Conditional Statements
+	- #### If Statements 
+		If statements work virtually the same as any other language, but you have the option to use the ```then``` keyword.
 		
-	if myCondition2 is false
-		print("myCondition2 is false")
-	```
-
-- ### 5.2 ) If-Else Statements
-	If-else statements give you a choice of two different keywords to serve as "else." ```else``` and ```otherwise``` that can be used interchangably.
-
-	```python
-	# This can either be the verbose or brief "if." The interpreter will accept either.
-	if myCondition is true 
-		print("myCondition is true")
-	else
-		print("MyCondition is false")
-		
-	if myCondition2 is false
-		print("myCondition2 is false")
-	otherwise
-		print("MyCondition2 is true")
-	```
-- ### 5.3 ) Else-If Statements
-	Else-if statements have many variants to choose from. You can use ```else if```, ```elif```, ```instead if```, ```alternatively if```, and ```otherwise if```.
-
-	```python
-	print("Please pick a number from 0-5:")
-	int userSelection = read()
+		```csharp
+		if myCondition is true then
+			print("myCondition is true")
+			
+		if myCondition2 is false
+			print("myCondition2 is false")
+		```
 	
-	if userSelection is 0
-		print("You selected 0")
-	else if userSelection is 1 then # You can optionally use then at the end of any variant
-		print("You selected 1")
-	elif userSelection is 2
-		print("You selected 2")
-	instead if userSelection is 3
-		print("You selected 3")
-	alternatively if userSelection is 4
-		print("You selected 4")
-	otherwise if userSelection is 5
-		print("You selected 5")
-	else
-		print("Selection outside of valid range")
-	```
+	- #### If-Else Statements
+		If-else statements give you a choice of two different keywords to serve as "else." ```else``` and ```otherwise``` that can be used interchangably.
+		
+		```python
+		# This can either be the verbose or brief "if." The interpreter will accept either.
+		if myCondition is true 
+			print("myCondition is true")
+		else
+			print("MyCondition is false")
+			
+		if myCondition2 is false
+			print("myCondition2 is false")
+		otherwise
+			print("MyCondition2 is true")
+		```
+ 
+	- #### Else-If Statements
+		Else-if statements have many variants to choose from. You can use ```else if```, ```elif```, ```instead if```, ```alternatively if```, and ```otherwise if```.
+		
+		```python
+		print("Please pick a number from 0-5:")
+		int userSelection = read()
+		
+		if userSelection is 0
+			print("You selected 0")
+		else if userSelection is 1 then # You can optionally use then at the end of any variant
+			print("You selected 1")
+		elif userSelection is 2
+			print("You selected 2")
+		instead if userSelection is 3
+			print("You selected 3")
+		alternatively if userSelection is 4
+			print("You selected 4")
+		otherwise if userSelection is 5
+			print("You selected 5")
+		else
+			print("Selection outside of valid range")
+		```
+ 
  - ### 5.4 ) While Loops
 	While loops provide three different syntactic options to choose from before your loop condition. ```while```, ```repeat while```, and ```repeat code while```.
 
@@ -419,6 +423,7 @@ SkimSkript contains scoped variables declared in top-level, function, or control
 		print("iterator3: " + iterator3)
 	}
 	```
+ 
 - ### 5.5 ) Control Structure Blocks
 	Control structures have two separate "types" or "styles" of blocks you can choose depending on your preference.
 
@@ -463,6 +468,7 @@ SkimSkript contains scoped variables declared in top-level, function, or control
 					iterator = iterator + 1
 			}		
 		```
+  
 ## 6. ) Functions
 SkimSkript offers statically typed support for both user-defined and built-in functions.
 
