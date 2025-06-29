@@ -14,9 +14,7 @@ class Program
         {
             log.Error("Requires at least one file path argument");
             return -1;
-        }
-
-        
+        } 
 
         foreach(var filepath in args)
         {
