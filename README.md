@@ -3,8 +3,8 @@
 # Table of Contents
 ### Introduction
 - [What's SkimSkript](#what-is-skimskript)
-- [Building the Interpreter]
-- [Your First Program]
+- [Building the Interpreter](#building-the-interpreter)
+- [Your First Program](#your-first-program)
 ### Syntax Guide
 1. [Comments](#1--comments)
 2. [Syntax Flexibility](#2--syntax-flexibility)
@@ -18,8 +18,8 @@
   	- 3.3 [Booleans](#33--booleans)
    	- 3.4 [Strings](#34--strings)
 4. [Variables]
-	- 4.1 [Identifiers]
- 	- 4.2 [Variable Declarations]
+	- 4.1 [Identifiers](#41--identifiers)
+ 	- 4.2 [Variable Declarations](#42--variable-declarations)
   	- 4.3 [Variable Assignments]
    	- 4.4 [Variable Scope]
 5. [Control Structures]
