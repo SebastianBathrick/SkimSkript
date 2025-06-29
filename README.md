@@ -1,6 +1,5 @@
-
-
-# Table of Contents
+# SkimSkript
+## Table of Contents
 ### Introduction
 - [What's SkimSkript](#what-is-skimskript)
 - [Building the Interpreter](#building-the-interpreter)
