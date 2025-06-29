@@ -4,67 +4,71 @@ SkimSkript is an interpreted language designed for beginners. It features flexib
 With support for multiple syntactic styles, it serves as a stepping stone to more advanced languages. Beginners can experiment with static types, recursion, and procedural logic without being boxed into rigid syntax rules or overwhelmed by compiler errors.
 
 ## Programmer Freedom
-Would you like to stick to something more reminiscent of the C family of languages? You can!
-```csharp
-int i = 1;
-
-while(i <= 100)
-{
-    if(i % 15 == 0)
-        print("FizzBuzz");
-    else if(i % 3 == 0)
-        print("Fizz");
-    else if(i % 5 == 0)
-        print("Buzz");
-    else
-        print(i);
-        
- i = i + 1;
-}
-```
-
-Maybe you want to mix in a little Python syntax:
-```python
-def int factorial(int n) =>
-    if n == 0:
-        return 1
-    else:
-        return n * factorial(n - 1)
-
-print(factorial(5))  # Output: 120
-```
-
-You may want something more verbose, academic, or closer to written English. In that case, SkimSkript has got you covered:   
-```csharp
-Declare int iterator as 1.
- 
-Run print("Please enter a number to find its square root:").
-Declare integer input as value of read().
-
-Invoke print:("Square root" plus value of SquareRoot(input))
-
-Define integer function SquareRoot(integer number):
-{
-	Declare integer odd as 1. Declare integer count as 0.
+- Would you like to stick to something more reminiscent of the C family of languages? You can!
+	```csharp
+	int i = 1;
 	
-	Repeat while number is at least 0:
+	while(i <= 100)
 	{
-		 Set number to number minus odd.
-		 Set odd to odd plus 2. 
-		 Set count to count plus 1.
+	    if(i % 15 == 0)
+	        print("FizzBuzz");
+	    else if(i % 3 == 0)
+	        print("Fizz");
+	    else if(i % 5 == 0)
+	        print("Buzz");
+	    else
+	        print(i);
+	        
+	 i = i + 1;
 	}
+	```
 
-	Give back count minus 1.
-}
-```
+- Maybe you want to mix in a little Python syntax:
+	```python
+	def int factorial(int n) =>
+	    if n == 0:
+	        return 1
+	    else:
+	        return n * factorial(n - 1)
+	
+	print(factorial(5))  # Output: 120
+	```
+
+- You may want something more verbose, academic, or closer to written English. In that case, SkimSkript has got you covered:   
+	```csharp
+	Declare int iterator as 1.
+	 
+	Run print("Please enter a number to find its square root:").
+	Declare integer input as value of read().
+	
+	Invoke print:("Square root" plus value of SquareRoot(input))
+	
+	Define integer function SquareRoot(integer number):
+	{
+		Declare integer odd as 1. Declare integer count as 0.
+		
+		Repeat while number is at least 0:
+		{
+			 Set number to number minus odd.
+			 Set odd to odd plus 2. 
+			 Set count to count plus 1.
+		}
+	
+		Give back count minus 1.
+	}
+	```
 
 ## How Does the Interpreter Do All This?
-The SkimSkript interpreter utilizes no third-party libraries, so while it possesses the typical lexical analysis, AST parsing, and interpretation that many other tree interpreters have, it also has some quirks that enable its unique syntactic style.
+- The SkimSkript interpreter utilizes no third-party libraries, so while it possesses the typical lexical analysis, AST parsing, and interpretation that many other tree interpreters have, it also has some quirks that enable its unique syntactic style.
 
-A prime example of this occurs during lexical analysis. After scanning each character in the source code, any alphabetic lexemes are fed into a trie structure. If a single alphabetic lexeme is a partial match for a phrase, the next lexeme is analyzed to check if it is part of that phrase as well. If a group of lexemes reaches a trie node containing a token type, those lexemes are grouped as a single token (assuming the following word does not continue a phrase). However, if the lexemes that form a partial match do not complete a phrase, then each of those lexemes is marked as an identifier. This unconventional approach allows for multi-word tokens, simplifies parsing, and accommodates multiple syntactic styles.
+	A prime example of this occurs during lexical analysis. After scanning each character in the source code, any alphabetic lexemes are fed into a trie structure. If a single alphabetic lexeme is a partial match for a phrase, the next lexeme is analyzed to check if it is part of that phrase as well. If a group of lexemes reaches a trie node containing a token type, those lexemes are grouped as a single token (assuming the following word does not continue a phrase). However, if the lexemes that form a partial match do not complete a phrase, then each of those lexemes is marked as an identifier. This unconventional approach allows for multi-word tokens, simplifies parsing, and accommodates multiple syntactic styles.
 
 ## What Features Does it Have?
 As of now, SkimSkript has the following:
+- | Variables | Assignments  | Static Typing | Coercion | Nested Expressions
+| :------------: | :------------: | :------------: | :------------: |
+| Variables  | Assignments  | Loop Statements| Conditional Statements  |Different Scope Types
+| Value+Void Functions  | Value+Reference Parameters  |  Parameters
 - Statically typed variable declarations & assignments.
 - User-defined functions with optional statically typed return types.
 - Global, local, and block scopes.
@@ -168,40 +172,40 @@ The following features I'd like to add next are:
 
 
 ## 2. ) Ignored Content
-### 2.1 ) Comments
-To comment, use the pound sign (i.e., ```#```) at the end of a line followed by your comment:
-```python
-# This is a comment
-```
+- ### 2.1 ) Comments
+	To comment, use the pound sign (i.e., ```#```) at the end of a line followed by your comment:
+		```python
+		# This is a comment
+		```
+	
+- ### 2.2 ) Symbols
+	When it comes to non-alphabetic and non-numeric symbols, SkimSkript gives you quite a bit of leeway. You can use any symbol not on this table without interfering with your program.
+	#### Reserved Symbols
+	|+   | -  |*   | /  |%   | >  |
+	| ------------ | ------------ | ------------ | ------------ | ------------ | ------------ |
+	|  < |=   | !=  |==   |&#124;&#124;   |&&   |
+	| ^^  | "|
+	
+- ### 2.3 ) Float Period/Decimal Rules
+	**Periods can affect your program if not used correctly.** Periods/decimals are used in floating-point numbers, but in most cases are ignored. 
+	- Single float --> ```1.0``` --> Expected Syntax
+	- Single float --> ```1.0...``` --> Extra periods are ignored
+	- Single integer --> ```.1``` --> Floats start with digits
+	- Two integers --> ```1..0``` --> Second periods are interpreted as trailing an int
 
-### 2.2 ) Symbols
-When it comes to non-alphabetic and non-numeric symbols, SkimSkript gives you quite a bit of leeway. You can use any symbol not on this table without interfering with your program. <br><br>
-#### Reserved Symbols
-|+   | -  |*   | /  |%   | >  |
-| ------------ | ------------ | ------------ | ------------ | ------------ | ------------ |
-|  < |=   | !=  |==   |&#124;&#124;   |&&   |
-| ^^  | "|
+- ### 2.4 ) Whitespace and Lines
+	As long as there is at least a single space between alphabetic and numeric lexemes, the interpreter ignores spacing and break lines:
+	```csharp
+	    int      myVar =      20
+	           myVar =        20
+	    if(myVar 
+	 ==        50) {print("My Variable is 50")}
+	```
 
-#### Float Period/Decimal Rules
-**Periods can affect your program if not used correctly.** Periods/decimals are used in floating-point numbers, but in most cases are ignored. 
-- Single float --> ```1.0``` --> Expected Syntax
-- Single float --> ```1.0...``` --> Extra periods are ignored
-- Single integer --> ```.1``` --> Floats start with digits
-- Two integers --> ```1..0``` --> Second periods are interpreted as trailing an int
-
-### 2.3 ) Whitespace and Lines
-As long as there is at least a single space between alphabetic and numeric lexemes, the interpreter ignores spacing and break lines:
-```csharp
-    int      myVar =      20
-           myVar =        20
-    if(myVar 
- ==        50) {print("My Variable is 50")}
-```
-
-### 2.4 ) Keywords/Phrases
-SkimSkript keywords have some quirks:
-- **Only complete phrases and singular keywords are reserved.** Meaning using a single word from a reserved phrase is allowed as an identifier unless the whole phrase is present. For example, ```give back``` is reserved, but you can use ```give``` and ```back``` as variable names.
-- **Reserved words and phrases are NOT case-sensitive**. So, ```Give back``` , ```iF```, and ```INTEGER``` are all valid.
+- ### 2.5 ) Keywords/Phrases
+	SkimSkript keywords have some quirks:
+	- **Only complete phrases and singular keywords are reserved.** Meaning using a single word from a reserved phrase is allowed as an identifier unless the whole phrase is present. For example, ```give back``` is reserved, but you can use ```give``` and ```back``` as variable names.
+	- **Reserved words and phrases are NOT case-sensitive**. So, ```Give back``` , ```iF```, and ```INTEGER``` are all valid.
 
 #### Reserved Keywords
 
