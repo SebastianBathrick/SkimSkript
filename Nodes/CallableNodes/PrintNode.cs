@@ -15,9 +15,14 @@ namespace SkimSkript.Nodes
 
         }
 
+        public static void CallInstance(string message)
+        {
+            new PrintNode().Call([new StringValueNode(message)]);
+        }
+
         /// <summary>Called to print each argument on a seperate line and accepts a variable number of 
         /// arguments with a minimum of 1. Each argument will be printed on its own line.</summary>
-        /// <param name="arguments">List containing argument data with the source of the parameter's
+        /// <param _name="arguments">List containing argument data with the source of the parameter's
         /// value and whether or not the argument is marked as reference. Each argument that is not
         /// of type string will be coerced prior to the call.</param>
         public override Node? Call(Node[]? arguments)

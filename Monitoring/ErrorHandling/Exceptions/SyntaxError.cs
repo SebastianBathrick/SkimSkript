@@ -34,9 +34,9 @@ namespace SkimSkript.ErrorHandling
         #endregion
 
         #region Constructors
-        /// <param name="message"> Message describing why syntactically is semantically invalid. </param>
-        /// <param name="tokenContainer"> See <see cref="TokenManagement.TokenContainer"/> docs. </param>
-        /// <param name="position"> See <see cref="SyntaxError.Position"/> doc. </param>
+        /// <param _name="message"> Message describing why syntactically is semantically invalid. </param>
+        /// <param _name="tokenContainer"> See <see cref="TokenManagement.TokenContainer"/> docs. </param>
+        /// <param _name="position"> See <see cref="SyntaxError.Position"/> doc. </param>
         public SyntaxError(string message, TokenContainer tokenContainer, ErrorTokenPosition position) : base($"{ERROR_LABEL}{message}")
         {
             _tokenContainer = tokenContainer;
@@ -44,9 +44,9 @@ namespace SkimSkript.ErrorHandling
         }
 
         /// <remarks> The <see cref="ErrorHandler"/> will generate the error message & not an instance of this class object. </remarks>
-        /// <param name="expectedTokenType"> See <see cref="SyntaxError.ExpectedTokenType"/> doc. </param>
-        /// <param name="tokenContainer"> See <see cref="TokenManagement.TokenContainer"/> docs. </param>
-        /// <param name="position"> See <see cref="SyntaxError.Position"/> doc. </param>
+        /// <param _name="expectedTokenType"> See <see cref="SyntaxError.ExpectedTokenType"/> doc. </param>
+        /// <param _name="tokenContainer"> See <see cref="TokenManagement.TokenContainer"/> docs. </param>
+        /// <param _name="position"> See <see cref="SyntaxError.Position"/> doc. </param>
         public SyntaxError(TokenType expectedTokenType, TokenContainer tokenContainer, ErrorTokenPosition position) : this(String.Empty, tokenContainer, position)
         {
             _expectedTokenType = expectedTokenType;

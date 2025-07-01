@@ -92,6 +92,7 @@
         EndOfFile,
         Factor,
         DataType,
+        StatementStartToken,
 
         // Utility TokenTypes (used for lexing)
         PartialPhrase,

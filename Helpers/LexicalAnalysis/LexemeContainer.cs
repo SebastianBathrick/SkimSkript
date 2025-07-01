@@ -137,8 +137,8 @@ namespace SkimSkript.Helpers.LexicalAnalysis
             return sb.ToString();
         }
 
-        /// <param name="upperMostIndex">Index of line closest to the top of the file.</param>
-        /// <param name="lowerMostIndex">Index of line closest to the bottom of the file.</param>
+        /// <param _name="upperMostIndex">Index of line closest to the top of the file.</param>
+        /// <param _name="lowerMostIndex">Index of line closest to the bottom of the file.</param>
         private string GetLineBreaks(int upperMostIndex, int lowerMostIndex)
         {
             var lineBreakCount = _lexemeList[lowerMostIndex].lineIndex - _lexemeList[upperMostIndex].lineIndex;

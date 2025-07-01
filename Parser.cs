@@ -10,17 +10,18 @@ namespace SkimSkript.Parsing
     ///<summary> Represents a parser for converting a list of tokens into an abstract syntax tree (AST).
     ///The root of the AST can be retrieved with the root being in the form of an <see cref="SkimSkript.Nodes.AbstractSyntaxTreeRoot"/>
     ///object.</summary>
-    internal class Parser
+    internal class Parser : MainComponent<TokenContainer, AbstractSyntaxTreeRoot>
     {
         private TokenContainer? _tokens;
-        private Logger _log;
 
         private TokenContainer Tokens => _tokens!;
 
-        public Parser(Logger log) => _log = log;
+        public override MainComponentType ComponentType => MainComponentType.Parser;
+
+        public Parser(MainComponentType[] debuggedTypes) : base(debuggedTypes) { }
 
         /// <summary> Returns AST root with top-level statements and functions as childrern. </summary>
-        public AbstractSyntaxTreeRoot BuildAbstractSyntaxTree(TokenContainer tokens)
+        protected override AbstractSyntaxTreeRoot OnExecute(TokenContainer tokens)
         {
             _tokens = tokens;
 
@@ -33,7 +34,7 @@ namespace SkimSkript.Parsing
                 if (!IsFunctionDefNext())
                 {
                     statements.Add(GetStatement());
-                    _log.Verbose("Parsed top-level statement: {Statement}", statements.Last());
+                    Log.Verbose("Parsed top-level statement: {Statement}", statements.Last());
                 }                   
                 else //Otherwise parse functions.
                     functions.Add(GetFunctionNode()); 
@@ -109,7 +110,22 @@ namespace SkimSkript.Parsing
                 TokenType.If => GetIfStatement(),    
                 TokenType.Identifier => GetIdentifierStartStatement(), //The function will be called here,
                 TokenType.Assertion => GetAssertionStatement(),
-                _ => throw new SyntaxError("Expected new statement but instead found an invalid token.", Tokens, ErrorTokenPosition.InPlace)
+
+                _ => throw Tokens.GetTokenExceptionError(
+                    errorType: TokenContainerError.TokenMismatch,
+
+                    // The token being referenced is the front-most token
+                    tokenIndexOffset: 0,
+
+                    // Expected token that will be displayed in the error message
+                    StringHelper.SplitPascalCaseManual(
+                        TokenType.StatementStartToken.ToString()
+                        ),
+                    // Actual token that was found
+                    StringHelper.SplitPascalCaseManual(
+                        Tokens.PeekType().ToString()
+                        )
+                    )
             };
 
         /// <summary>Returns either a function call or a variable assignment statment where the first token is an identifierNode.</summary>

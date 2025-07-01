@@ -21,7 +21,7 @@ namespace SkimSkript.LexicalAnalysis.Helpers
 
         private string[] Lines => _lines!;
 
-        /// <param name="linesArray"> Lines of code in the source language. </param>
+        /// <param _name="linesArray"> Lines of code in the source language. </param>
         public LexemeContainer CreateLexemes(string[] linesArray)
         {
             _lines = linesArray;

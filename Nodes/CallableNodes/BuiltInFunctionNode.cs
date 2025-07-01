@@ -6,7 +6,7 @@ namespace SkimSkript.Nodes
     public abstract class BuiltInFunctionNode : CallableNode
     {
         /// <summary>Base constructor for child class objects.</summary>
-        /// <param name="builtInFunctionId">Enum representing the type/ID for a given built-in-function. This allows for
+        /// <param _name="builtInFunctionId">Enum representing the type/ID for a given built-in-function. This allows for
         /// the associated function identifier to be retrieved from the <see cref="SyntaxSpec">.</param>
         public BuiltInFunctionNode(
             BuiltInFunctionID builtInFunctionId, 

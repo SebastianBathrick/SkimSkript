@@ -18,8 +18,8 @@ namespace SkimSkript.Nodes.Runtime
         public Type DataType => _dataType;
 
         /// <summary>Constructor to initialize variable, and define its static data type.</summary>
-        /// <param name="value">Instance of a node that is associated with the data type.</param>
-        /// <param name="dataType">Type representing a child class of <see cref="Node"> associated with 
+        /// <param _name="value">Instance of a node that is associated with the data type.</param>
+        /// <param _name="dataType">Type representing a child class of <see cref="Node"> associated with 
         /// the variable's type.</param>
         public VariableNode(Node value, Type dataType)
         {          

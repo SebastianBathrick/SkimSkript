@@ -5,7 +5,7 @@
     {
         private const string ERROR_LABEL = "Semantic Error: ";
 
-        /// <param name="message"> Message describing why code is semantically invalid. </param>
+        /// <param _name="message"> Message describing why code is semantically invalid. </param>
         public SemanticError(string message) : base($"{ERROR_LABEL}{message}") { }
     }
 }

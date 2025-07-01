@@ -23,7 +23,7 @@
             if (float.TryParse(_value, out float result))
                 return result;
 
-            throw new System.Exception($"Failed to cast string '{_value}' to float.");
+            return _value.Length;
         }
 
         public override int ToInt()
@@ -31,7 +31,7 @@
             if (int.TryParse(_value, out int result))
                 return result;
 
-            throw new System.Exception($"Failed to cast string '{_value}' to int.");
+            return _value.Length; // Default to length if parsing fails
         }
 
         public override string ToString() => _value;

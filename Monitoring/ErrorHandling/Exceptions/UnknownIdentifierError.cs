@@ -6,7 +6,7 @@
         private const string ERROR_MSG_LEADING = "Unknown IdentfierNode Error: An unknown identifier called '";
         private const string ERROR_MSG_TRAILING = "' was used.";
 
-        /// <param name="identifier"> IdentfierNode that couldn't be found/accessed </param>
+        /// <param _name="identifier"> IdentfierNode that couldn't be found/accessed </param>
         public UnknownIdentifierError(string identifier) : base($"{ERROR_MSG_LEADING}{identifier}{ERROR_MSG_TRAILING}") { }
     }
 }

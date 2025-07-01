@@ -23,25 +23,31 @@ namespace SkimSkript.Interpretation.Helpers
             switch (operandDataType)
             {
                 case OperandDataType.Integer:
-                    var intResult = GetIntMathOperationResult(
-                        leftValueNode.ToInt(), rightValueNode.ToInt(), mathOp);
+                    int intLeft = leftValueNode.ToInt();
+                    int intRight = rightValueNode.ToInt();
+                    var intResult = GetMathResultInt(intLeft, intRight, mathOp);
                     return new IntValueNode(intResult);
-                case OperandDataType.Float:
-                    var floatResult = GetFloatMathOperationResult(
-                        leftValueNode.ToFloat(), rightValueNode.ToFloat(), mathOp);
-                    return new FloatValueNode(floatResult);
-                case OperandDataType.String:
-                    var strResult = GetStringMathOperationResults(
-                        leftValueNode.ToString(), rightValueNode.ToString(), mathOp);
-                    return new StringValueNode(strResult);
-                case OperandDataType.Bool:
-                    var boolResult = GetBoolMathOperationResult(
-                        leftValueNode.ToBool(), rightValueNode.ToBool(), mathOp);
-                    return new BoolValueNode(boolResult);
-                default:
-                    throw new InvalidOperationException($"{mathOp} is not supported for {operandDataType}.");
-            }
 
+                case OperandDataType.Float:
+                    float floatLeft = leftValueNode.ToFloat();
+                    float floatRight = rightValueNode.ToFloat();
+                    var floatResult = GetMathResultFloat(floatLeft, floatRight, mathOp);
+                    return new FloatValueNode(floatResult);
+
+                case OperandDataType.Bool:
+                    bool leftBool = leftValueNode.ToBool();
+                    bool rightBool = rightValueNode.ToBool();
+                    var boolResult = GetMathResultBool(leftBool, rightBool, mathOp);
+                    return new BoolValueNode(boolResult);
+
+                case OperandDataType.String:
+                    var stringResult = GetMathResultString(leftValueNode, rightValueNode, mathOp);
+                    return new StringValueNode(stringResult);
+
+                default:
+                    throw new InvalidOperationException(
+                        $"{mathOp} is not supported for {operandDataType}.");
+            }
         }
 
         public Node PerformComparisonOperation(Node left, Node right, ComparisonOperator comparisonOp)
@@ -91,7 +97,7 @@ namespace SkimSkript.Interpretation.Helpers
         // TODO: Revisit type operations for runtime error implementation.
 
         /// <summary> Returns the result of an math operation using ints as operands. </summary>
-        private int GetIntMathOperationResult(int left, int right, MathOperator mathOp) =>
+        private int GetMathResultInt(int left, int right, MathOperator mathOp) =>
             mathOp switch
             {
                 MathOperator.Add => left + right,
@@ -118,7 +124,7 @@ namespace SkimSkript.Interpretation.Helpers
             };
 
         /// <summary> Returns the result of an math operation using floats as operands. </summary>
-        private float GetFloatMathOperationResult(float left, float right, MathOperator mathOp) =>
+        private float GetMathResultFloat(float left, float right, MathOperator mathOp) =>
             mathOp switch
             {
                 MathOperator.Add => left + right,
@@ -134,7 +140,7 @@ namespace SkimSkript.Interpretation.Helpers
         /// Evaluates a boolean expression using math-like operators,
         /// where the result is still a boolean value.
         /// </summary>
-        private bool GetBoolMathOperationResult(bool left, bool right, MathOperator mathOp) =>
+        private bool GetMathResultBool(bool left, bool right, MathOperator mathOp) =>
             mathOp switch
             {
                 // Logical OR: true if either operand is true
@@ -174,13 +180,17 @@ namespace SkimSkript.Interpretation.Helpers
             };
 
         /// <summary> Returns the result of an math operation using strings as operands. </summary>
-        private string GetStringMathOperationResults(string left, string right, MathOperator mathOp) =>
-            mathOp switch
-            {
-                MathOperator.Add => left + right,
-                MathOperator.Subtract => left.Replace(right, ""),
-                _ => throw new ArgumentException("Invalid math operation for strings.")
-    };
+        private string GetMathResultString(ValueNode left, ValueNode right, MathOperator mathOp)
+        {
+            if (mathOp == MathOperator.Add)
+                return left.ToString() + right.ToString();
+
+            if(mathOp == MathOperator.Modulus && (right is IntValueNode || left is IntValueNode))
+                return GetIntComparisonOperationValue(left.ToInt(), right.ToInt(), ComparisonOperator.Equals).ToString();
+
+            return GetMathResultFloat(left.ToFloat(), right.ToFloat(), mathOp).ToString();
+        }
+
 
         /// <summary> Returns the result of an comparison operation using strings as operands. </summary>
         private bool GetStringComparisonOperationValue(string left, string right, ComparisonOperator comparisonOp) =>

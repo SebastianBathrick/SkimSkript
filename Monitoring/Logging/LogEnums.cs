@@ -1,7 +1,7 @@
 ﻿namespace SkimSkript.Logging
 {
     /// <summary> Represents the logging levels used in the application. </summary>
-    internal enum LogLevel
+    public enum LogLevel
     {
         None = 0,
         UserInterface = 1,
@@ -14,7 +14,7 @@
     }
 
     /// <summary> Represents ANSI color codes for terminal output. </summary>
-    internal enum ANSIColor
+    public enum ANSIColor
     {
         Black = 30,
         Red = 31,

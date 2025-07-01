@@ -9,8 +9,13 @@ namespace SkimSkript.Interpretation
     /// from the parsed source code. It handles function calls, variable management, expressions, and 
     /// control structures (e.g., if, while) to produce runtime results. 
     /// </summary>
-    public class Interpreter
+    internal class Interpreter : MainComponent<AbstractSyntaxTreeRoot, int>
     {
+        private const string NON_INT_RETURN_CODE = $"Non-integer exit code:";
+
+        private const int DEFAULT_EXIT_CODE = 0;
+        private const int ERROR_EXIT_CODE = 1;
+
         #region Data Members
         private ScopeManager _scope = new();
         private CoercionInterpreter? _coercionInterpreter;
@@ -20,6 +25,8 @@ namespace SkimSkript.Interpretation
         #endregion
 
         #region Properties
+        public override MainComponentType ComponentType => MainComponentType.Interpreter;
+
         private CoercionInterpreter CoercionInterpreter =>
             _coercionInterpreter ??= new CoercionInterpreter();
 
@@ -30,11 +37,36 @@ namespace SkimSkript.Interpretation
             _callableFunctionsDict ??= GetFunctionMap(_userFunctions);
         #endregion
 
+
+
         #region Execution
-        public void Execute(AbstractSyntaxTreeRoot treeRoot)
+        public Interpreter(IEnumerable<MainComponentType> debuggedTypes) : base(debuggedTypes) { }
+
+        protected override int OnExecute(AbstractSyntaxTreeRoot treeRoot)
         {
             _userFunctions = treeRoot.UserFunctions;
-            InterpretBlock(treeRoot);
+            var exitData = InterpretBlock(treeRoot);
+
+            if (exitData.ExitType == BlockExitType.StatementsExhausted)
+                return DEFAULT_EXIT_CODE;
+
+            if (exitData.ExitType == BlockExitType.ReturnStatement)
+            {
+                // If no data was returned, return 0 as default exit code.
+                if (exitData.ReturnData == null)
+                    return DEFAULT_EXIT_CODE;
+
+                // If the returned data is an integer, return it as exit code.
+                if (exitData.ReturnData is ValueNode)
+                    return ((ValueNode)exitData.ReturnData).ToInt();
+
+                // If the returned data is not an integer, print a warning and return an error exit code.
+                Console.Error.WriteLine($"{NON_INT_RETURN_CODE} {exitData.ReturnData.ToString()}");
+
+                return ERROR_EXIT_CODE; 
+            }
+
+            return ERROR_EXIT_CODE;
         }
 
         /// <summary> Interprets block, executes its statements, and returns info about how the block exited. </summary>
