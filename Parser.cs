@@ -3,6 +3,7 @@ using SkimSkript.Helpers.General;
 using SkimSkript.Logging;
 using SkimSkript.Monitoring.ErrorHandling;
 using SkimSkript.Nodes;
+using SkimSkript.Nodes.StatementNodes;
 using SkimSkript.Tokens;
 
 namespace SkimSkript.Parsing
@@ -122,6 +123,8 @@ namespace SkimSkript.Parsing
                 case TokenType.Identifier: newNode = GetIdentifierStartStatement(); break;
 
                 case TokenType.Assertion: newNode = GetAssertionStatement(); break;
+
+                case TokenType.RepeatLoop: newNode = GetRepeatLoop(); break;
 
                 default:
                     var expectedStr = StringHelper.SplitPascalCaseManual(TokenType.StatementStartToken.ToString());
@@ -243,7 +246,7 @@ namespace SkimSkript.Parsing
             if (Tokens.TryMatchAndRemove(TokenType.ElseIf))
                 chainedStructure = GetIfStatement(true);
             else if (Tokens.TryMatchAndRemove(TokenType.Else))
-                chainedStructure = new ElseNode(GetBlock());
+                chainedStructure = new ElseNode(GetBlock(), statementEndLexeme);
 
             return !isElseIf ? 
                 new IfNode(condition, block, chainedStructure, statementEndLexeme) : 
@@ -258,6 +261,16 @@ namespace SkimSkript.Parsing
             var statementEndLexeme = Tokens.GetLexemeEndIndex();
 
             return new WhileNode(condition, GetBlock(), statementEndLexeme);
+        }
+
+        private Node GetRepeatLoop()
+        {
+            Tokens.MatchAndRemove(TokenType.RepeatLoop);
+            var condition = GetExpression();
+            Tokens.TryMatchAndRemove(TokenType.RepeatLoopTrail);
+            var statementEndLexeme = Tokens.GetLexemeEndIndex();
+            
+            return new RepeatNode(condition, GetBlock(), statementEndLexeme);
         }
         #endregion
 

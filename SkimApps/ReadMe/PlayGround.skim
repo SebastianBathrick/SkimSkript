@@ -1,8 +1,55 @@
-﻿int myNum = read()
-print("Output worked! Your number: " + myNum)
+﻿while true
+{
+	PrintMenu()
+	int selection = read("Please select an operation to perform:")
 
-assert myNum == 42.0
+	if selection exceeds 5 or selection is below 1
+		return "Goodbye!"
 
-sdds = 20
+	float left float right 
+	GetOperands(ref left, ref right)
+	float result
 
-print("Assertion passed! Your number is indeed 42.")
+	if selection == 1 
+		result = Add(left, right)
+	else if selection == 2 
+		result = Subtract(left, right)
+	else if selection == 3 
+		result = Multiply(left, right)
+	else if selection == 4 result = Divide(left, right)
+	else 
+		result = Modulus(left, right)
+
+	print("Result: " + result)
+	read("Press Enter to continue...")
+	clear()
+}
+
+def PrintMenu()
+{
+	print("1. Add")
+	print("2. Subtract")
+	print("3. Multiply")
+	print("4. Divide")
+	print("5. Modulus")
+	print("6. Exit")
+}
+
+def GetOperands(ref float left, ref float right)
+{
+	left = read("Enter the first operand:")
+	right = read("Enter the second operand:")
+}
+
+def float Add(float a, float b) return a + b
+
+def float Subtract(float a, float b) return a - b
+
+def float Multiply(float a, float b) return a * b
+
+def float Divide(float a, float b) return a / b
+
+def float Modulus(float a, float b) return a % b
+
+
+	

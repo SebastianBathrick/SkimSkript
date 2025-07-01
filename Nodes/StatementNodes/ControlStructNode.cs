@@ -7,7 +7,7 @@
 
         public Node Block => _block;
 
-        public ControlStructNode(Node block) => _block = block;
+        public ControlStructNode(Node block, int endLexemeIndex) => _block = block;
 
         public override string ToString() => $"\n{_block}";
     }

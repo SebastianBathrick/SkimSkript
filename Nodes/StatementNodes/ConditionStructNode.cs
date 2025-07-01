@@ -6,7 +6,7 @@
 
         public Node Condition => _condition;
 
-        public ConditionStructNode(Node condition, Node block, int endLexemeIndex) : base(block)
+        public ConditionStructNode(Node condition, Node block, int endLexemeIndex) : base(block, endLexemeIndex)
         {
             SetLexemeEndIndex(endLexemeIndex);
             _condition = condition;

@@ -72,6 +72,8 @@
         Else,
         WhileLoop,
         Then,
+        RepeatLoop,
+        RepeatLoopTrail,
         #endregion
 
         #region Variables

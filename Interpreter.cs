@@ -2,6 +2,7 @@
 using SkimSkript.Interpretation.Helpers;
 using SkimSkript.Monitoring.ErrorHandling;
 using SkimSkript.Nodes;
+using SkimSkript.Nodes.StatementNodes;
 
 namespace SkimSkript.Interpretation
 {
@@ -174,6 +175,8 @@ namespace SkimSkript.Interpretation
                     return InterpretWhileStructure(whileNode);
                 case ReturnNode returnNode: 
                     return InterpretReturnStatement(returnNode); 
+                case RepeatNode repeatNode: 
+                    return InterpretRepeatLoop(repeatNode);
             }
 
             return null; // Only a single non-return statement was executed, so no exit data.
@@ -279,6 +282,8 @@ namespace SkimSkript.Interpretation
         #region Control Structures
         private BlockExitData InterpretWhileStructure(WhileNode whileNode)
         {
+
+
             while (CoercionInterpreter.CoerceCondition(EvaluateExpression(whileNode.Condition)))
             {
                 var exitData = InterpretBlock(whileNode.Block);
@@ -322,6 +327,25 @@ namespace SkimSkript.Interpretation
 
         private BlockExitData InterpretElseStructure(ElseNode elseNode) =>
             InterpretBlock(elseNode.Block);
+
+        private BlockExitData InterpretRepeatLoop(RepeatNode repeatNode)
+        {
+            var evaluatedCondition = (ValueNode)EvaluateExpression(repeatNode.Condition);
+            var targetCount = evaluatedCondition.ToInt();
+            int iterations = 0;
+
+            while (iterations++ < targetCount)
+            {
+                var exitData = InterpretBlock(repeatNode.Block);
+
+                if(exitData.ExitType != BlockExitType.StatementsExhausted)
+                    return exitData;
+
+                targetCount = ((ValueNode)EvaluateExpression(repeatNode.Condition)).ToInt();
+            }
+
+            return new BlockExitData(BlockExitType.StatementsExhausted);
+        }
         #endregion
 
         #region Variable Statements

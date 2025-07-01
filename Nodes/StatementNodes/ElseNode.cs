@@ -2,6 +2,6 @@
 {
     internal class ElseNode : ControlStructNode
     {
-        public ElseNode(Node block) : base(block) { }
+        public ElseNode(Node block, int endLexemeIndex) : base(block, endLexemeIndex) { }
     }
 }
