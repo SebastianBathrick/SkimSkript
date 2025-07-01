@@ -41,6 +41,7 @@ namespace SkimSkript.Helpers.LexicalAnalysis
 
         public int GetLexemeColumnByIndex(int lexemeIndex) => _lexemeList[lexemeIndex].startColumn;
 
+        /// <remarks>Used for parsing data type literals.</remarks>
         public string GetLexemesAsString(int startIndex, int endIndex)
         {
             var sb = new StringBuilder();
@@ -51,39 +52,32 @@ namespace SkimSkript.Helpers.LexicalAnalysis
             return sb.ToString();
         }
 
-        public string GetLexemesAsStringLines(int startIndex, int endIndex)
-        {
+        /// <summary>Returns an array of lexemes in the specified range.</summary>
+        /// <remarks>Used for printing statements</remarks>
+        public string[] GetLabeledLines(int startIndex, int endIndex)
+        { 
             var sb = new StringBuilder();
+            var lexemesList = new List<string>();
+            var lastLineIndex = _lexemeList[startIndex].lineIndex;
 
-            if (startIndex != 0)
-            {
-                sb.Append(GetLineBreaks(startIndex - 1, startIndex));
-
-                if (_lexemeList[startIndex].lineIndex != _lexemeList[startIndex - 1].lineIndex)
-                {
-                    sb.Append((_lexemeList[startIndex].lineIndex + 1).ToString("D3") + "| ");
-                    sb.Append(new string(' ', _lexemeList[startIndex].startColumn));
-                }
-            }
-            else
-                sb.Append((_lexemeList[startIndex].lineIndex + 1).ToString("D3") + "| ");
+            sb.Append($"Line {(lastLineIndex + 1).ToString("D3")}| ");
 
             for (int i = startIndex; i <= endIndex; i++)
             {
-                if (i - 1 > 0 && _lexemeList[i - 1].lineIndex != _lexemeList[i].lineIndex && i != startIndex)
-                    sb.Append((_lexemeList[i].lineIndex + 1).ToString("D3") + "| ");
+                if(lastLineIndex != _lexemeList[i].lineIndex)
+                {
+                    var line = sb.ToString();
+                    sb.Clear();
+                    lexemesList.Add(line);
+                    sb.Append($"Line {(lastLineIndex + 1).ToString("D3")}| ");
+                }
 
-                sb.Append(GetLexemeSpan(i).ToString());
-
-                if (i != endIndex)
-                    sb.Append(GetLineBreaks(i, i + 1));
-
-                if (i != _lexemeList.Count - 1 && _lexemeList[i + 1].lineIndex == _lexemeList[i].lineIndex)
-                    if (_lexemeList[i + 1].startColumn - _lexemeList[i].endColumn > 1)
-                        sb.Append(' ');
+                sb.Append(GetLexemeSpan(i)).Append(' ');
             }
+            
+            lexemesList.Add(sb.ToString());
 
-            return sb.ToString();
+            return lexemesList.ToArray();
         }
 
         public void BackTrackLexemes(int lexemeCount)
@@ -133,26 +127,6 @@ namespace SkimSkript.Helpers.LexicalAnalysis
 
             for (int i = 0; i < _lexemeList.Count; i++)
                 sb.AppendLine($"{i}: {_lexemeList[i].type} - {GetLexemeSpan(i).ToString()}");
-
-            return sb.ToString();
-        }
-
-        /// <param _name="upperMostIndex">Index of line closest to the top of the file.</param>
-        /// <param _name="lowerMostIndex">Index of line closest to the bottom of the file.</param>
-        private string GetLineBreaks(int upperMostIndex, int lowerMostIndex)
-        {
-            var lineBreakCount = _lexemeList[lowerMostIndex].lineIndex - _lexemeList[upperMostIndex].lineIndex;
-
-            if (lineBreakCount == 0)
-                return string.Empty;
-
-            var line = _lexemeList[upperMostIndex].lineIndex + 2;
-            var sb = new StringBuilder("\n");
-
-            for (int i = 0; i < lineBreakCount - 1; i++)
-            {
-                sb.AppendLine($"{line++:D3}| ");
-            }
 
             return sb.ToString();
         }

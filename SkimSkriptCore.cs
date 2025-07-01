@@ -67,9 +67,14 @@ namespace SkimSkript
 
                 return _interpreter.Execute(treeRoot);
             }
-            catch(AssertionException ex)
+            catch(RuntimeException ex)
             {
-                Console.Error.WriteLine($"Assertion failed: {ex.Message}");
+                var message = ex.Message;
+
+                if(ex.StatementNode != null)
+                    message += $"\n{StatementNode.ToString(ex.StatementNode, _lexer.Lexemes)}";
+
+                Log.Error(message, ex.Properties);
                 return ERROR_EXIT_CODE;
             }
             catch (TokenContainerException ex)

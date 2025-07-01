@@ -1,4 +1,5 @@
-﻿using SkimSkript.Nodes;
+﻿using SkimSkript.Monitoring.ErrorHandling;
+using SkimSkript.Nodes;
 
 namespace SkimSkript.Interpretation.Helpers
 {
@@ -41,7 +42,10 @@ namespace SkimSkript.Interpretation.Helpers
                     return new BoolValueNode(boolResult);
 
                 case OperandDataType.String:
-                    var stringResult = GetMathResultString(leftValueNode, rightValueNode, mathOp);
+                    string leftString = leftValueNode.ToString();
+                    string rightString = rightValueNode.ToString();
+                    var stringResult = GetMathResultString(leftString, rightString, mathOp);
+
                     return new StringValueNode(stringResult);
 
                 default:
@@ -97,17 +101,25 @@ namespace SkimSkript.Interpretation.Helpers
         // TODO: Revisit type operations for runtime error implementation.
 
         /// <summary> Returns the result of an math operation using ints as operands. </summary>
-        private int GetMathResultInt(int left, int right, MathOperator mathOp) =>
-            mathOp switch
+        private int GetMathResultInt(int left, int right, MathOperator mathOp)
+        {
+            switch(mathOp)
             {
-                MathOperator.Add => left + right,
-                MathOperator.Subtract => left - right,
-                MathOperator.Multiply => left * right,
-                MathOperator.Divide => left / right,
-                MathOperator.Modulus => left % right,
-                MathOperator.Exponent => (int)Math.Pow(left, right),
-                _ => throw new ArgumentException("Integer arithmetic error.")
-            };
+                case MathOperator.Add: return left + right;
+                case MathOperator.Subtract: return left - right;
+                case MathOperator.Multiply: return left * right;
+                case MathOperator.Divide: 
+                    if(right == 0)
+                        throw new RuntimeException("Integer division by zero. {Left} divided by {Right}", null, left, right);
+
+                    return left / right;
+                case MathOperator.Modulus: return left % right;
+                case MathOperator.Exponent: return (int)Math.Pow(left, right);
+                default:
+                    throw new ArgumentException("Invalid math operation for integers.");
+            }
+        }
+
 
 
         /// <summary> Returns the result of an comparison operation using ints as operands. </summary>
@@ -124,17 +136,25 @@ namespace SkimSkript.Interpretation.Helpers
             };
 
         /// <summary> Returns the result of an math operation using floats as operands. </summary>
-        private float GetMathResultFloat(float left, float right, MathOperator mathOp) =>
-            mathOp switch
+        private float GetMathResultFloat(float left, float right, MathOperator mathOp)
+        {
+            switch (mathOp)
             {
-                MathOperator.Add => left + right,
-                MathOperator.Subtract => left - right,
-                MathOperator.Multiply => left * right,
-                MathOperator.Divide => left / right,
-                MathOperator.Exponent => (float)Math.Pow(left, right),
-                MathOperator.Modulus => left - right * (float)Math.Floor(left / right),
-                _ => throw new ArgumentException("Floating point arithmetic error.")
-            };
+                case MathOperator.Add: return left + right;
+                case MathOperator.Subtract: return left - right;
+                case MathOperator.Multiply: return left * right;
+                case MathOperator.Divide:
+                    if (right == 0)
+                        throw new RuntimeException("Floating-point division by zero. {Left} divided by {Right}", 
+                            null, left, right);
+
+                    return left / right;
+                case MathOperator.Modulus: return left % right;
+                case MathOperator.Exponent: return left - right * (float)Math.Floor(left / right);
+                default:
+                    throw new ArgumentException("Invalid math operation for floating-points.");
+            }
+        }
 
         /// <summary>
         /// Evaluates a boolean expression using math-like operators,
@@ -180,16 +200,13 @@ namespace SkimSkript.Interpretation.Helpers
             };
 
         /// <summary> Returns the result of an math operation using strings as operands. </summary>
-        private string GetMathResultString(ValueNode left, ValueNode right, MathOperator mathOp)
-        {
-            if (mathOp == MathOperator.Add)
-                return left.ToString() + right.ToString();
-
-            if(mathOp == MathOperator.Modulus && (right is IntValueNode || left is IntValueNode))
-                return GetIntComparisonOperationValue(left.ToInt(), right.ToInt(), ComparisonOperator.Equals).ToString();
-
-            return GetMathResultFloat(left.ToFloat(), right.ToFloat(), mathOp).ToString();
-        }
+        private string GetMathResultString(string left, string right, MathOperator mathOp) =>
+            mathOp switch
+            {
+                MathOperator.Add => left + right,
+                MathOperator.Subtract => left.Replace(right, ""),
+                _ => throw new ArgumentException("Invalid math operation for strings.")
+            };
 
 
         /// <summary> Returns the result of an comparison operation using strings as operands. </summary>

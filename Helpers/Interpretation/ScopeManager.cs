@@ -1,6 +1,7 @@
 ﻿using SkimSkript.Nodes.Runtime;
 using SkimSkript.Nodes;
 using SkimSkript.ErrorHandling;
+using SkimSkript.Monitoring.ErrorHandling;
 
 namespace SkimSkript.Interpretation.Helpers
 {
@@ -37,7 +38,7 @@ namespace SkimSkript.Interpretation.Helpers
             else if (_topLevelFrame.GetVariablePointer(identifier) is not null)
                 _topLevelFrame.AssignValueToVariable(identifier, value);
             else
-                throw new UnknownIdentifierError(identifier);
+                throw UnknownIdentifierError(identifier);
         }
 
         public Node GetVariableValueCopy(string identifier)
@@ -48,7 +49,7 @@ namespace SkimSkript.Interpretation.Helpers
             valueCopy = _topLevelFrame.GetVariableValueCopy(identifier);
             if (valueCopy != null) return valueCopy;
 
-            throw new UnknownIdentifierError(identifier);
+            throw UnknownIdentifierError(identifier);
         }
 
         public Type GetVariableDataType(string identifier)
@@ -59,7 +60,7 @@ namespace SkimSkript.Interpretation.Helpers
             type = _topLevelFrame.GetVariableDataType(identifier);
             if (type != null) return type;
 
-            throw new UnknownIdentifierError(identifier);
+            throw UnknownIdentifierError(identifier);
         }
 
         public Node GetVariablePointer(string identifier)
@@ -70,7 +71,7 @@ namespace SkimSkript.Interpretation.Helpers
             pointer = _topLevelFrame.GetVariablePointer(identifier);
             if (pointer != null) return pointer;
 
-            throw new UnknownIdentifierError(identifier);
+            throw UnknownIdentifierError(identifier);
         }
         #endregion
 
@@ -94,6 +95,7 @@ namespace SkimSkript.Interpretation.Helpers
             _isTopLevel = _functionCallStackFrames.Count == 0;
         }
 
-
+        private RuntimeException UnknownIdentifierError(string identifier) =>
+            new RuntimeException("Unknown identifier {Identifier}", null, identifier);
     }
 }

@@ -133,6 +133,12 @@ namespace SkimSkript.Tokens
         #endregion
 
         #region Get Lexeme Methods
+        public int GetLexemeStartIndex(int offset = 0) => 
+            _tokenList[_currentTokenIndex - offset].LexemeStartIndex;
+
+        public int GetLexemeEndIndex(int offset = 1) => 
+            _tokenList[_currentTokenIndex - offset].LexemeEndIndex;
+
         public string MatchRemoveAndGetLexeme(TokenType tokenType)
         {
             MatchAndRemove(tokenType);

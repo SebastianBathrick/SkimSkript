@@ -10,7 +10,7 @@ namespace SkimSkript.Nodes
 
         public Node? ChainedStructure => _chainedStructure;
 
-        public IfNode(Node condition, Node block, Node? chainedStructure) : base(condition, block) =>
+        public IfNode(Node condition, Node block, Node? chainedStructure, int endLexemeIndex) : base(condition, block, endLexemeIndex) =>
             _chainedStructure = chainedStructure;
 
         public override string ToString() => $"if{base.ToString()}";

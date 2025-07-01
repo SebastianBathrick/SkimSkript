@@ -2,7 +2,7 @@
 {
     /// <summary>Class representing assignment statement in which a variable being referenced 
     /// gets assigned an expression.</summary>
-    public class AssignmentNode : StatementNode
+    internal class AssignmentNode : StatementNode
     {
         private Node _identifierNode;
         private Node _assignedExpression;

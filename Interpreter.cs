@@ -1,5 +1,6 @@
 ﻿using SkimSkript.ErrorHandling;
 using SkimSkript.Interpretation.Helpers;
+using SkimSkript.Monitoring.ErrorHandling;
 using SkimSkript.Nodes;
 
 namespace SkimSkript.Interpretation
@@ -22,6 +23,7 @@ namespace SkimSkript.Interpretation
         private OperationInterpreter? _operationInterpreter;
         private Dictionary<string, CallableNode>? _callableFunctionsDict;
         private Node[]? _userFunctions;
+        private StatementNode? _currentStatementNode;
         #endregion
 
         #region Properties
@@ -45,7 +47,20 @@ namespace SkimSkript.Interpretation
         protected override int OnExecute(AbstractSyntaxTreeRoot treeRoot)
         {
             _userFunctions = treeRoot.UserFunctions;
-            var exitData = InterpretBlock(treeRoot);
+            BlockExitData exitData;
+            try
+            {
+                exitData = InterpretBlock(treeRoot);
+            }
+            catch(RuntimeException ex)
+            {
+                ex.SetStatement(_currentStatementNode);
+                throw;
+            }
+            catch
+            {
+                throw;
+            }
 
             if (exitData.ExitType == BlockExitType.StatementsExhausted)
                 return DEFAULT_EXIT_CODE;
@@ -141,6 +156,8 @@ namespace SkimSkript.Interpretation
         /// <summary> Interprets a single statement node and returns any exit data if applicable. </summary>
         private BlockExitData? InterpretStatement(Node node)
         {
+            _currentStatementNode = (StatementNode)node;
+
             switch (node)
             {
                 case VariableDeclarationNode varNode: 
@@ -320,16 +337,7 @@ namespace SkimSkript.Interpretation
             Node coercedInitVal;
 
             // Coerce the value to be the same type as the variable's data type.
-            try
-            {
                 coercedInitVal = CoercionInterpreter.CoerceNodeValue(initVal, dataType);
-            }
-            catch
-            {
-                throw new InvalidDataException(
-                    $"Variable \"{identifier}\" cannot be initialized with a value of type {initVal.GetType().Name}.\n" +
-                    $"Expected type: {dataType.Name}.");
-            }
 
             /* Even if there was no explicit initialization, the parser will still store a value 
              * node with a default value in the declaration node. Works like C# primitives. */
@@ -347,11 +355,6 @@ namespace SkimSkript.Interpretation
             // Coerce the evaluated expression to the variable's data type
             var coercedAssignVal = CoercionInterpreter.CoerceNodeValue(rawAssignVal, varDataType);
 
-            if (coercedAssignVal == null)
-                throw new InvalidDataException(
-                    $"Variable \"{assignment.IdentifierNode}\" cannot be assigned a value of type {rawAssignVal.GetType().Name}.\n" +
-                    $"Expected type: {varDataType.Name}.");
-
             _scope.AssignValueToVariable(identifier, coercedAssignVal);
         }
         #endregion
@@ -361,16 +364,42 @@ namespace SkimSkript.Interpretation
         /// <exception cref="AssertionException"> Thrown if the conditional expression stored in the statement is false. </exception>
         private void InterpretAssertion(AssertionNode assertionNode)
         {
-            try
+            var interpretedExpression = EvaluateExpression(assertionNode.Condition);
+            var evaluatedCondition = CoercionInterpreter.CoerceLogicOperand(interpretedExpression, out _);
+
+            if (!evaluatedCondition)
             {
-                var interpretedExpression = EvaluateExpression(assertionNode.Condition);
-                if (!CoercionInterpreter.CoerceLogicOperand(interpretedExpression, out _))
-                    throw new AssertionException("Expression evaluated to false");        
+                Node leftOperand;
+                Node rightOperand;
+
+                if(assertionNode.Condition is LogicExpressionNode logicExpr)
+                {
+                    leftOperand = logicExpr.LeftOperand;
+                    rightOperand = logicExpr.RightOperand;
+                }
+                else if(assertionNode.Condition is ComparisonExpressionNode comparisonExpr)
+                {
+                    leftOperand = comparisonExpr.LeftOperand;
+                    rightOperand = comparisonExpr.RightOperand;
+                }
+                else if(assertionNode.Condition is MathExpressionNode mathExpr)
+                {
+                    leftOperand = assertionNode.Condition;
+                    rightOperand = new BoolValueNode(false);
+                }
+                else
+                    throw new RuntimeException("Assertion failed", assertionNode);
+
+                var leftEval = EvaluateExpression(leftOperand);
+                var rightEval = EvaluateExpression(rightOperand);
+
+                throw new RuntimeException(
+                    "Assertion failed. Evaluated left operand: {Left} Evaluated right operand: {Right}",
+                    assertionNode, leftEval, rightEval
+                    );
             }
-            catch(Exception ex)
-            {
-                throw new AssertionException($"{assertionNode.ToString()}\nException was thrown while executing assertion: {ex.Message}");
-            }
+                       
+
         }
         #endregion
         #endregion

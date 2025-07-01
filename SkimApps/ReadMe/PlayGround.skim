@@ -1,1 +1,8 @@
-﻿
+﻿int myNum = read()
+print("Output worked! Your number: " + myNum)
+
+assert myNum == 42.0
+
+sdds = 20
+
+print("Assertion passed! Your number is indeed 42.")

@@ -8,4 +8,8 @@
 	  <AssemblyName>skimskript</AssemblyName>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Nodes\NodeExceptions\" />
+  </ItemGroup>
+
 </Project>

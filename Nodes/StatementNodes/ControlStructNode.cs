@@ -1,7 +1,7 @@
 ﻿namespace SkimSkript.Nodes
 {
     /// <summary>Abstract class representing a control structure with a condition of execution for a stored block.</summary>
-    public abstract class ControlStructNode : StatementNode
+    internal abstract class ControlStructNode : StatementNode
     {
         private Node _block;
 

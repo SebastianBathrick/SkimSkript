@@ -30,7 +30,7 @@ namespace SkimSkript.Parsing
             
             while (Tokens.HasTokens)
             {
-                //If the next token is a statement then parse it and add it to the entry point.
+                //If the next token is a newNode then parse it and add it to the entry point.
                 if (!IsFunctionDefNext())
                 {
                     statements.Add(GetStatement());
@@ -79,14 +79,14 @@ namespace SkimSkript.Parsing
             var isImplicitBlock = !Tokens.TryMatchAndRemove(TokenType.BlockOpen);
             List<Node>? statements = null;
 
-            if(isImplicitBlock)
+            if (isImplicitBlock)
                 return new BlockNode([GetStatement()]);
 
             while (!Tokens.TryMatchAndRemove(TokenType.BlockClose))
             {
                 statements ??= new List<Node>();
                 statements.Add(GetStatement());
-            }          
+            }
 
             return new BlockNode(statements?.ToArray());
         }
@@ -94,39 +94,50 @@ namespace SkimSkript.Parsing
 
         #region Statements
         #region Primary Statement Methods
-        /// <summary>Determines using the front-most token what type of statement needs to be parsed
-        /// next, and then parses that statement.</summary>
+        /// <summary>Determines using the front-most token what type of newNode needs to be parsed
+        /// next, and then parses that newNode.</summary>
         /// <exception cref="SyntaxError"></exception>
-        private Node GetStatement() =>
-            Tokens.PeekType() switch
+        private Node GetStatement()
+        {
+            Node newNode;
+            int lexemeStartIndex = Tokens.GetLexemeStartIndex();
+
+            switch (Tokens.PeekType())
             {
-                TokenType.DeclarationStart or TokenType.IntegerKeyword or
-                TokenType.StringKeyword or TokenType.FloatKeyword or
-                TokenType.BoolKeyword => GetVariableDeclaration(),           
-                TokenType.FunctionCallStart => GetFunctionCall(),
-                TokenType.Return => GetReturnStatement(),
-                TokenType.AssignmentStart => GetAssignment(),
-                TokenType.WhileLoop => GetWhileLoop(),
-                TokenType.If => GetIfStatement(),    
-                TokenType.Identifier => GetIdentifierStartStatement(), //The function will be called here,
-                TokenType.Assertion => GetAssertionStatement(),
+                case TokenType.DeclarationStart: case TokenType.IntegerKeyword: 
+                case TokenType.StringKeyword: case TokenType.FloatKeyword: 
+                case TokenType.BoolKeyword: 
+                    newNode = GetVariableDeclaration(); break;
 
-                _ => throw Tokens.GetTokenExceptionError(
-                    errorType: TokenContainerError.TokenMismatch,
+                case TokenType.FunctionCallStart: newNode = GetFunctionCall(); break;
 
-                    // The token being referenced is the front-most token
-                    tokenIndexOffset: 0,
+                case TokenType.Return: newNode = GetReturnStatement(); break;
 
-                    // Expected token that will be displayed in the error message
-                    StringHelper.SplitPascalCaseManual(
-                        TokenType.StatementStartToken.ToString()
-                        ),
-                    // Actual token that was found
-                    StringHelper.SplitPascalCaseManual(
-                        Tokens.PeekType().ToString()
-                        )
-                    )
-            };
+                case TokenType.AssignmentStart: newNode = GetAssignment(); break;
+
+                case TokenType.WhileLoop: newNode = GetWhileLoop(); break;
+
+                case TokenType.If: newNode = GetIfStatement(); break;
+
+                case TokenType.Identifier: newNode = GetIdentifierStartStatement(); break;
+
+                case TokenType.Assertion: newNode = GetAssertionStatement(); break;
+
+                default:
+                    var expectedStr = StringHelper.SplitPascalCaseManual(TokenType.StatementStartToken.ToString());
+                    var actualStr = StringHelper.SplitPascalCaseManual(Tokens.PeekType().ToString());
+                    throw Tokens.GetTokenExceptionError(
+                        errorType: TokenContainerError.TokenMismatch, 0, expectedStr, actualStr);
+            }
+
+            var statementNode = (StatementNode)newNode;
+            statementNode.SetLexemeStartIndex(lexemeStartIndex);
+
+            if(!statementNode.IsEndLexeme)
+                statementNode.SetLexemeEndIndex(Tokens.GetLexemeEndIndex());
+
+            return statementNode;
+        }
 
         /// <summary>Returns either a function call or a variable assignment statment where the first token is an identifierNode.</summary>
         private Node GetIdentifierStartStatement()
@@ -161,7 +172,7 @@ namespace SkimSkript.Parsing
             return new FunctionCallNode(identifier, args?.ToArray());
         }
 
-        /// <summary>Parses a return statement with or without an conditionalExpression.</summary>
+        /// <summary>Parses a return newNode with or without an conditionalExpression.</summary>
         private Node GetReturnStatement()
         {
             Tokens.MatchAndRemove(TokenType.Return);
@@ -170,7 +181,7 @@ namespace SkimSkript.Parsing
         #endregion
 
         #region Variable Statements
-        /// <summary>Parses a variable declaration and can potentially parse an initilization in the same statement.</summary>
+        /// <summary>Parses a variable declaration and can potentially parse an initilization in the same newNode.</summary>
         private Node GetVariableDeclaration()
         {
             Tokens.TryMatchAndRemove(TokenType.DeclarationStart);
@@ -203,7 +214,7 @@ namespace SkimSkript.Parsing
             return new VariableDeclarationNode(identifierNode, dataType, initValue);
         }
 
-        /// <summary>Parses an assignment statement where what is presumably a variable or parameter is assigned an condition.</summary>
+        /// <summary>Parses an assignment newNode where what is presumably a variable or parameter is assigned an condition.</summary>
         private Node GetAssignment()
         {
             Tokens.TryMatchAndRemove(TokenType.AssignmentStart);
@@ -224,6 +235,7 @@ namespace SkimSkript.Parsing
             var condition = GetExpression();
 
             Tokens.TryMatchAndRemove(TokenType.Then);
+            var statementEndLexeme = Tokens.GetLexemeEndIndex();
 
             var block = GetBlock();
             Node? chainedStructure = null;
@@ -234,8 +246,8 @@ namespace SkimSkript.Parsing
                 chainedStructure = new ElseNode(GetBlock());
 
             return !isElseIf ? 
-                new IfNode(condition, block, chainedStructure) : 
-                new ElseIfNode(condition, block,chainedStructure);
+                new IfNode(condition, block, chainedStructure, statementEndLexeme) : 
+                new ElseIfNode(condition, block,chainedStructure, statementEndLexeme);
         }
 
         private Node GetWhileLoop()
@@ -243,12 +255,14 @@ namespace SkimSkript.Parsing
             Tokens.MatchAndRemove(TokenType.WhileLoop);
             var condition = GetExpression();
             Tokens.TryMatchAndRemove(TokenType.Then);
-            return new WhileNode(condition, GetBlock());
+            var statementEndLexeme = Tokens.GetLexemeEndIndex();
+
+            return new WhileNode(condition, GetBlock(), statementEndLexeme);
         }
         #endregion
 
         #region Misc. Statements
-        /// <summary>Parses an assertion statement with an conditional conditionalExpression.</summary>
+        /// <summary>Parses an assertion newNode with an conditional conditionalExpression.</summary>
         private Node GetAssertionStatement()
         {
             Tokens.MatchAndRemove(TokenType.Assertion);

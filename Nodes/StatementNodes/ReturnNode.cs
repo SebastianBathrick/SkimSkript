@@ -2,7 +2,7 @@
 {
     /// <summary>Class representing a return statement where a function ceases to execute and returns control to the caller.</summary>
     /// <remarks>Optionally an expression can be stored to represent a return value.</remarks>
-    public class ReturnNode : StatementNode
+    internal class ReturnNode : StatementNode
     {
         private Node? _expression;
 

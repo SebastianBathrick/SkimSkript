@@ -5,7 +5,7 @@ namespace SkimSkript.Nodes
     /// <summary>Class representing a while loop control structure.</summary>
     internal class WhileNode : ConditionStructNode
     {
-        public WhileNode(Node condition, Node block) : base(condition, block) { }
+        public WhileNode(Node condition, Node block, int endLexemeIndex) : base(condition, block, endLexemeIndex) { }
 
         public override string ToString() => $"while{base.ToString()}";
     }
