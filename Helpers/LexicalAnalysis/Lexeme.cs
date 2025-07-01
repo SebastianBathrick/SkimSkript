@@ -1,6 +1,6 @@
 ﻿using SkimSkript.LexicalAnalysis.Helpers;
 
-namespace SkimSkript.CoreHelpers.LexicalAnalysis
+namespace SkimSkript.Helpers.LexicalAnalysis
 {
     internal struct Lexeme
     {

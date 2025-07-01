@@ -1,7 +1,9 @@
-﻿using SkimSkript.TokenManagement;
-using SkimSkript.ErrorHandling;
-using SkimSkript.Nodes;
+﻿using SkimSkript.ErrorHandling;
+using SkimSkript.Helpers.General;
 using SkimSkript.Logging;
+using SkimSkript.Monitoring.ErrorHandling;
+using SkimSkript.Nodes;
+using SkimSkript.Tokens;
 
 namespace SkimSkript.Parsing
 {
@@ -313,17 +315,38 @@ namespace SkimSkript.Parsing
 
             switch (tokenType)
             {
-                case TokenType.Integer: return new IntValueNode(int.Parse(lexeme));
-                case TokenType.Float: return new FloatValueNode(float.Parse(lexeme));
+                case TokenType.Integer: 
+                    return new IntValueNode(int.Parse(lexeme));
+
+                case TokenType.Float: 
+                    return new FloatValueNode(float.Parse(lexeme));
+
                 case TokenType.String: 
                     lexeme = lexeme.Trim('"'); // Remove surrounding quotes from string literals
                     return new StringValueNode(in lexeme);
-                case TokenType.ParenthesisOpen: return ParseInnerExpression();
-                case TokenType.FunctionCallStartExpression: return GetFunctionCall();
-                case TokenType.True: return new BoolValueNode(true);
-                case TokenType.False: return new BoolValueNode(false);
+
+                case TokenType.ParenthesisOpen: 
+                    return ParseInnerExpression();
+
+                case TokenType.FunctionCallStartExpression: 
+                    return GetFunctionCall();
+
+                case TokenType.True: 
+                    return new BoolValueNode(true);
+
+                case TokenType.False: 
+                    return new BoolValueNode(false);
+
                 case TokenType.Subtract: return new MathExpressionNode(MathOperator.Multiply, new IntValueNode(-1), ParseFactor());
-                default: throw new SyntaxError("Invalid factor in conditionalExpression.", Tokens, ErrorTokenPosition.Backward);
+                default:
+                    throw Tokens.GetTokenExceptionError(
+                        TokenContainerError.TokenMismatch, 
+                        tokenIndexOffset:1, 
+                        StringHelper.SplitPascalCaseManual(
+                            TokenType.Factor.ToString()),
+                        StringHelper.SplitPascalCaseManual(
+                            tokenType.ToString())
+                        );
             }
         }
         #endregion
@@ -358,7 +381,7 @@ namespace SkimSkript.Parsing
         private bool IsFunctionDefNext() =>
             Tokens.PeekType() switch
             {
-                TokenType.FunctionIntDefine or TokenType.FunctionFloatDefine or TokenType.FunctionStringDefine or TokenManagement.TokenType.FunctionVoidDefine
+                TokenType.FunctionIntDefine or TokenType.FunctionFloatDefine or TokenType.FunctionStringDefine or TokenType.FunctionVoidDefine
                 or TokenType.FunctionBoolDefine => true,
                 _ => false
             };
@@ -389,7 +412,14 @@ namespace SkimSkript.Parsing
                 TokenType.BoolKeyword => typeof(BoolValueNode),
                 TokenType.StringKeyword => typeof(StringValueNode),
                 TokenType.IntegerKeyword => typeof(IntValueNode),
-                _ => throw new SyntaxError($"Invalid data type token", Tokens, ErrorTokenPosition.Backward)
+                _ => throw Tokens.GetTokenExceptionError(
+                    TokenContainerError.TokenMismatch,
+                    tokenIndexOffset: 1,
+                    StringHelper.SplitPascalCaseManual(
+                        TokenType.DataType.ToString()),
+                    StringHelper.SplitPascalCaseManual(
+                        Tokens.GetPreviousTokenType().ToString())
+                    )
             };
 
         private Node GetValueNodeOfType(Type valueNodeType) =>
@@ -399,7 +429,12 @@ namespace SkimSkript.Parsing
                 Type t when t == typeof(FloatValueNode) => new FloatValueNode(),
                 Type t when t == typeof(BoolValueNode) => new BoolValueNode(),
                 Type t when t == typeof(StringValueNode) => new StringValueNode(),
-                _ => throw new SyntaxError($"Invalid value node type: {valueNodeType}.", Tokens, ErrorTokenPosition.Backward)
+                _ => throw Tokens.GetTokenExceptionError(
+                    TokenContainerError.TokenMismatch,
+                    tokenIndexOffset: 1,
+                    TokenType.DataType,
+                    Tokens.GetPreviousTokenType()
+                    )
             };
 
         private Node GetIdentifier() => 

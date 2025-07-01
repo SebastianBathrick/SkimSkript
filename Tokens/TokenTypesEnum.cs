@@ -1,4 +1,4 @@
-﻿namespace SkimSkript.TokenManagement
+﻿namespace SkimSkript.Tokens
 {
     /// <summary>Enum that serves as a label to determine how the token should be treated during parsing.</summary>
     public enum TokenType : byte
@@ -86,11 +86,17 @@
         BlockOpen,
         BlockClose,
         Assertion,
-        CommentStart,      
+        CommentStart,
+
+        // Error Checking
+        EndOfFile,
+        Factor,
+        DataType,
 
         // Utility TokenTypes (used for lexing)
         PartialPhrase,
         Undefined,
+        
         #endregion
     }
 }

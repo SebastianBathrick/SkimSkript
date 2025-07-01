@@ -1,4 +1,4 @@
-﻿using SkimSkript.CoreHelpers.LexicalAnalysis;
+﻿using SkimSkript.Helpers.LexicalAnalysis;
 using SkimSkript.ErrorHandling;
 using System.Text;
 

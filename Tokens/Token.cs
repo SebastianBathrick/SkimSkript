@@ -1,4 +1,4 @@
-﻿namespace SkimSkript.TokenManagement.Tokens
+﻿namespace SkimSkript.Tokens
 {
     /// <summary>Class that represents a single token created during lexical analysis utilized for parsing.</summary>
     public class Token

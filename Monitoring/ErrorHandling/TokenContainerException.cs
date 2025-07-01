@@ -1,6 +1,6 @@
 ﻿
-using SkimSkript.CoreHelpers.LexicalAnalysis;
-using SkimSkript.TokenManagement.Tokens;
+using SkimSkript.Helpers.LexicalAnalysis;
+using SkimSkript.Tokens;
 using System.Text;
 
 namespace SkimSkript.Monitoring.ErrorHandling
@@ -16,6 +16,7 @@ namespace SkimSkript.Monitoring.ErrorHandling
         private static readonly string[] _messages =
         {
             "Expected {TokenType} but got {TokenType} instead"
+
         };
 
         private LexemeContainer _lexemes;
@@ -39,6 +40,8 @@ namespace SkimSkript.Monitoring.ErrorHandling
             _lexemes = lexemes;
         }
 
+
+
         protected override bool TryGetAdditionalContext(out string message, out object[] properties)
         {
             (int start, int end) lineIndexes;
@@ -47,8 +50,6 @@ namespace SkimSkript.Monitoring.ErrorHandling
 
             var sb = new StringBuilder();
             var propertiesList = new List<object>();
-
-
 
             for (int i = lineIndexes.start; i <= lineIndexes.end; i++)
             {

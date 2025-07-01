@@ -1,7 +1,7 @@
 ﻿using SkimSkript.LexicalAnalysis.Helpers;
 using System.Text;
 
-namespace SkimSkript.CoreHelpers.LexicalAnalysis
+namespace SkimSkript.Helpers.LexicalAnalysis
 {
     internal class LexemeContainer
     {

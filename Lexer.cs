@@ -1,6 +1,6 @@
-﻿using SkimSkript.CoreHelpers.LexicalAnalysis;
+﻿using SkimSkript.Helpers.LexicalAnalysis;
 using SkimSkript.LexicalAnalysis.Helpers;
-using SkimSkript.TokenManagement;
+using SkimSkript.Tokens;
 using System.Text;
 
 namespace SkimSkript.LexicalAnalysis

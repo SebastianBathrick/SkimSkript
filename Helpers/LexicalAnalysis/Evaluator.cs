@@ -1,7 +1,6 @@
-﻿using SkimSkript.TokenManagement.Tokens;
-using SkimSkript.TokenManagement;
+﻿using SkimSkript.Tokens;
 using SkimSkript.Syntax;
-using SkimSkript.CoreHelpers.LexicalAnalysis;
+using SkimSkript.Helpers.LexicalAnalysis;
 
 namespace SkimSkript.LexicalAnalysis.Helpers
 {
@@ -62,7 +61,7 @@ namespace SkimSkript.LexicalAnalysis.Helpers
                         break;
                 }
                 
-                tokens.Add(new Token(tokenType, lexemeStartIndex, Lexemes.CurrentLexemeIndex));
+                tokens.Append(new Token(tokenType, lexemeStartIndex, Lexemes.CurrentLexemeIndex));
             }
             while (Lexemes.TryMoveToNextLexeme());
 

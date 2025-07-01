@@ -72,7 +72,7 @@ namespace SkimSkript.Interpretation
 
             InitializeParameters(functionNode.Parameters, evaluatedArgs);
 
-            // TODO: Add return checking to functions in semantic analysis
+            // TODO: Append return checking to functions in semantic analysis
             var bodyExitData = InterpretBlock(functionNode.Block);
 
             _scope.ExitFunctionScope();

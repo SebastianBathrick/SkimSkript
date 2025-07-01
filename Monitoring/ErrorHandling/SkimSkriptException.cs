@@ -4,10 +4,10 @@ namespace SkimSkript.Monitoring.ErrorHandling
 {
     internal abstract class SkimSkriptException : Exception
     {
-        private readonly object[] _properties;
-        private readonly Enum _errorKey;
-        private readonly int _line;
-        private readonly int _column;   
+        protected readonly object[] _properties;      
+        protected readonly int _line;
+        protected readonly int _column;
+        protected readonly Enum _errorKey;
 
         public object[] Properties
         {
@@ -28,7 +28,12 @@ namespace SkimSkript.Monitoring.ErrorHandling
             base.Message + (TryGetAdditionalContext(out var msg, out _) ? $".\n{msg}" : string.Empty);
                         
         public SkimSkriptException(
-            Enum errorKey, string[] messages, int line, int column, params object[] properties) 
+            Enum errorKey, 
+            string[] messages, 
+            int line, 
+            int column, 
+            params object[] properties
+            ) 
             : base(CreateMessage(errorKey, messages, line, column))
         {
             _properties = properties;
@@ -46,42 +51,5 @@ namespace SkimSkript.Monitoring.ErrorHandling
 
         private static string CreateMessage(Enum errorKey, string[] messages, int line, int column) =>
             "[L{Line}:C{Column}]" + $" {messages[Convert.ToInt32(errorKey)]}";
-
-        public static string SplitPascalCaseManual(string input)
-        {
-            if (string.IsNullOrEmpty(input))
-                return input;
-
-            var result = new StringBuilder();
-
-            for (int i = 0; i < input.Length; i++)
-            {
-                char current = input[i];
-
-                // Add space before uppercase letter if previous char is lowercase or digit
-                if (i > 0 && char.IsUpper(current))
-                {
-                    char previous = input[i - 1];
-                    if (char.IsLower(previous) || char.IsDigit(previous))
-                    {
-                        result.Append(' ');
-                    }
-                }
-
-                // Add space before digit if previous char is letter
-                if (i > 0 && char.IsDigit(current))
-                {
-                    char previous = input[i - 1];
-                    if (char.IsLetter(previous))
-                    {
-                        result.Append(' ');
-                    }
-                }
-
-                result.Append(current);
-            }
-
-            return result.ToString();
-        }
     }
 }

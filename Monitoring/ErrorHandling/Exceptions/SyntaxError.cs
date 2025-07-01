@@ -1,4 +1,4 @@
-﻿using SkimSkript.TokenManagement;
+﻿using SkimSkript.Tokens;
 
 namespace SkimSkript.ErrorHandling
 {
