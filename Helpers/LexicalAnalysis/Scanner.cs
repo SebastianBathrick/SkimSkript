@@ -1,5 +1,5 @@
-﻿using SkimSkript.Helpers.LexicalAnalysis;
-using SkimSkript.ErrorHandling;
+﻿using SkimSkript.ErrorHandling.Exceptions;
+using SkimSkript.Helpers.LexicalAnalysis;
 using System.Text;
 
 namespace SkimSkript.LexicalAnalysis.Helpers

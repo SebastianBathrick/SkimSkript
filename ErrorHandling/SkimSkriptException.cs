@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace SkimSkript.Monitoring.ErrorHandling
+namespace SkimSkript.ErrorHandling
 {
     internal abstract class SkimSkriptException : Exception
     {

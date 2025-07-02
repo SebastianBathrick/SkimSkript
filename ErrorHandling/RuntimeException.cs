@@ -1,6 +1,6 @@
 ﻿using SkimSkript.Nodes;
 
-namespace SkimSkript.Monitoring.ErrorHandling
+namespace SkimSkript.ErrorHandling
 {
     internal class RuntimeException : Exception
     {

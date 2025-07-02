@@ -1,4 +1,4 @@
-﻿namespace SkimSkript.ErrorHandling
+﻿namespace SkimSkript.ErrorHandling.Exceptions
 {
     /// <summary> <see cref="LanguageError"/> specific to the lexical analysis phase, during which it will be thrown. </summary>
     public class LexicalError : LanguageError

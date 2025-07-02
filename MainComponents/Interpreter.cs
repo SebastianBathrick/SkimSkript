@@ -1,10 +1,9 @@
 ﻿using SkimSkript.ErrorHandling;
 using SkimSkript.Interpretation.Helpers;
-using SkimSkript.Monitoring.ErrorHandling;
 using SkimSkript.Nodes;
 using SkimSkript.Nodes.StatementNodes;
 
-namespace SkimSkript.Interpretation
+namespace SkimSkript.MainComponents
 {
     /// <summary> 
     /// Responsible for executing the program represented by an Abstract Syntax Tree (AST) generated 
@@ -39,8 +38,6 @@ namespace SkimSkript.Interpretation
         private Dictionary<string, CallableNode> CallableFunctions =>
             _callableFunctionsDict ??= GetFunctionMap(_userFunctions);
         #endregion
-
-
 
         #region Execution
         public Interpreter(IEnumerable<MainComponentType> debuggedTypes) : base(debuggedTypes) { }

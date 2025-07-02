@@ -1,4 +1,4 @@
-﻿namespace SkimSkript.ErrorHandling
+﻿namespace SkimSkript.ErrorHandling.Exceptions
 {
     /// <summary> <see cref="LanguageError"/> thrown runtime if an identifier can't be found/accessed or in the current scope. </summary>
     public class UnknownIdentifierError : LanguageError

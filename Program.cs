@@ -1,7 +1,7 @@
-﻿using JustLogger.ConsoleLogging;
-using JustLogger;
+﻿using SkimSkript.Helpers.EntryPoint;
+using JustLogger.ConsoleLogging;
 using SkimSkript;
-using Flags;
+using JustLogger;
 
 class Program
 {

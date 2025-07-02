@@ -1,15 +1,15 @@
-﻿using SkimSkript.ErrorHandling;
+﻿using SkimSkript.ErrorHandling.Exceptions;
 using SkimSkript.Helpers.General;
-using SkimSkript.Monitoring.ErrorHandling;
-using SkimSkript.Nodes;
 using SkimSkript.Nodes.StatementNodes;
+using SkimSkript.ErrorHandling;
 using SkimSkript.Tokens;
+using SkimSkript.Nodes;
 using JustLogger;
 
-namespace SkimSkript.Parsing
+namespace SkimSkript.MainComponents
 {
     ///<summary> Represents a parser for converting a list of tokens into an abstract syntax tree (AST).
-    ///The root of the AST can be retrieved with the root being in the form of an <see cref="SkimSkript.Nodes.AbstractSyntaxTreeRoot"/>
+    ///The root of the AST can be retrieved with the root being in the form of an <see cref="AbstractSyntaxTreeRoot"/>
     ///object.</summary>
     internal class Parser : MainComponent<TokenContainer, AbstractSyntaxTreeRoot>
     {

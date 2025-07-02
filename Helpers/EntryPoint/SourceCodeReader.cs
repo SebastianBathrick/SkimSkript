@@ -1,6 +1,6 @@
 using JustLogger;
 
-namespace SkimSkript
+namespace SkimSkript.Helpers.EntryPoint
 {
     /// <summary>
     /// Provides functionality for reading and validating SkimSkript source code files.

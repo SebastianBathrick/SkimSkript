@@ -1,4 +1,4 @@
-﻿namespace SkimSkript.ErrorHandling
+﻿namespace SkimSkript.ErrorHandling.Exceptions
 {
     /// <summary> Abstract class that inherits from <see cref="Exception"/> and will serve as the
     /// parent of any error specific to the language. </summary>

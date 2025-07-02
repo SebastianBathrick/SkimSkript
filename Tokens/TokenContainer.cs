@@ -1,6 +1,6 @@
-﻿using SkimSkript.Helpers.General;
+﻿using SkimSkript.ErrorHandling;
+using SkimSkript.Helpers.General;
 using SkimSkript.Helpers.LexicalAnalysis;
-using SkimSkript.Monitoring.ErrorHandling;
 using System.Text;
 
 namespace SkimSkript.Tokens

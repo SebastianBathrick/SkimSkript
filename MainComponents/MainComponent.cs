@@ -1,7 +1,7 @@
 ﻿using JustLogger;
 using System.Diagnostics;
 
-namespace SkimSkript
+namespace SkimSkript.MainComponents
 {
     public enum MainComponentType
     {

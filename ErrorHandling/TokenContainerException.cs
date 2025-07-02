@@ -1,9 +1,8 @@
-﻿
-using SkimSkript.Helpers.LexicalAnalysis;
+﻿using SkimSkript.Helpers.LexicalAnalysis;
 using SkimSkript.Tokens;
 using System.Text;
 
-namespace SkimSkript.Monitoring.ErrorHandling
+namespace SkimSkript.ErrorHandling
 {
     internal enum TokenContainerError
     {

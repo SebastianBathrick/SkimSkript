@@ -1,4 +1,4 @@
-﻿namespace SkimSkript.ErrorHandling
+﻿namespace SkimSkript.ErrorHandling.Exceptions
 {
     /// <summary> <see cref="LanguageError"/> specific to the semantic analysis phase in which it will be thrown. </summary>
     public class SemanticError : LanguageError

@@ -1,9 +1,9 @@
-﻿using SkimSkript.Helpers.LexicalAnalysis;
-using SkimSkript.LexicalAnalysis.Helpers;
+﻿using SkimSkript.LexicalAnalysis.Helpers;
+using SkimSkript.Helpers.LexicalAnalysis;
 using SkimSkript.Tokens;
 using System.Text;
 
-namespace SkimSkript.LexicalAnalysis
+namespace SkimSkript.MainComponents
 {
     /// <summary>Coordinates lexeme scanning and evaluation to produce tokens.
     /// Populates a <see cref="TokenManagement.TokenContainer"/> using input lines.</summary>

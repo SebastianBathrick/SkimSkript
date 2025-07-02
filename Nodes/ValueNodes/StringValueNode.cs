@@ -1,4 +1,4 @@
-﻿using SkimSkript.Monitoring.ErrorHandling;
+﻿using SkimSkript.ErrorHandling;
 
 namespace SkimSkript.Nodes
 {

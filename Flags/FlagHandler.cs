@@ -1,5 +1,5 @@
-﻿using JustLogger;
-using System.Text;
+﻿using System.Text;
+using JustLogger;
 
 namespace Flags
 {

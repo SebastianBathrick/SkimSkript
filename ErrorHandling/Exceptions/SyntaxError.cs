@@ -1,6 +1,6 @@
 ﻿using SkimSkript.Tokens;
 
-namespace SkimSkript.ErrorHandling
+namespace SkimSkript.ErrorHandling.Exceptions
 {
     /// <summary> Represents the position of the problematic token relative to the <see cref="TokenContainer"/>
     /// pointer in the event of an error. Intended to help in displaying accurate and relevant syntax errors'
@@ -36,7 +36,7 @@ namespace SkimSkript.ErrorHandling
         #region Constructors
         /// <param _name="message"> Message describing why syntactically is semantically invalid. </param>
         /// <param _name="tokenContainer"> See <see cref="TokenManagement.TokenContainer"/> docs. </param>
-        /// <param _name="position"> See <see cref="SyntaxError.Position"/> doc. </param>
+        /// <param _name="position"> See <see cref="Position"/> doc. </param>
         public SyntaxError(string message, TokenContainer tokenContainer, ErrorTokenPosition position) : base($"{ERROR_LABEL}{message}")
         {
             _tokenContainer = tokenContainer;
@@ -44,10 +44,10 @@ namespace SkimSkript.ErrorHandling
         }
 
         /// <remarks> The <see cref="ErrorHandler"/> will generate the error message & not an instance of this class object. </remarks>
-        /// <param _name="expectedTokenType"> See <see cref="SyntaxError.ExpectedTokenType"/> doc. </param>
+        /// <param _name="expectedTokenType"> See <see cref="ExpectedTokenType"/> doc. </param>
         /// <param _name="tokenContainer"> See <see cref="TokenManagement.TokenContainer"/> docs. </param>
-        /// <param _name="position"> See <see cref="SyntaxError.Position"/> doc. </param>
-        public SyntaxError(TokenType expectedTokenType, TokenContainer tokenContainer, ErrorTokenPosition position) : this(String.Empty, tokenContainer, position)
+        /// <param _name="position"> See <see cref="Position"/> doc. </param>
+        public SyntaxError(TokenType expectedTokenType, TokenContainer tokenContainer, ErrorTokenPosition position) : this(string.Empty, tokenContainer, position)
         {
             _expectedTokenType = expectedTokenType;
             _isExpectedTokenType = true;            

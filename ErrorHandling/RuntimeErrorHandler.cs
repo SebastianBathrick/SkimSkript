@@ -1,4 +1,4 @@
-﻿namespace SkimSkript.Monitoring.ErrorHandling
+﻿namespace SkimSkript.ErrorHandling
 {
 
     internal class RuntimeErrorHandler

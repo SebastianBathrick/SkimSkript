@@ -1,7 +1,7 @@
-﻿using Flags;
-using JustLogger;
+﻿using JustLogger;
+using Flags;
 
-namespace SkimSkript
+namespace SkimSkript.Helpers.EntryPoint
 {
     internal static class InterpreterFlags
     {
