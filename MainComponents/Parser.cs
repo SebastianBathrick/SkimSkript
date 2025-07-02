@@ -32,7 +32,7 @@ namespace SkimSkript.MainComponents
                 if (!IsFunctionDefNext())
                 {
                     statements.Add(GetStatement());
-                    Log.Verbose("Parsed top-level statement: {Statement}", statements.Last());
+                    _logger?.Verbose("Parsed top-level statement: {Statement}", statements.Last());
                 }
                 else //Otherwise parse functions.
                     functions.Add(GetFunctionNode());

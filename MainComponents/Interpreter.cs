@@ -19,8 +19,6 @@ namespace SkimSkript.MainComponents
 
         #region Data Members
         private ScopeManager _scope = new();
-        private CoercionInterpreter? _coercionInterpreter;
-        private OperationInterpreter? _operationInterpreter;
         private Dictionary<string, CallableNode>? _callableFunctionsDict;
         private Node[]? _userFunctions;
         private StatementNode? _currentStatementNode;
@@ -28,12 +26,6 @@ namespace SkimSkript.MainComponents
 
         #region Properties
         public override MainComponentType ComponentType => MainComponentType.Interpreter;
-
-        private CoercionInterpreter CoercionInterpreter =>
-            _coercionInterpreter ??= new CoercionInterpreter();
-
-        private OperationInterpreter OperationInterpreter =>
-            _operationInterpreter ??= new OperationInterpreter();
 
         private Dictionary<string, CallableNode> CallableFunctions =>
             _callableFunctionsDict ??= GetFunctionMap(_userFunctions);
@@ -214,10 +206,6 @@ namespace SkimSkript.MainComponents
             int argCount = args != null ? args.Length : 0;
             int parameterCount = parameters != null ? parameters.Length : 0;
 
-            // Variadic (built-in) functions will handle their own coercion
-            if (isVariadic)
-                return args;
-
             // If function has fixed paramNode count but the argument count doesn't match
             if (!isVariadic && parameterCount != argCount)
                 throw new RuntimeException(
@@ -232,6 +220,13 @@ namespace SkimSkript.MainComponents
             for (int i = 0; i < evaluatedArgs.Length; i++)
             {
                 var argNode = (ArgumentNode)args[i];
+
+                if(i >= parameterCount)
+                {
+                    evaluatedArgs[i] = EvaluateExpression(argNode.Value);
+                    continue;
+                }
+
                 var paramNode = (ParameterNode)(parameters![i]);
 
                 if (argNode.IsReference != paramNode.IsReference)
@@ -245,7 +240,7 @@ namespace SkimSkript.MainComponents
                     continue;
                 }
 
-                var varPointer = (ValueNode)_scope.GetVariablePointer(GetIdentifier(argNode));
+                var varPointer = (ValueNode)_scope.GetVariablePointer(GetIdentifier(argNode.Value));
 
                 if (varPointer.GetType() != paramNode.DataType)
                     throw new RuntimeException(
@@ -485,9 +480,6 @@ namespace SkimSkript.MainComponents
         private string GetIdentifier(Node identifierNode)
         {
             var nodeType = identifierNode.GetType();
-            if (nodeType != typeof(IdentifierNode))
-                throw new InvalidDataException($"Expected {typeof(IdentifierNode).Name} but found {nodeType.Name}");
-
             return ((IdentifierNode)identifierNode).Lexeme;
         }
 

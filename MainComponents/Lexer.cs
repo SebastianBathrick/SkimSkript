@@ -9,37 +9,33 @@ namespace SkimSkript.MainComponents
     /// Populates a <see cref="TokenManagement.TokenContainer"/> using input lines.</summary>
     internal class Lexer : MainComponent<string[], TokenContainer>
     {
-        private Scanner _scanner = new();
-        private Evaluator _evaluator = new();
-
+        private Scanner? _scanner;
+        private Evaluator? _evaluator;
         private LexemeContainer? _lexemes;
-        private TokenContainer? _tokens;
+
 
         public override MainComponentType ComponentType => MainComponentType.Lexer;
 
-        public LexemeContainer Lexemes => _lexemes!;
-
-        public TokenContainer Tokens => _tokens!;
+        public LexemeContainer Lexemes => _lexemes ?? throw new NullReferenceException("LexemeContainer null");
 
         public Lexer(IEnumerable<MainComponentType> debuggedTypes) : base(debuggedTypes) { }
+
+        protected override void OnConstructor()
+        {
+            _scanner = new Scanner();
+            _evaluator = new Evaluator();
+        }
 
         /// <summary>Constructor that performs lexical analysis using lines of code in the source language.</summary>
         /// <param _name="linesArray">Lines of code in the source language.</param>
         protected override TokenContainer OnExecute(string[] linesArray)
         {
-            _lexemes = _scanner.CreateLexemes(linesArray);
-            _tokens = _evaluator.CreateTokens(_lexemes);
-            return _tokens;
-        }
+            if (_scanner == null || _evaluator == null)
+                throw new NullReferenceException("Lexer not properly initialized");
 
-        public override string ToString()
-        {
-            StringBuilder sb = new();
-            sb.AppendLine("Lexemes:");
-            sb.AppendLine(Lexemes.ToString());
-            sb.AppendLine("\nTokens:");
-            sb.AppendLine(Tokens.ToString());
-            return sb.ToString();
+            _lexemes = _scanner.CreateLexemes(linesArray);
+            var tokens = _evaluator.CreateTokens(_lexemes);
+            return tokens;
         }
     }
 }

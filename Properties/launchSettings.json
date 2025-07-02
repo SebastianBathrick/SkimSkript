@@ -2,7 +2,7 @@
   "profiles": {
     "SkimSkript": {
       "commandName": "Project",
-      "commandLineArgs": "--debug --file C:\\Users\\Sebastian\\Desktop\\SkimSkript\\SkimApps\\UnitTests\\FunctionTests.sk"
+      "commandLineArgs": "--debug lexer --file C:\\Users\\Sebastian\\Desktop\\SkimSkript\\SkimApps\\UnitTests\\FunctionTests.sk"
     }
   }
 }

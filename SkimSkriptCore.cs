@@ -24,7 +24,9 @@ namespace SkimSkript
         private Lexer? _lexer;
         private Parser? _parser;
         private Interpreter? _interpreter;
-        private bool _isLoggerInitialized = false;
+        private Logger _monitoringLogger;
+
+        private bool _isDebugging;
         #endregion
 
         #region Constructor
@@ -34,11 +36,12 @@ namespace SkimSkript
         /// <remarks>
         /// Components are set to null and must be initialized via <see cref="Initialize"/> before use.
         /// </remarks>
-        public SkimSkriptCore()
+        public SkimSkriptCore(Logger errorLogger)
         {
             _lexer = null;
             _parser = null;
             _interpreter = null;
+            _monitoringLogger = errorLogger;
         }
         #endregion
 
@@ -56,40 +59,16 @@ namespace SkimSkript
         {
             // Use empty array if no debug components specified
             debuggedComponents ??= [];
+            _isDebugging = debuggedComponents.Length > 0;
+
+            if(_isDebugging)
+                _monitoringLogger.SetMinimumLogLevel(LogLevel.Debug);
 
             // Initialize all core components with optional debugging
             _lexer = new(debuggedComponents);
             _parser = new(debuggedComponents);
             _interpreter = new(debuggedComponents);
 
-            // Log successful initialization if logger is available
-            if (Log.IsLoggerSet)
-                Log.Info("SkimSkriptCore initialized");
-
-            return this;
-        }
-
-        /// <summary>
-        /// Initializes static logger for interpreter if not already set.
-        /// </summary>
-        /// <param name="logger">Logger instance that inherits from SkimSkript.Logging.Logger.</param>
-        /// <param name="minLogLevel">Minimum log level that will be logged.</param>
-        /// <param name="isThreadLocking">Whether this logger instance will be accessed by multiple threads.</param>
-        /// <returns>This instance for method chaining.</returns>
-        /// <remarks>
-        /// Configures the global logging system used throughout the compilation pipeline.
-        /// </remarks>
-        public SkimSkriptCore InitializeLogger(
-            Logger logger,
-            LogLevel minLogLevel = DEFAULT_LOG_LVL,
-            bool isThreadLocking = true
-            )
-        {
-            Log.SetLogger(logger)
-               .SetMinimumLogLevel(minLogLevel)
-               .SetLockBehavior(isThreadLocking);
-
-            _isLoggerInitialized = true;
             return this;
         }
         #endregion
@@ -100,9 +79,6 @@ namespace SkimSkript
         /// </summary>
         /// <param name="sourceCode">Array of strings representing the source code to execute. Each string corresponds to a line of code.</param>
         /// <returns>Exit code from the interpreted program execution.</returns>
-        /// <exception cref="NullReferenceException">Thrown when Initialize() was not called or logger is not set.</exception>
-        /// <exception cref="RuntimeException">Thrown when runtime errors occur during interpretation.</exception>
-        /// <exception cref="TokenContainerException">Thrown when token processing errors occur.</exception>
         /// <remarks>
         /// Performs the complete compilation pipeline: lexical analysis → parsing → interpretation.
         /// Returns ERROR_EXIT_CODE (-1) on any compilation or runtime errors.
@@ -114,11 +90,6 @@ namespace SkimSkript
                 throw new NullReferenceException(
                     "SkimScriptCore instance's Initialize() was not called before Execute()");
 
-            // Ensure logger is configured for error reporting
-            if (!Log.IsLoggerSet)
-                throw new NullReferenceException(
-                    "Logger is not set. Please set a logger before executing the source code");
-
             try
             {
                 // Step 1: Lexical Analysis - Convert source code to tokens
@@ -128,7 +99,12 @@ namespace SkimSkript
                 var treeRoot = _parser.Execute(tokens);
 
                 // Step 3: Interpretation - Execute the abstract syntax tree
-                return _interpreter.Execute(treeRoot);
+                var exitCode = _interpreter.Execute(treeRoot);
+
+                if (_isDebugging)
+                    _monitoringLogger.Debug("Total Measured Time: {Amount} ms", GlobalClock.GlobalElapsedTime);
+
+                return exitCode;
             }
             catch (RuntimeException ex)
             {
@@ -139,14 +115,13 @@ namespace SkimSkript
                 if (ex.StatementNode != null)
                     message += $"\n{StatementNode.ToString(ex.StatementNode, _lexer.Lexemes)}";
 
-                Log.Error(message, ex.Properties);
+                _monitoringLogger.Error(message, ex.Properties);
                 return ERROR_EXIT_CODE;
             }
-            catch (TokenContainerException ex)
+            catch (SkimSkriptException ex)
             {
                 // Handle token processing errors with dedicated logger
-                var logger = new ConsoleLogger();
-                logger.Error(ex.Message, ex.Properties);
+                _monitoringLogger.Error(ex.Message, ex.Properties);
                 return ERROR_EXIT_CODE;
             }
         }

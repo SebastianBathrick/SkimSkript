@@ -33,14 +33,14 @@ class Program
         if (args.Length == 0)
         {
             _entryPointLogger.Error(
-                InterpreterFlags.NoArgsErrorMessage, InterpreterFlags.NoArgsErrorProperties);
+                ProgramFlags.NoArgsErrorMessage, ProgramFlags.NoArgsErrorProperties);
             return ERROR_EXIT_CODE;
         }
 
         int exitCode = DEFAULT_EXIT_CODE;
 
         // Process command-line flags if first argument has flag prefix and exit if an error occurs while dong so
-        if (InterpreterFlags.IsFlag(args) && !InterpreterFlags.TryEvaluateArguments(args, _entryPointLogger))   
+        if (ProgramFlags.IsFlag(args) && !ProgramFlags.TryEvaluateArguments(args, _entryPointLogger))   
                 return ERROR_EXIT_CODE;
 
         // Early exit if no files to process
@@ -48,7 +48,7 @@ class Program
             return exitCode;
 
         // Initialize the SkimSkript interpreter core
-        var core = new SkimSkriptCore().InitializeLogger(new ConsoleLogger());
+        var core = new SkimSkriptCore(errorLogger: new ConsoleLogger());
 
         // Process each source code file sequentially
         foreach (var filePath in SourceCodePaths)

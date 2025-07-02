@@ -2,14 +2,14 @@
 
 namespace SkimSkript.Interpretation.Helpers
 {
-    internal class CoercionInterpreter
+    internal static class CoercionInterpreter
     {
-        private readonly Type[] _expressionTypePrecidence =
+        private static readonly Type[] _expressionTypePrecidence =
             [typeof(StringValueNode), typeof(FloatValueNode), typeof(IntValueNode)];
 
         #region Public Methods
         /// <summary> Forcefully an assumed <see cref="ValueNode"/> to a target type of the same base class. </summary>
-        public Node CoerceNodeValue(Node node, Type targetType)
+        public static Node CoerceNodeValue(Node node, Type targetType)
         {
             if (node is not ValueNode valueNode)
                 throw new ArgumentException($"{node.GetType().Name} is not a coercible type");
@@ -18,7 +18,7 @@ namespace SkimSkript.Interpretation.Helpers
         }
 
         /// <summary> Coerces two operators based on their relationship and data-type precidence rules </summary>
-        public Type CoerceOperands(Node left, Node right, out Node coercedLeft, out Node coercedRight)
+        public static Type CoerceOperands(Node left, Node right, out Node coercedLeft, out Node coercedRight)
         {
             if (left is not ValueNode leftValNode || right is not ValueNode rightValNode)
                 throw new ArgumentException(
@@ -46,7 +46,7 @@ namespace SkimSkript.Interpretation.Helpers
         }
 
         /// <summary> Coerces evaluated operand to <see cref="BoolValueNode"/> and returns its stored bool value. </summary>
-        public bool CoerceLogicOperand(Node operand, out Node coercedOperand)
+        public static bool CoerceLogicOperand(Node operand, out Node coercedOperand)
         {
             var targetType = typeof(BoolValueNode);
             coercedOperand = operand.GetType() == targetType ? operand : CoerceNodeValue(operand, targetType);
@@ -55,12 +55,12 @@ namespace SkimSkript.Interpretation.Helpers
 
         /// <summary> Coerces evaluated condition to <see cref="BoolValueNode"/> and returns its stored bool value. </summary>
         /// <remarks> Primarily intended for condition-based control structures. </remarks>
-        public bool CoerceCondition(Node evaluatedCondition) =>
+        public static bool CoerceCondition(Node evaluatedCondition) =>
             CoerceLogicOperand(evaluatedCondition, out _);
         #endregion
 
         #region Primary Coercion Methods
-        private Node CoerceValue(ValueNode value, Type castType)
+        private static Node CoerceValue(ValueNode value, Type castType)
         {
             var valueNode = value;
 
@@ -83,7 +83,7 @@ namespace SkimSkript.Interpretation.Helpers
             }
         }
 
-        private bool TryOperandCoercionOfType(
+        private static bool TryOperandCoercionOfType(
             Type targetType,
             ValueNode left, ValueNode right,
             Type leftType, Type rightType,

@@ -1,4 +1,5 @@
 ﻿using JustLogger;
+using JustLogger.ConsoleLogging;
 using System.Diagnostics;
 
 namespace SkimSkript.MainComponents
@@ -12,49 +13,75 @@ namespace SkimSkript.MainComponents
 
     internal abstract class MainComponent<T, Y> where T : notnull where Y : notnull
     {
+        private static long _globalElapsedTime = 0;
+
         private bool _isDebugging;
         private string _name;
 
+        protected Logger? _logger;
         private Stopwatch? _executionTimer;
-        private long _executionTimeMs;
 
         public abstract MainComponentType ComponentType { get; }
-        public bool IsDebugging => _isDebugging;
-        public long ExecutionTimeMs => _executionTimeMs;
 
         public MainComponent(IEnumerable<MainComponentType> debuggedTypes)
         {
             _isDebugging = debuggedTypes.Contains(ComponentType);
             _name = GetType().Name;
 
-            if (Log.IsLoggerSet)
-                Log.Info("{ClassName} initialized with debug mode: {State}", _name, _isDebugging);
+            if (_isDebugging)
+            {
+                _logger = new ConsoleLogger().SetMinimumLogLevel(LogLevel.Debug);
+                _logger?.Debug("{ClassName} initialized with debug mode: {State}", _name, _isDebugging);
+                _executionTimer = Stopwatch.StartNew();
+            }
+
+            OnConstructor();
+
+            if (!_isDebugging)
+                return;
+
+            _executionTimer?.Stop();
+            var elapsedTime = _executionTimer!.ElapsedMilliseconds;
+            GlobalClock.AddToGlobalElapsedTime(elapsedTime);
+
+            _logger?.Debug("{ClassName} constructor took {ExecutionTime} ms", _name, elapsedTime!);
+            
         }
 
         public Y Execute(T componentInput)
         {
-            Log.Info("Executing {ClassName}", _name);
-
             if (!_isDebugging)
-            {
-                var normReturnData = OnExecute(componentInput);
-                Log.Info("{ClassName} execution completed", _name);
-                return normReturnData;
-            }
+                return OnExecute(componentInput);
 
-            Log.Verbose("Input for {ClassName}: {Input}", _name, componentInput);
-            Log.Debug("Starting {ClassName} execution timer", _name);
-            _executionTimer = Stopwatch.StartNew();
+            _logger?.Verbose("Input for {ClassName}: {Input}", _name, componentInput);
+            _logger?.Debug("Starting {ClassName} execution timer", _name);
+            _executionTimer?.Restart();
 
+            _logger?.Debug("Executing {ClassName}", _name);
             var debugReturnData = OnExecute(componentInput);
 
             _executionTimer?.Stop();
-            _executionTimeMs = _executionTimer!.ElapsedMilliseconds;
-            Log.Debug("{ClassName} execution in {ExecutionTime} ms", _name, _executionTimeMs);
-            Log.Verbose("Output for {ClassName}: {Output}", _name, debugReturnData);
+            var elapsedTime = _executionTimer!.ElapsedMilliseconds;
+            GlobalClock.AddToGlobalElapsedTime(elapsedTime);
+
+            _logger?.Debug("{ClassName} executed in {ExecutionTime} ms", _name, elapsedTime);
+            _logger?.Verbose("Output for {ClassName}: {Output}", _name, debugReturnData);
+
             return debugReturnData;
         }
 
         protected abstract Y OnExecute(T componentInput);
+
+        protected virtual void OnConstructor() => _logger?.Debug("No OnConstructor behavior defined");
+    }
+
+    internal static class GlobalClock
+    {
+        private static long _globalElapsedTime = 0;
+
+        public static long GlobalElapsedTime => _globalElapsedTime;
+
+        public static void AddToGlobalElapsedTime(long elapsedTime) => _globalElapsedTime += elapsedTime;
+
     }
 }

@@ -158,7 +158,7 @@ def int Factorial(int n)
 }
 
 # Recursive Fibonacci function
-def int Fibonacci(it n)
+def int Fibonacci(int n)
 {
     if n == 0
         return 0

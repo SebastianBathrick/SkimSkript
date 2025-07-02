@@ -4,7 +4,7 @@ using SkimSkript.MainComponents;
 
 namespace SkimSkript.Helpers.EntryPoint
 {
-    internal static class InterpreterFlags
+    internal static class ProgramFlags
     {
         #region File Flag Constants
         private const string FILE_FLAG_NAME = "file";
@@ -118,7 +118,7 @@ namespace SkimSkript.Helpers.EntryPoint
             .SetDescription(DEBUG_FLAG_DESC)
             .SetParameterCount(DEBUG_FLAG_MIN_PARAMETERS)
             .SetVariadic(DEBUG_FLAG_IS_VARIADIC)
-            .SetAction(DebugFlagAction)
+            .SetAction((parameters) => DebugFlagAction(parameters))
             .AddAdditionalInfo(
                 new AdditionalInfo(
                     DEBUG_FLAG_ADD_INFO_LABEL_1, DEBUG_FLAG_ADD_INFO_VAL_1),

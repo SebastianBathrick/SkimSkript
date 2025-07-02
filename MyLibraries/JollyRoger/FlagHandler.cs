@@ -158,7 +158,7 @@ namespace JollyRoger
             }
 
             // If the flag doesn't require parameters, execute the flag
-            if (!selectedFlag.DoesRequireParameters)
+            if (!selectedFlag.DoesRequireParameters && !selectedFlag.IsVariadicParameters)
             {
                 endIndex++;
                 selectedFlag.Action.Invoke(null);
