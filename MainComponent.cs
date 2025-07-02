@@ -1,4 +1,4 @@
-﻿using SkimSkript.Logging;
+﻿using JustLogger;
 using System.Diagnostics;
 
 namespace SkimSkript

@@ -1,23 +1,34 @@
-﻿using SkimSkript;
-using SkimSkript.Logging;
+﻿using JustLogger.ConsoleLogging;
+using JustLogger;
+using SkimSkript;
+using Flags;
 
 class Program
 {
     #region Constants
     private const int ERROR_EXIT_CODE = -1;
+    private const int DEFAULT_EXIT_CODE = 0;
     private const string EXPECTED_FILE_EXTENSION = ".skim"; // Expected file extension for SkimSkript source files
     private const LogLevel ENTRY_POINT_LOG_LVL = LogLevel.Information;
     #endregion
 
-    private static readonly Logger _log = new ConsoleLogger().SetMinimumLogLevel(ENTRY_POINT_LOG_LVL);
+    #region Data Members
+    private static readonly Logger _entryPointLogger = new ConsoleLogger().SetMinimumLogLevel(ENTRY_POINT_LOG_LVL);
+    private static List<string>? _sourceCodePaths;
+    #endregion
+
+    public static List<string> SourceCodePaths => _sourceCodePaths ?? (_sourceCodePaths =[]); 
 
     private static int Main(string[] args)
     {
         if (args.Length == 0)
         {
-            _log.Error("Requires at least one file path argument");
+            _entryPointLogger.Error("Requires at least one file path argument");
             return ERROR_EXIT_CODE;
         }
+
+        InterpreterFlags.EvaluateArguments(args, _entryPointLogger);
+        return 0;
             
         var core = new SkimSkriptCore();
         core.InitializeLogger(new ConsoleLogger());
@@ -32,6 +43,9 @@ class Program
 
         return returnCode;
     }
+
+    public static void AddSourceCodePaths(params string[] sourceCodePaths) => _sourceCodePaths?.AddRange(sourceCodePaths);
+
 
     private static bool TryGetSourceCode(string filePath, out string[] sourceCode)
     {
@@ -89,4 +103,6 @@ class Program
         sourceCode = [];
         return false;
     }
+
+
 }

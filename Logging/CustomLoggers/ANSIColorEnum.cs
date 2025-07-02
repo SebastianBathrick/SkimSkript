@@ -1,18 +1,5 @@
-﻿namespace SkimSkript.Logging
+namespace JustLogger.ConsoleLogging
 {
-    /// <summary> Represents the logging levels used in the application. </summary>
-    public enum LogLevel
-    {
-        None = 0,
-        UserInterface = 1,
-        Fatal = 2,
-        Error = 3,
-        Warning = 4,
-        Information = 5,
-        Debug = 6,
-        Verbose = 7,
-    }
-
     /// <summary> Represents ANSI color codes for terminal output. </summary>
     public enum ANSIColor
     {

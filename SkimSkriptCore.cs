@@ -1,9 +1,10 @@
 ﻿using SkimSkript.Interpretation;
 using SkimSkript.LexicalAnalysis;
-using SkimSkript.Logging;
 using SkimSkript.Monitoring.ErrorHandling;
 using SkimSkript.Nodes;
 using SkimSkript.Parsing;
+using JustLogger.ConsoleLogging;
+using JustLogger;
 
 namespace SkimSkript
 {

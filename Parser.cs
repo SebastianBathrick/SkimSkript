@@ -1,10 +1,10 @@
 ﻿using SkimSkript.ErrorHandling;
 using SkimSkript.Helpers.General;
-using SkimSkript.Logging;
 using SkimSkript.Monitoring.ErrorHandling;
 using SkimSkript.Nodes;
 using SkimSkript.Nodes.StatementNodes;
 using SkimSkript.Tokens;
+using JustLogger;
 
 namespace SkimSkript.Parsing
 {

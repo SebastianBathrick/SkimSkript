@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace SkimSkript.Logging
+namespace JustLogger.ConsoleLogging
 {
     public class ConsoleLogger : Logger
     {
@@ -27,7 +27,7 @@ namespace SkimSkript.Logging
 
         public override void Clear()
         {
-           Console.Clear();
+            Console.Clear();
         }
     }
 }
