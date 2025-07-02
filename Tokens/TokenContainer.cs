@@ -93,20 +93,7 @@ namespace SkimSkript.Tokens
         public void MatchAndRemove(TokenType tokenType)
         {
             if (_tokenList[_currentTokenIndex].Type != tokenType)
-            {
-                var expectedStr = StringHelper.SplitPascalCaseManual(
-                    tokenType.ToString());
-                var receivedStr = StringHelper.SplitPascalCaseManual(
-                    _tokenList[_currentTokenIndex].Type.ToString());
-                throw new TokenContainerException(
-                    TokenContainerError.TokenMismatch, 
-                    _tokenList[_currentTokenIndex],
-                    _lexemes,
-                    expectedStr, 
-                    receivedStr
-                    );
-            }
-
+                throw GetTokenExceptionError(tokenType);
 
             Remove(tokenType);
         }
@@ -154,19 +141,19 @@ namespace SkimSkript.Tokens
 
         #region Helper Methods
         public TokenContainerException GetTokenExceptionError(
-            TokenContainerError errorType, int tokenIndexOffset = 0, params object[] properties) =>
+            TokenType expectedType,
+            int tokenIndexOffset = 0,
+            params object[] properties
+            ) =>
             throw new TokenContainerException(
-                errorType,
-                _tokenList[_currentTokenIndex - tokenIndexOffset],
+                expectedType, 
+                _tokenList[_currentTokenIndex - tokenIndexOffset], 
                 _lexemes,
                 properties
                 );
 
-        public TokenType GetPreviousTokenType(int offset = 1) =>
-            _currentTokenIndex > 0 + offset ? _tokenList[_currentTokenIndex - offset].Type : _tokenList[0].Type;
-
         private TokenContainerException GetEndOfFileError(TokenType tokenType = TokenType.Undefined) =>
-            GetTokenExceptionError(TokenContainerError.EndOfFile, tokenIndexOffset: 0, tokenType, TokenType.EndOfFile);
+            GetTokenExceptionError(TokenType.EndOfFile, tokenIndexOffset: 0, tokenType, TokenType.EndOfFile);
 
         public override string ToString()
         {

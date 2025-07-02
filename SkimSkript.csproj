@@ -9,8 +9,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Monitoring\" />
-    <Folder Include="Nodes\NodeExceptions\" />
+    <Compile Remove="Nodes\NodeExceptions\**" />
+    <EmbeddedResource Remove="Nodes\NodeExceptions\**" />
+    <None Remove="Nodes\NodeExceptions\**" />
   </ItemGroup>
 
 </Project>

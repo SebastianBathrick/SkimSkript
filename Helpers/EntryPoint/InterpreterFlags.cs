@@ -1,5 +1,5 @@
 ﻿using JustLogger;
-using Flags;
+using JollyRoger;
 
 namespace SkimSkript.Helpers.EntryPoint
 {
@@ -10,8 +10,15 @@ namespace SkimSkript.Helpers.EntryPoint
         private const string FILE_FLAG_SHORT_NAME = "f";
         private const string FILE_FLAG_DESC = "Opens file(s) containing source code at path(s) provided " +
             "(Flag not required if only file paths are provided as arguments).";
+
         private const int FILE_FLAG_MIN_PARAMETERS = 1;
         private const bool FILE_FLAG_IS_VARIADIC = true;
+
+        private const string DEBUG_FLAG_NAME = "debug";
+        private const string DEBUG_FLAG_SHORT_NAME = "d";
+        private const string DEBUG_FLAG_DESC = "Enables interpreter component debug messages and benchmarks (debugging for all main components by default).";
+
+
         #endregion
 
         #region Fields

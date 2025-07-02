@@ -52,7 +52,8 @@ namespace SkimSkript.MainComponents
             }
             catch(RuntimeException ex)
             {
-                ex.SetStatement(_currentStatementNode);
+                if(_currentStatementNode != null)
+                    ex.SetStatement(_currentStatementNode);
                 throw;
             }
             catch
@@ -191,16 +192,10 @@ namespace SkimSkript.MainComponents
             var parameters = callableNode.Parameters;
             Node[]? evaluatedArgs = null;
 
-            if(parameters != null || args != null)
-            {
-                var isVariadic = callableNode.IsVariadic;
+            var isVariadic = callableNode.IsVariadic;
 
-                // Throw an exception if the argument to parameter ratio is invalid.
-                ValidateArgCount(args, parameters, isVariadic);
-
-                // For each pass-by-value arg evaluate the expression and coerce it to the parameter's data type.
-                evaluatedArgs = GetEvaluatedArguments(identifier, args, parameters, isVariadic);
-            }
+            // For each pass-by-value arg evaluate the expression and coerce it to the paramNode's data type.
+            evaluatedArgs = GetEvaluatedArguments(identifier, args, parameters, isVariadic);
 
 
             if (callableNode is FunctionNode userFunction)
@@ -214,39 +209,55 @@ namespace SkimSkript.MainComponents
         /// in pass-byrerence arguments.
         /// </summary>
         private Node[]? GetEvaluatedArguments(
-            string functionIdentifier, Node[]? args, Node[]? parameters, bool isVariadic)
+            string functionIdentifier, Node[] args, Node[] parameters, bool isVariadic)
         {
+            int argCount = args != null ? args.Length : 0;
+            int parameterCount = parameters != null ? parameters.Length : 0;
+
+            // Variadic (built-in) functions will handle their own coercion
+            if (isVariadic)
+                return args; 
+
+            // If function has fixed paramNode count but the argument count doesn't match
+            if (!isVariadic && parameterCount != argCount)
+                throw new RuntimeException(
+                    "Call to function {Function} used invalid number of arguments", functionIdentifier);
+
+            // If no arguments were sent and none are required
+            if (argCount == 0)
+                return null;
+
             var evaluatedArgs = new Node[args!.Length];
 
             for(int i = 0; i < evaluatedArgs.Length; i++)
             {
-                var rawArg = (ArgumentNode)args[i];
+                var argNode = (ArgumentNode)args[i];
+                var paramNode = (ParameterNode)(parameters![i]);
 
-                // If reference get the variable pointer, otherwise evaluate the expression.
-                if (rawArg.IsReference)
-                    evaluatedArgs[i] = _scope.GetVariablePointer(GetIdentifier(rawArg.Value));
-                else
-                    evaluatedArgs[i] = EvaluateExpression(rawArg.Value);
+                if (argNode.IsReference != paramNode.IsReference)
+                    throw new RuntimeException(
+                        "Call to function {Function} used invalid argument pass-by type", functionIdentifier);
 
-                if (parameters == null)
+                if(!argNode.IsReference)
+                {
+                    var evalArg = EvaluateExpression(argNode.Value);
+                    evaluatedArgs[i] = CoercionInterpreter.CoerceNodeValue(evalArg, paramNode.DataType);
                     continue;
+                }
 
-                var parameter = (ParameterNode)parameters[i];
+                var varPointer = (ValueNode)_scope.GetVariablePointer(GetIdentifier(argNode));
 
-                if (parameter.IsReference != rawArg.IsReference)
-                    throw new InterpreterError(RuntimeErrorCode.ArgumentPassTypeMismatch);
+                if (varPointer.GetType() != paramNode.DataType)
+                    throw new RuntimeException(
+                        "Call to function {Function} used invalid data type for reference argument", functionIdentifier);
 
-                if (parameter.DataType != evaluatedArgs[i].GetType())
-                    throw new InterpreterError(RuntimeErrorCode.ArgumentDataTypeMismatch);
-
-                // If pass-by-value coerce the evaluated argument to the parameter's data type.
-                if (!rawArg.IsReference)
-                    evaluatedArgs[i] = CoercionInterpreter.CoerceNodeValue(
-                        evaluatedArgs[i], parameter.DataType);
+                evaluatedArgs[i] = varPointer;                    
             }
 
             return evaluatedArgs;
         }
+
+
 
         /// <summary>Handles return statement and sets the last returned value.</summary>
         private BlockExitData InterpretReturnStatement(ReturnNode returnNode)
@@ -256,23 +267,6 @@ namespace SkimSkript.MainComponents
                 returnData = EvaluateExpression(returnNode.Expression);
 
             return new BlockExitData(BlockExitType.ReturnStatement, returnData);
-        }
-
-        /// <summary> Validates the argument count against the parameters of the function being called. </summary>
-        private void ValidateArgCount(Node[]? args, Node[]? parameters, bool isVariadic)
-        {
-            if (!isVariadic)
-            {
-                var isInvalidArgCount = args == null && parameters != null || args != null && parameters == null;
-                isInvalidArgCount = isInvalidArgCount || args!.Length != parameters!.Length;
-
-                if (isInvalidArgCount)
-                {
-                    var argCount = args == null ? 0 : args.Length;
-                    var paramCount = parameters == null ? 0 : parameters.Length;
-                    throw new InterpreterError(RuntimeErrorCode.ArgumentInvalidCount, argCount, paramCount);
-                }
-            }
         }
         #endregion
 

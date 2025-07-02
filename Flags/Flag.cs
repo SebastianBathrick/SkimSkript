@@ -1,4 +1,4 @@
-namespace Flags
+namespace JollyRoger
 {
     /// <summary>
     /// Represents a command line flag.
@@ -19,6 +19,9 @@ namespace Flags
         private string _name = string.Empty;
         private string _shortName = string.Empty;
         private string _desc = DEFAULT_DESC;
+
+        private string[]? _additionalInfo;
+        private object[][] additionalInfoProperties;
 
         private int _minParameterCount;
         private bool _isVariadic = DEFAULT_IS_VARIADIC;

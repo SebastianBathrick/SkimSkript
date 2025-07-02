@@ -1,5 +1,5 @@
 ﻿using SkimSkript.Nodes.Runtime;
-using SkimSkript.ErrorHandling.Exceptions;
+using SkimSkript.ErrorHandling;
 using SkimSkript.Nodes;
 
 namespace SkimSkript.Interpretation.Helpers
@@ -86,7 +86,7 @@ namespace SkimSkript.Interpretation.Helpers
             var variable = GetVariable(identifier);
 
             if (variable == null)
-                throw new UnknownIdentifierError(identifier);
+                throw new RuntimeException("Unknown identifier {Identifier}", identifier);
 
             if (assignNode is not ValueNode valueNode)
                 throw new InvalidDataException($"Cannot assign {assignNode.GetType().Name} to variable {identifier}");

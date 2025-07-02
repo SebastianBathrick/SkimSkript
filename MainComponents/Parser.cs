@@ -1,7 +1,4 @@
-﻿using SkimSkript.ErrorHandling.Exceptions;
-using SkimSkript.Helpers.General;
-using SkimSkript.Nodes.StatementNodes;
-using SkimSkript.ErrorHandling;
+﻿using SkimSkript.Nodes.StatementNodes;
 using SkimSkript.Tokens;
 using SkimSkript.Nodes;
 using JustLogger;
@@ -109,28 +106,24 @@ namespace SkimSkript.MainComponents
                 case TokenType.StringKeyword: case TokenType.FloatKeyword: 
                 case TokenType.BoolKeyword: 
                     newNode = GetVariableDeclaration(); break;
-
-                case TokenType.FunctionCallStart: newNode = GetFunctionCall(); break;
-
-                case TokenType.Return: newNode = GetReturnStatement(); break;
-
-                case TokenType.AssignmentStart: newNode = GetAssignment(); break;
-
-                case TokenType.WhileLoop: newNode = GetWhileLoop(); break;
-
-                case TokenType.If: newNode = GetIfStatement(); break;
-
-                case TokenType.Identifier: newNode = GetIdentifierStartStatement(); break;
-
-                case TokenType.Assertion: newNode = GetAssertionStatement(); break;
-
-                case TokenType.RepeatLoop: newNode = GetRepeatLoop(); break;
-
+                case TokenType.FunctionCallStart: 
+                    newNode = GetFunctionCall(); break;
+                case TokenType.Return: 
+                    newNode = GetReturnStatement(); break;
+                case TokenType.AssignmentStart: 
+                    newNode = GetAssignment(); break;
+                case TokenType.WhileLoop: 
+                    newNode = GetWhileLoop(); break;
+                case TokenType.If: 
+                    newNode = GetIfStatement(); break;
+                case TokenType.Identifier: 
+                    newNode = GetIdentifierStartStatement(); break;
+                case TokenType.Assertion: 
+                    newNode = GetAssertionStatement(); break;
+                case TokenType.RepeatLoop: 
+                    newNode = GetRepeatLoop(); break;
                 default:
-                    var expectedStr = StringHelper.SplitPascalCaseManual(TokenType.StatementStartToken.ToString());
-                    var actualStr = StringHelper.SplitPascalCaseManual(Tokens.PeekType().ToString());
-                    throw Tokens.GetTokenExceptionError(
-                        errorType: TokenContainerError.TokenMismatch, 0, expectedStr, actualStr);
+                    throw Tokens.GetTokenExceptionError(TokenType.StatementStartToken);
             }
 
             var statementNode = (StatementNode)newNode;
@@ -360,36 +353,24 @@ namespace SkimSkript.MainComponents
             {
                 case TokenType.Integer: 
                     return new IntValueNode(int.Parse(lexeme));
-
                 case TokenType.Float: 
                     return new FloatValueNode(float.Parse(lexeme));
-
                 case TokenType.String: 
                     lexeme = lexeme.Trim('"'); // Remove surrounding quotes from string literals
                     return new StringValueNode(in lexeme);
-
                 case TokenType.ParenthesisOpen: 
                     return ParseInnerExpression();
-
                 case TokenType.FunctionCallStartExpression: 
                     return GetFunctionCall();
-
                 case TokenType.True: 
                     return new BoolValueNode(true);
-
                 case TokenType.False: 
                     return new BoolValueNode(false);
-
-                case TokenType.Subtract: return new MathExpressionNode(MathOperator.Multiply, new IntValueNode(-1), ParseFactor());
+                case TokenType.Subtract: 
+                    return new MathExpressionNode(MathOperator.Multiply, new IntValueNode(-1), ParseFactor());
                 default:
-                    throw Tokens.GetTokenExceptionError(
-                        TokenContainerError.TokenMismatch, 
-                        tokenIndexOffset:1, 
-                        StringHelper.SplitPascalCaseManual(
-                            TokenType.Factor.ToString()),
-                        StringHelper.SplitPascalCaseManual(
-                            tokenType.ToString())
-                        );
+                    throw Tokens.GetTokenExceptionError(TokenType.Factor, tokenIndexOffset: 1);
+
             }
         }
         #endregion
@@ -455,14 +436,7 @@ namespace SkimSkript.MainComponents
                 TokenType.BoolKeyword => typeof(BoolValueNode),
                 TokenType.StringKeyword => typeof(StringValueNode),
                 TokenType.IntegerKeyword => typeof(IntValueNode),
-                _ => throw Tokens.GetTokenExceptionError(
-                    TokenContainerError.TokenMismatch,
-                    tokenIndexOffset: 1,
-                    StringHelper.SplitPascalCaseManual(
-                        TokenType.DataType.ToString()),
-                    StringHelper.SplitPascalCaseManual(
-                        Tokens.GetPreviousTokenType().ToString())
-                    )
+                _ => throw Tokens.GetTokenExceptionError(TokenType.DataType, tokenIndexOffset: 1)
             };
 
         private Node GetValueNodeOfType(Type valueNodeType) =>
@@ -472,12 +446,7 @@ namespace SkimSkript.MainComponents
                 Type t when t == typeof(FloatValueNode) => new FloatValueNode(),
                 Type t when t == typeof(BoolValueNode) => new BoolValueNode(),
                 Type t when t == typeof(StringValueNode) => new StringValueNode(),
-                _ => throw Tokens.GetTokenExceptionError(
-                    TokenContainerError.TokenMismatch,
-                    tokenIndexOffset: 1,
-                    TokenType.DataType,
-                    Tokens.GetPreviousTokenType()
-                    )
+                _ => throw Tokens.GetTokenExceptionError(TokenType.DataType, tokenIndexOffset: 1)
             };
 
         private Node GetIdentifier() => 

@@ -2,29 +2,26 @@
 
 namespace SkimSkript.ErrorHandling
 {
-    internal class RuntimeException : Exception
+    internal class RuntimeException : SkimSkriptException
     {
         private StatementNode? _statementNode;
-        private object[] _properties = [];
 
         public StatementNode? StatementNode => _statementNode;
-        public object[] Properties => _properties;
 
-        public RuntimeException(string message, StatementNode? statementNode = null, params object[] properties) : base(message)
+        public RuntimeException(string message, StatementNode? statementNode = null, params object[] properties) 
+            : base(message, properties)
         {
             _statementNode = statementNode;
-            _properties = properties;
+        }
+
+        public RuntimeException(string message, params object[] properties) 
+            : base(message, properties)
+        {
         }
 
         public RuntimeException SetStatement(StatementNode statementNode)
         {           
             _statementNode = statementNode;
-            return this;
-        }
-
-        public RuntimeException SetProperties(params object[] properties)
-        {
-            _properties = properties;
             return this;
         }
     }

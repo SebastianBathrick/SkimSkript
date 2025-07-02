@@ -1,46 +1,50 @@
-﻿using SkimSkript.Helpers.LexicalAnalysis;
+﻿using SkimSkript.Helpers.General;
+using SkimSkript.Helpers.LexicalAnalysis;
 using SkimSkript.Tokens;
 using System.Text;
 
 namespace SkimSkript.ErrorHandling
 {
-    internal enum TokenContainerError
-    {
-        TokenMismatch,
-        EndOfFile
-    }
-
     internal class TokenContainerException : SkimSkriptException
     {
-        private static readonly string[] _messages =
-        {
-            "Expected {TokenType} but got {TokenType} instead"
-
-        };
+        private const string MESSAGE = "Expected {TokenType} but got {TokenType}";
 
         private LexemeContainer _lexemes;
         private Token _problemToken;
 
+        public override string Message => "[L{Line}:C{Column}] " + base.Message;
+
         public TokenContainerException(
-            TokenContainerError errorKey, 
+            TokenType expectedType,
             Token problemToken,
             LexemeContainer lexemes,
             params object[] properties
             ) 
-            : base(
-                  errorKey,
-                  _messages, 
-                  lexemes.GetLexemeLineByIndex(problemToken.LexemeStartIndex) + 1,
-                  lexemes.GetLexemeColumnByIndex(problemToken.LexemeEndIndex) + 1,
-                  properties
-                  )
+            : base(MESSAGE, GetProperties(properties, expectedType, problemToken, lexemes))
         {
             _problemToken = problemToken;
             _lexemes = lexemes;
         }
 
+        private static object[] GetProperties(
+            object[] properties, 
+            TokenType expectedType, 
+            Token problemToken, 
+            LexemeContainer lexemes
+            )
+        {
+            var propsList = properties.ToList();
 
+            var line = lexemes.GetLexemeLineByIndex(problemToken.LexemeStartIndex);
+            var column = lexemes.GetLexemeColumnByIndex(problemToken.LexemeEndIndex);
 
+            var expectedStr = StringHelper.SplitPascalCaseManual(expectedType.ToString());
+            var gotStr = StringHelper.SplitPascalCaseManual(problemToken.Type.ToString());         
+
+            propsList.AddRange([line, column, expectedStr.ToLower(), gotStr.ToLower()]);
+            return propsList.ToArray();
+        }
+            
         protected override bool TryGetAdditionalContext(out string message, out object[] properties)
         {
             (int start, int end) lineIndexes;

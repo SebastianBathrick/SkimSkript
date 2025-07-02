@@ -12,22 +12,17 @@ namespace SkimSkript.Helpers.General
             if (string.IsNullOrEmpty(input))
                 return input;
 
-            var sb = new StringBuilder();
+            var result = new StringBuilder();
 
             for (int i = 0; i < input.Length; i++)
             {
-                char current = input[i];
-
-                // Append space before uppercase letter if previous char is lowercase or digit
-                sb.Append(GetSpaceBeforeUpper(input, i));
-
-                // Append space before digit if previous char is letter
-                sb.Append(GetSpaceBeforeDigit(input, i));
+                result.Append(GetSpaceBeforeUpper(input, i));
+                result.Append(GetSpaceBeforeDigit(input, i));
+                result.Append(input[i]);
             }
 
-            return sb.ToString();
+            return result.ToString();
         }
-
         private static string GetSpaceBeforeDigit(string input, int index)
         {
             if (index <= 0 || !char.IsDigit(input[index]) || !char.IsLetter(input[index - 1]))

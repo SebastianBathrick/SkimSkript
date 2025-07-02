@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using JustLogger;
 
-namespace Flags
+namespace JollyRoger
 {
     internal class FlagHandler
     {
@@ -51,7 +51,7 @@ namespace Flags
         /// <summary>
         /// Adds flags to handler flag list.
         /// </summary>
-        /// <param name="flags">Flags to add to handler.</param>
+        /// <param name="flags">JollyRoger to add to handler.</param>
         /// <returns>This handler instance for method chaining.</returns>
         public FlagHandler AddFlags(params Flag[] flags)
         {

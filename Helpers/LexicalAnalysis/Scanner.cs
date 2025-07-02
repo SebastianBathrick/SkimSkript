@@ -1,4 +1,4 @@
-﻿using SkimSkript.ErrorHandling.Exceptions;
+﻿using SkimSkript.ErrorHandling;
 using SkimSkript.Helpers.LexicalAnalysis;
 using System.Text;
 
@@ -139,7 +139,7 @@ namespace SkimSkript.LexicalAnalysis.Helpers
                 _lexemeStringBuilder.Append(DequeueChar());
 
                 if (IsEndOfLine)
-                    throw new LexicalError($"String literal missing a closing quote on same line.", _lineIndex + 1, _lines[_lineIndex ]);
+                    throw new LexerException($"String literal missing a closing quote on same line", _lineIndex);
             }
                 
             DequeueChar(); //The closing quote is not included for the same reason mentioned above.
