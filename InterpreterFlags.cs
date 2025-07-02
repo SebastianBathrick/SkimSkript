@@ -26,16 +26,13 @@ namespace SkimSkript
         #endregion
 
         #region Public Methods
-        public static void EvaluateArguments(string[] args, Logger logger)
+        public static bool TryEvaluateArguments(string[] args, Logger logger)
         {
             int argIndex = 0;
             _logger = logger;
 
             if (!FlagHandler.IsFlag(args[argIndex]))
-            {
-                Program.AddSourceCodePaths(args);
-                return;
-            }
+                return false;
 
             Handler
                 .SetLogger(Logger)
@@ -44,6 +41,8 @@ namespace SkimSkript
             do
                 Handler.ExecuteFlag(argIndex, args, out argIndex);
             while (argIndex < args.Length && FlagHandler.IsFlag(args[argIndex]));
+
+            return true;
         }
         #endregion
 

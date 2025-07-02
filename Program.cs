@@ -8,101 +8,57 @@ class Program
     #region Constants
     private const int ERROR_EXIT_CODE = -1;
     private const int DEFAULT_EXIT_CODE = 0;
-    private const string EXPECTED_FILE_EXTENSION = ".skim"; // Expected file extension for SkimSkript source files
     private const LogLevel ENTRY_POINT_LOG_LVL = LogLevel.Information;
     #endregion
 
     #region Data Members
     private static readonly Logger _entryPointLogger = new ConsoleLogger().SetMinimumLogLevel(ENTRY_POINT_LOG_LVL);
-    private static List<string>? _sourceCodePaths;
+    private static List<string>? _sourceCodePaths; // Lazy-initialized list of file paths to process
     #endregion
 
+    #region Properties
+    /// <summary>
+    /// Gets the list of source code file paths, initializing if null.
+    /// </summary>
     public static List<string> SourceCodePaths => _sourceCodePaths ?? (_sourceCodePaths =[]); 
+    #endregion
 
     private static int Main(string[] args)
     {
+        // Validate that at least one argument was provided
         if (args.Length == 0)
         {
             _entryPointLogger.Error("Requires at least one file path argument");
             return ERROR_EXIT_CODE;
         }
 
-        InterpreterFlags.EvaluateArguments(args, _entryPointLogger);
-        return 0;
+        int exitCode = DEFAULT_EXIT_CODE;
+
+        // Process command-line flags first, add remaining args as file paths if no flags processed
+        if(!InterpreterFlags.TryEvaluateArguments(args, _entryPointLogger))
+            SourceCodePaths.AddRange(args);
+
+        // Early exit if no files to process
+        if (SourceCodePaths.Count == 0)
+            return exitCode;
             
-        var core = new SkimSkriptCore();
-        core.InitializeLogger(new ConsoleLogger());
+        // Initialize the SkimSkript interpreter core
+        var core = new SkimSkriptCore().InitializeLogger(new ConsoleLogger());
 
-        int returnCode = ERROR_EXIT_CODE; // Source code will modify this after its execution
-
-        for (int i = 0; i < args.Length && TryGetSourceCode(args[i], out var sourceCode); i++)
+        // Process each source code file sequentially
+        foreach (var filePath in SourceCodePaths)
         {
-            core.Initialize(); // Initialize core for each file to ensure fresh state
-            returnCode = core.Execute(sourceCode);
+            // Attempt to read and validate the source code file
+            if (!SourceCodeReader.TryGetSourceCode(filePath, out var sourceCode))
+                continue; // Skip to next file if current one fails to load
+
+            // Reset core state for each file to ensure clean execution environment
+            core.Initialize();
+            
+            // Execute the source code and capture the exit code
+            exitCode = core.Execute(sourceCode);
         }
 
-        return returnCode;
+        return exitCode; // Last interpreted program's exit code
     }
-
-    public static void AddSourceCodePaths(params string[] sourceCodePaths) => _sourceCodePaths?.AddRange(sourceCodePaths);
-
-
-    private static bool TryGetSourceCode(string filePath, out string[] sourceCode)
-    {
-        string fileExtension = Path.GetExtension(filePath);
-
-        if (!string.Equals(fileExtension, EXPECTED_FILE_EXTENSION, StringComparison.OrdinalIgnoreCase))
-        {
-            Log.Error(
-                "Wrong file extension. Expected: {ExpectedExtension}, " +
-                "Actual: {ActualExtension} for file: {FilePath}", 
-                EXPECTED_FILE_EXTENSION, fileExtension, filePath
-                );
-            sourceCode = [];
-            return false;
-        }
-
-        try
-        {
-            sourceCode = File.ReadAllLines(filePath);
-            return true;
-        }
-        catch (FileNotFoundException)
-        {
-            Log.Error("File not found: {FilePath}", filePath);
-        }
-        catch (DirectoryNotFoundException)
-        {
-            Log.Error("Directory not found: {FilePath}", filePath);
-        }
-        catch (UnauthorizedAccessException)
-        {
-            Log.Error("Access denied: {FilePath}", filePath);
-        }
-        catch (PathTooLongException)
-        {
-            Log.Error("Path too long: {FilePath}", filePath);
-        }
-        catch (NotSupportedException)
-        {
-            Log.Error("File format not supported: {FilePath}", filePath);
-        }
-        catch (IOException ex)
-        {
-            Log.Error("IO error reading file {FilePath}: {Message}", filePath, ex.Message);
-        }
-        catch (OutOfMemoryException)
-        {
-            Log.Error("Out of memory reading file: {FilePath}", filePath);
-        }
-        catch (Exception ex)
-        {
-            Log.Error("Unexpected error reading file {FilePath}: {Message}", filePath, ex.Message);
-        }
-
-        sourceCode = [];
-        return false;
-    }
-
-
 }

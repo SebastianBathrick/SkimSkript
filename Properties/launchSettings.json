@@ -2,7 +2,7 @@
   "profiles": {
     "SkimSkript": {
       "commandName": "Project",
-      "commandLineArgs": "--help"
+      "commandLineArgs": "C:\\Users\\Sebastian\\Desktop\\SkimSkript\\SkimApps\\UnitTests\\ScopeTests.skim"
     }
   }
 }
