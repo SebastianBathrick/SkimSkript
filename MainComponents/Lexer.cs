@@ -1,5 +1,5 @@
-﻿using SkimSkript.LexicalAnalysis.Helpers;
-using SkimSkript.Helpers.LexicalAnalysis;
+﻿using SkimSkript.Helpers.LexicalAnalysis;
+using SkimSkript.LexicalAnalysis.Helpers;
 using SkimSkript.Tokens;
 using System.Text;
 

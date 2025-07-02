@@ -1,6 +1,6 @@
-﻿using SkimSkript.Nodes.Runtime;
-using SkimSkript.ErrorHandling;
+﻿using SkimSkript.ErrorHandling;
 using SkimSkript.Nodes;
+using SkimSkript.Nodes.Runtime;
 
 namespace SkimSkript.Interpretation.Helpers
 {
@@ -27,7 +27,7 @@ namespace SkimSkript.Interpretation.Helpers
         // variable w/ a parameter.
 
         /// <summary> Adds a <see cref="VariableNode"/> associated with an iddentifier to the current scope. </summary>
-        public void AddVariable(string identifier, Node value, Type dataType) => 
+        public void AddVariable(string identifier, Node value, Type dataType) =>
             CurrentStackFrame.AddVariable(identifier, value, dataType);
 
         public void AssignValueToVariable(string identifier, Node value)
@@ -90,7 +90,7 @@ namespace SkimSkript.Interpretation.Helpers
         /// <summary> Goes to the previous function scope level and removes the current level. </summary>
         public void ExitFunctionScope()
         {
-             _functionCallStackFrames.Pop();
+            _functionCallStackFrames.Pop();
             _isTopLevel = _functionCallStackFrames.Count == 0;
         }
 

@@ -55,7 +55,7 @@ namespace SkimSkript.Helpers.LexicalAnalysis
         /// <summary>Returns an array of lexemes in the specified range.</summary>
         /// <remarks>Used for printing statements</remarks>
         public string[] GetLabeledLines(int startIndex, int endIndex)
-        { 
+        {
             var sb = new StringBuilder();
             var lexemesList = new List<string>();
             var lastLineIndex = _lexemeList[startIndex].lineIndex;
@@ -64,7 +64,7 @@ namespace SkimSkript.Helpers.LexicalAnalysis
 
             for (int i = startIndex; i <= endIndex; i++)
             {
-                if(lastLineIndex != _lexemeList[i].lineIndex)
+                if (lastLineIndex != _lexemeList[i].lineIndex)
                 {
                     var line = sb.ToString();
                     sb.Clear();
@@ -74,7 +74,7 @@ namespace SkimSkript.Helpers.LexicalAnalysis
 
                 sb.Append(GetLexemeSpan(i)).Append(' ');
             }
-            
+
             lexemesList.Add(sb.ToString());
 
             return lexemesList.ToArray();
@@ -135,7 +135,7 @@ namespace SkimSkript.Helpers.LexicalAnalysis
         {
             var lines = new List<int>();
 
-            for(int i = 0; i < _lexemeList.Count; i++)
+            for (int i = 0; i < _lexemeList.Count; i++)
                 if (_lexemeList[i].lineIndex < lineIndex)
                     continue;
                 else if (_lexemeList[i].lineIndex == lineIndex)

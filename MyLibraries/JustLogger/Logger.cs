@@ -84,7 +84,7 @@
         #endregion
 
         #region Logging Methods
-        public abstract void Clear();  
+        public abstract void Clear();
 
         /// <summary>
         /// Logs a message without a label (shown unless log level is set to <see cref="LogLevel.None"/>)
@@ -185,7 +185,7 @@
         {
             var segmentedMessage = GetSegmentedMessage(message, properties);
 
-            if(_isLockEnabled)
+            if (_isLockEnabled)
             {
                 using var _ = AcquireLock();
                 Write(segmentedMessage);

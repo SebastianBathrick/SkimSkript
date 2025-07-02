@@ -24,6 +24,6 @@
 
         /// <summary>Returns a bool representation of the value stored in the reciever.</summary>
         public abstract bool ToBool();
-        
+
     }
 }

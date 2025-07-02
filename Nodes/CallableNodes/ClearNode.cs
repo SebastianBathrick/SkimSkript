@@ -9,7 +9,7 @@ namespace SkimSkript.Nodes
 
         /// <summary>Called to clear the console buffer.</summary>
         public override Node? Call(Node[]? arguments = null)
-        {            
+        {
             Console.Clear();
             return null;
         }

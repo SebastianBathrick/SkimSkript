@@ -50,9 +50,9 @@ namespace SkimSkript.MainComponents
             {
                 exitData = InterpretBlock(treeRoot);
             }
-            catch(RuntimeException ex)
+            catch (RuntimeException ex)
             {
-                if(_currentStatementNode != null)
+                if (_currentStatementNode != null)
                     ex.SetStatement(_currentStatementNode);
                 throw;
             }
@@ -77,7 +77,7 @@ namespace SkimSkript.MainComponents
                 // If the returned data is not an integer, print a warning and return an error exit code.
                 Console.Error.WriteLine($"{NON_INT_RETURN_CODE} {exitData.ReturnData.ToString()}");
 
-                return ERROR_EXIT_CODE; 
+                return ERROR_EXIT_CODE;
             }
 
             return ERROR_EXIT_CODE;
@@ -89,7 +89,7 @@ namespace SkimSkript.MainComponents
             var coercedBlock = (BlockNode)block;
             BlockExitData? exitData = null;
 
-            if(coercedBlock.Statements != null)
+            if (coercedBlock.Statements != null)
             {
                 _scope.EnterScope();
                 foreach (var statement in coercedBlock.Statements!)
@@ -101,8 +101,8 @@ namespace SkimSkript.MainComponents
                         break;
                 }
                 _scope.ExitScope();
-            }    
-          
+            }
+
             return exitData ?? new BlockExitData(BlockExitType.StatementsExhausted);
         }
         #endregion
@@ -143,7 +143,7 @@ namespace SkimSkript.MainComponents
             if (parameters == null)
                 return;
 
-            for(int i = 0; i < parameters.Length; i++)
+            for (int i = 0; i < parameters.Length; i++)
             {
                 var identifier = GetIdentifier(((ParameterNode)parameters[i]).IdentifierNode);
                 _scope.AddVariable(identifier, evaluatedArgs![i], evaluatedArgs![i].GetType());
@@ -159,21 +159,21 @@ namespace SkimSkript.MainComponents
 
             switch (node)
             {
-                case VariableDeclarationNode varNode: 
+                case VariableDeclarationNode varNode:
                     InterpretVariableDeclaration(varNode); break;
-                case FunctionCallNode functionCallNode: 
+                case FunctionCallNode functionCallNode:
                     InterpretFunctionCall(functionCallNode); break;
-                case AssignmentNode assignmentNode: 
+                case AssignmentNode assignmentNode:
                     AssignValueToVariable(assignmentNode); break;
-                case AssertionNode assertionNode: 
+                case AssertionNode assertionNode:
                     InterpretAssertion(assertionNode); break;
-                case IfNode ifNode: 
+                case IfNode ifNode:
                     return InterpretIfStructure(ifNode);
-                case WhileNode whileNode: 
+                case WhileNode whileNode:
                     return InterpretWhileStructure(whileNode);
-                case ReturnNode returnNode: 
-                    return InterpretReturnStatement(returnNode); 
-                case RepeatNode repeatNode: 
+                case ReturnNode returnNode:
+                    return InterpretReturnStatement(returnNode);
+                case RepeatNode repeatNode:
                     return InterpretRepeatLoop(repeatNode);
             }
 
@@ -216,7 +216,7 @@ namespace SkimSkript.MainComponents
 
             // Variadic (built-in) functions will handle their own coercion
             if (isVariadic)
-                return args; 
+                return args;
 
             // If function has fixed paramNode count but the argument count doesn't match
             if (!isVariadic && parameterCount != argCount)
@@ -229,7 +229,7 @@ namespace SkimSkript.MainComponents
 
             var evaluatedArgs = new Node[args!.Length];
 
-            for(int i = 0; i < evaluatedArgs.Length; i++)
+            for (int i = 0; i < evaluatedArgs.Length; i++)
             {
                 var argNode = (ArgumentNode)args[i];
                 var paramNode = (ParameterNode)(parameters![i]);
@@ -238,7 +238,7 @@ namespace SkimSkript.MainComponents
                     throw new RuntimeException(
                         "Call to function {Function} used invalid argument pass-by type", functionIdentifier);
 
-                if(!argNode.IsReference)
+                if (!argNode.IsReference)
                 {
                     var evalArg = EvaluateExpression(argNode.Value);
                     evaluatedArgs[i] = CoercionInterpreter.CoerceNodeValue(evalArg, paramNode.DataType);
@@ -251,7 +251,7 @@ namespace SkimSkript.MainComponents
                     throw new RuntimeException(
                         "Call to function {Function} used invalid data type for reference argument", functionIdentifier);
 
-                evaluatedArgs[i] = varPointer;                    
+                evaluatedArgs[i] = varPointer;
             }
 
             return evaluatedArgs;
@@ -263,7 +263,7 @@ namespace SkimSkript.MainComponents
         private BlockExitData InterpretReturnStatement(ReturnNode returnNode)
         {
             Node? returnData = null;
-            if(returnNode.Expression != null)
+            if (returnNode.Expression != null)
                 returnData = EvaluateExpression(returnNode.Expression);
 
             return new BlockExitData(BlockExitType.ReturnStatement, returnData);
@@ -329,7 +329,7 @@ namespace SkimSkript.MainComponents
             {
                 var exitData = InterpretBlock(repeatNode.Block);
 
-                if(exitData.ExitType != BlockExitType.StatementsExhausted)
+                if (exitData.ExitType != BlockExitType.StatementsExhausted)
                     return exitData;
 
                 targetCount = ((ValueNode)EvaluateExpression(repeatNode.Condition)).ToInt();
@@ -342,7 +342,7 @@ namespace SkimSkript.MainComponents
         #region Variable Statements
         /// <summary> Declares a new variable in the current scope. </summary>
         private void InterpretVariableDeclaration(VariableDeclarationNode declarationNode)
-        {          
+        {
             var dataType = declarationNode.DataType;
             var identifier = GetIdentifier(declarationNode.IdentifierNode);
 
@@ -352,7 +352,7 @@ namespace SkimSkript.MainComponents
             Node coercedInitVal;
 
             // Coerce the value to be the same type as the variable's data type.
-                coercedInitVal = CoercionInterpreter.CoerceNodeValue(initVal, dataType);
+            coercedInitVal = CoercionInterpreter.CoerceNodeValue(initVal, dataType);
 
             /* Even if there was no explicit initialization, the parser will still store a value 
              * node with a default value in the declaration node. Works like C# primitives. */
@@ -387,17 +387,17 @@ namespace SkimSkript.MainComponents
                 Node leftOperand;
                 Node rightOperand;
 
-                if(assertionNode.Condition is LogicExpressionNode logicExpr)
+                if (assertionNode.Condition is LogicExpressionNode logicExpr)
                 {
                     leftOperand = logicExpr.LeftOperand;
                     rightOperand = logicExpr.RightOperand;
                 }
-                else if(assertionNode.Condition is ComparisonExpressionNode comparisonExpr)
+                else if (assertionNode.Condition is ComparisonExpressionNode comparisonExpr)
                 {
                     leftOperand = comparisonExpr.LeftOperand;
                     rightOperand = comparisonExpr.RightOperand;
                 }
-                else if(assertionNode.Condition is MathExpressionNode mathExpr)
+                else if (assertionNode.Condition is MathExpressionNode mathExpr)
                 {
                     leftOperand = assertionNode.Condition;
                     rightOperand = new BoolValueNode(false);
@@ -413,7 +413,7 @@ namespace SkimSkript.MainComponents
                     assertionNode, leftEval, rightEval
                     );
             }
-                       
+
 
         }
         #endregion
@@ -426,12 +426,12 @@ namespace SkimSkript.MainComponents
             if (node is LogicExpressionNode logicNode)
                 return EvaluateLogicExpression(logicNode);
 
-            if(node is ComparisonExpressionNode comparisonNode)
+            if (node is ComparisonExpressionNode comparisonNode)
                 return EvaluateComparisonExpression(comparisonNode);
 
             if (node is MathExpressionNode mathExpr)
                 return EvaluateMathExpression(mathExpr);
-            
+
             return EvaluateFactor(node);
         }
 
@@ -473,7 +473,7 @@ namespace SkimSkript.MainComponents
         /// <returns>A <see cref="ValueNode"/> representing the factor’s computed value.</returns>
         private Node EvaluateFactor(Node node) =>
             node switch
-            {      
+            {
                 FunctionCallNode callNode => InterpretFunctionCall(callNode),
                 IdentifierNode idNode => _scope.GetVariableValueCopy(idNode.ToString()),
                 _ => node

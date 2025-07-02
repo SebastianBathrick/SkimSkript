@@ -10,7 +10,7 @@ namespace SkimSkript.Nodes
 
         private StringBuilder StringBuilder => _stringBuilder ??= new StringBuilder();
 
-        public PrintNode() : base(builtInFunctionId:BuiltInFunctionID.Print, isVariadic:true)
+        public PrintNode() : base(builtInFunctionId: BuiltInFunctionID.Print, isVariadic: true)
         {
 
         }
@@ -26,8 +26,8 @@ namespace SkimSkript.Nodes
         /// value and whether or not the argument is marked as reference. Each argument that is not
         /// of type string will be coerced prior to the call.</param>
         public override Node? Call(Node[]? arguments)
-        {          
-            if(arguments == null)
+        {
+            if (arguments == null)
             {
                 Console.WriteLine();
                 return null;
@@ -36,7 +36,7 @@ namespace SkimSkript.Nodes
             if (StringBuilder.Length != 0)
                 StringBuilder.Clear();
 
-            foreach(var node in arguments)
+            foreach (var node in arguments)
                 StringBuilder.Append(node.ToString()).Append('\n');
 
             Console.Write(value: StringBuilder.ToString());

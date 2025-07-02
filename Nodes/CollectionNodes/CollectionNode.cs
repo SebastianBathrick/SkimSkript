@@ -1,7 +1,7 @@
 ﻿namespace SkimSkript.Nodes.CollectionNodes
 {
     internal abstract class CollectionNode<T> : Node
-    {       
+    {
         private readonly Type _elementDataType;
 
         /// <summary> Type used to identify and retreive specific elements in the collection. </summary>

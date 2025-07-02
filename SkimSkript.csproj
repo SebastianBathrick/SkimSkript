@@ -7,11 +7,4 @@
     <Nullable>enable</Nullable>
 	  <AssemblyName>skimskript</AssemblyName>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="Nodes\NodeExceptions\**" />
-    <EmbeddedResource Remove="Nodes\NodeExceptions\**" />
-    <None Remove="Nodes\NodeExceptions\**" />
-  </ItemGroup>
-
 </Project>

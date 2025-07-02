@@ -27,7 +27,7 @@ namespace SkimSkript.Interpretation.Helpers
             var lType = left.GetType();
             var rType = right.GetType();
 
-            if(lType == rType)
+            if (lType == rType)
             {
                 // If both operands are the same type, no coercion is needed
                 coercedLeft = leftValNode;
@@ -84,10 +84,10 @@ namespace SkimSkript.Interpretation.Helpers
         }
 
         private bool TryOperandCoercionOfType(
-            Type targetType, 
+            Type targetType,
             ValueNode left, ValueNode right,
             Type leftType, Type rightType,
-            out Node coercedLeft, 
+            out Node coercedLeft,
             out Node coercedRight)
         {
             var isLeftOfType = leftType == targetType;

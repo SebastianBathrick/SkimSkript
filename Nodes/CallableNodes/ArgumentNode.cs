@@ -18,6 +18,6 @@
         }
 
         public override string ToString() =>
-            _isRef ? "ref " : string.Empty + _value.ToString(); 
+            _isRef ? "ref " : string.Empty + _value.ToString();
     }
 }

@@ -19,7 +19,7 @@ namespace SkimSkript.ErrorHandling
             Token problemToken,
             LexemeContainer lexemes,
             params object[] properties
-            ) 
+            )
             : base(MESSAGE, GetProperties(properties, expectedType, problemToken, lexemes))
         {
             _problemToken = problemToken;
@@ -27,9 +27,9 @@ namespace SkimSkript.ErrorHandling
         }
 
         private static object[] GetProperties(
-            object[] properties, 
-            TokenType expectedType, 
-            Token problemToken, 
+            object[] properties,
+            TokenType expectedType,
+            Token problemToken,
             LexemeContainer lexemes
             )
         {
@@ -39,12 +39,12 @@ namespace SkimSkript.ErrorHandling
             var column = lexemes.GetLexemeColumnByIndex(problemToken.LexemeEndIndex);
 
             var expectedStr = StringHelper.SplitPascalCaseManual(expectedType.ToString());
-            var gotStr = StringHelper.SplitPascalCaseManual(problemToken.Type.ToString());         
+            var gotStr = StringHelper.SplitPascalCaseManual(problemToken.Type.ToString());
 
             propsList.AddRange([line, column, expectedStr.ToLower(), gotStr.ToLower()]);
             return propsList.ToArray();
         }
-            
+
         protected override bool TryGetAdditionalContext(out string message, out object[] properties)
         {
             (int start, int end) lineIndexes;
@@ -56,12 +56,12 @@ namespace SkimSkript.ErrorHandling
 
             for (int i = lineIndexes.start; i <= lineIndexes.end; i++)
             {
-                sb.Append($"Line {(i+1).ToString("D3")} | ");
+                sb.Append($"Line {(i + 1).ToString("D3")} | ");
                 var list = _lexemes.GetLexemeIndexesOnLine(i);
 
                 var errorUnderline = new StringBuilder(new string(' ', sb.Length));
-                
-                for(int j = 0; j < list.Count; j++)
+
+                for (int j = 0; j < list.Count; j++)
                 {
                     var lexemeStr = _lexemes.GetLexemeSpan(list[j]).ToString();
                     char underlineChar = ' ';
@@ -74,7 +74,7 @@ namespace SkimSkript.ErrorHandling
                     }
                     else
                         sb.Append(lexemeStr.ToString());
-          
+
                     sb.Append(' ');
                     errorUnderline.Append(new string(underlineChar, lexemeStr.Length)).Append(' ');
                 }
@@ -86,7 +86,7 @@ namespace SkimSkript.ErrorHandling
                 {
                     sb.AppendLine("{Underline}");
                     propertiesList.Add(underline);
-                }         
+                }
             }
 
             message = sb.ToString();

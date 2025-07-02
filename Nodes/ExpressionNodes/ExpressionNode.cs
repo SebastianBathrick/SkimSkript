@@ -9,7 +9,7 @@
 
         /// <summary> Enum value representing the type of operator being used in this expression. </summary>
         public T Operator => _operator;
-        
+
         /// <summary> Node representing left operand in the form of an expression of any type, term, or factor. </summary>
         public Node LeftOperand => _leftOperand;
 

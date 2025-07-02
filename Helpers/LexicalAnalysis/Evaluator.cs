@@ -1,6 +1,6 @@
-﻿using SkimSkript.Syntax;
+﻿using SkimSkript.Helpers.LexicalAnalysis;
+using SkimSkript.Syntax;
 using SkimSkript.Tokens;
-using SkimSkript.Helpers.LexicalAnalysis;
 
 namespace SkimSkript.LexicalAnalysis.Helpers
 {
@@ -8,7 +8,7 @@ namespace SkimSkript.LexicalAnalysis.Helpers
     ///  functionality to build a reserved keyword trie, evaluate lexemes, and handle multi-word tokens. </summary>
     internal class Evaluator
     {
-        
+
         private CharacterNode _keywordTrieRoot = new();
         private LexemeContainer? _lexemes;
 
@@ -37,30 +37,30 @@ namespace SkimSkript.LexicalAnalysis.Helpers
 
                 switch (Lexemes.GetLexemeType())
                 {
-                    case LexemeType.Alphanumeric: 
-                        tokenType = TokenType.Identifier; 
+                    case LexemeType.Alphanumeric:
+                        tokenType = TokenType.Identifier;
                         break;
-                    case LexemeType.NumericDecimal: 
-                        tokenType = TokenType.Float; 
+                    case LexemeType.NumericDecimal:
+                        tokenType = TokenType.Float;
                         break;
-                    case LexemeType.Numeric: 
-                        tokenType = TokenType.Integer; 
+                    case LexemeType.Numeric:
+                        tokenType = TokenType.Integer;
                         break;
-                    case LexemeType.Textual: 
-                        tokenType = TokenType.String; 
+                    case LexemeType.Textual:
+                        tokenType = TokenType.String;
                         break;
-                    case LexemeType.Operator: 
-                        tokenType = SyntaxSpec.operatorDict[Lexemes.GetLexemeSpan().ToString()]; 
+                    case LexemeType.Operator:
+                        tokenType = SyntaxSpec.operatorDict[Lexemes.GetLexemeSpan().ToString()];
                         break;
                     case LexemeType.Delimeter:
                         Lexemes.TryGetLexemeChar(out var lexemeChar);
                         tokenType = SyntaxSpec.GetDelimeterType(lexemeChar);
                         break;
-                    default: 
-                        tokenType = EvaluateAlphabetic(); 
+                    default:
+                        tokenType = EvaluateAlphabetic();
                         break;
                 }
-                
+
                 tokens.Append(new Token(tokenType, lexemeStartIndex, Lexemes.CurrentLexemeIndex));
             }
             while (Lexemes.TryMoveToNextLexeme());
@@ -70,7 +70,7 @@ namespace SkimSkript.LexicalAnalysis.Helpers
 
         /// <summary> Determines if a lexeme or a continuous group of lexems form a reserved keyword/multi-word-token. </summary>
         private TokenType EvaluateAlphabetic()
-        {           
+        {
             var navNode = _keywordTrieRoot;
 
             var tokenType = TokenType.Identifier;
@@ -88,7 +88,7 @@ namespace SkimSkript.LexicalAnalysis.Helpers
                     isEvaluationComplete = navNode == null;
                 }
 
-                if(isEvaluationComplete)
+                if (isEvaluationComplete)
                     continue;
 
                 // If we've arrived at a node with a non-identifier TokenType that is different from the last
@@ -117,7 +117,7 @@ namespace SkimSkript.LexicalAnalysis.Helpers
             Lexemes.BackTrackLexemes(undefinedLexemesVisited);
 
             // If the serach was successful return reserved word(s) TokenType, otherwise return Identifier.
-            return tokenType; 
+            return tokenType;
         }
 
         /// <summary> Constructs trie that stores reserved words and their associated <see cref="TokenType"/>s. </summary>

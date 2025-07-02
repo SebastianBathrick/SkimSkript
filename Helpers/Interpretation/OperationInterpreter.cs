@@ -20,7 +20,7 @@ namespace SkimSkript.Interpretation.Helpers
         {
             GetValueNodeOperands(left, right, out var leftValueNode, out var rightValueNode);
             var operandDataType = GetOperandDataType(leftValueNode);
-            
+
             switch (operandDataType)
             {
                 case OperandDataType.Integer:
@@ -60,7 +60,7 @@ namespace SkimSkript.Interpretation.Helpers
             var operandDataType = GetOperandDataType(leftValueNode);
             bool result;
 
-            switch(operandDataType)
+            switch (operandDataType)
             {
                 case OperandDataType.Integer:
                     result = GetIntComparisonOperationValue(
@@ -103,13 +103,13 @@ namespace SkimSkript.Interpretation.Helpers
         /// <summary> Returns the result of an math operation using ints as operands. </summary>
         private int GetMathResultInt(int left, int right, MathOperator mathOp)
         {
-            switch(mathOp)
+            switch (mathOp)
             {
                 case MathOperator.Add: return left + right;
                 case MathOperator.Subtract: return left - right;
                 case MathOperator.Multiply: return left * right;
-                case MathOperator.Divide: 
-                    if(right == 0)
+                case MathOperator.Divide:
+                    if (right == 0)
                         throw new RuntimeException("Integer division by zero. {Left} divided by {Right}", null, left, right);
 
                     return left / right;
@@ -145,7 +145,7 @@ namespace SkimSkript.Interpretation.Helpers
                 case MathOperator.Multiply: return left * right;
                 case MathOperator.Divide:
                     if (right == 0)
-                        throw new RuntimeException("Floating-point division by zero. {Left} divided by {Right}", 
+                        throw new RuntimeException("Floating-point division by zero. {Left} divided by {Right}",
                             null, left, right);
 
                     return left / right;

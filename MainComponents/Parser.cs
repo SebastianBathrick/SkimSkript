@@ -1,7 +1,7 @@
-﻿using SkimSkript.Nodes.StatementNodes;
-using SkimSkript.Tokens;
+﻿using JustLogger;
 using SkimSkript.Nodes;
-using JustLogger;
+using SkimSkript.Nodes.StatementNodes;
+using SkimSkript.Tokens;
 
 namespace SkimSkript.MainComponents
 {
@@ -24,8 +24,8 @@ namespace SkimSkript.MainComponents
             _tokens = tokens;
 
             List<Node> statements = new();
-            List<Node> functions = new ();
-            
+            List<Node> functions = new();
+
             while (Tokens.HasTokens)
             {
                 //If the next token is a newNode then parse it and add it to the entry point.
@@ -33,9 +33,9 @@ namespace SkimSkript.MainComponents
                 {
                     statements.Add(GetStatement());
                     Log.Verbose("Parsed top-level statement: {Statement}", statements.Last());
-                }                   
+                }
                 else //Otherwise parse functions.
-                    functions.Add(GetFunctionNode()); 
+                    functions.Add(GetFunctionNode());
             }
 
             return new AbstractSyntaxTreeRoot(statements.ToArray(), functions.ToArray());
@@ -46,7 +46,7 @@ namespace SkimSkript.MainComponents
         private Node GetFunctionNode()
         {
             var returnType = GetFunctionReturnType();
-            var identifier = GetIdentifier();     
+            var identifier = GetIdentifier();
 
             // Opening parenthesis to enclose parameter declarations
             Tokens.MatchAndRemove(TokenType.ParenthesisOpen);
@@ -58,7 +58,7 @@ namespace SkimSkript.MainComponents
                 parameters ??= new List<Node>();
                 parameters.Add(GetParameter());
             }
-                
+
             return new FunctionNode(identifier, returnType, parameters?.ToArray(), GetBlock());
         }
 
@@ -102,25 +102,27 @@ namespace SkimSkript.MainComponents
 
             switch (Tokens.PeekType())
             {
-                case TokenType.DeclarationStart: case TokenType.IntegerKeyword: 
-                case TokenType.StringKeyword: case TokenType.FloatKeyword: 
-                case TokenType.BoolKeyword: 
+                case TokenType.DeclarationStart:
+                case TokenType.IntegerKeyword:
+                case TokenType.StringKeyword:
+                case TokenType.FloatKeyword:
+                case TokenType.BoolKeyword:
                     newNode = GetVariableDeclaration(); break;
-                case TokenType.FunctionCallStart: 
+                case TokenType.FunctionCallStart:
                     newNode = GetFunctionCall(); break;
-                case TokenType.Return: 
+                case TokenType.Return:
                     newNode = GetReturnStatement(); break;
-                case TokenType.AssignmentStart: 
+                case TokenType.AssignmentStart:
                     newNode = GetAssignment(); break;
-                case TokenType.WhileLoop: 
+                case TokenType.WhileLoop:
                     newNode = GetWhileLoop(); break;
-                case TokenType.If: 
+                case TokenType.If:
                     newNode = GetIfStatement(); break;
-                case TokenType.Identifier: 
+                case TokenType.Identifier:
                     newNode = GetIdentifierStartStatement(); break;
-                case TokenType.Assertion: 
+                case TokenType.Assertion:
                     newNode = GetAssertionStatement(); break;
-                case TokenType.RepeatLoop: 
+                case TokenType.RepeatLoop:
                     newNode = GetRepeatLoop(); break;
                 default:
                     throw Tokens.GetTokenExceptionError(TokenType.StatementStartToken);
@@ -129,7 +131,7 @@ namespace SkimSkript.MainComponents
             var statementNode = (StatementNode)newNode;
             statementNode.SetLexemeStartIndex(lexemeStartIndex);
 
-            if(!statementNode.IsEndLexeme)
+            if (!statementNode.IsEndLexeme)
                 statementNode.SetLexemeEndIndex(Tokens.GetLexemeEndIndex());
 
             return statementNode;
@@ -155,7 +157,7 @@ namespace SkimSkript.MainComponents
             List<Node>? args = null;
 
             Tokens.MatchAndRemove(TokenType.ParenthesisOpen);
-        
+
             while (!Tokens.TryMatchAndRemove(TokenType.ParenthesisClose))
             {
                 // If a value argument then it's an condition, but if reference, it's an identifierNode
@@ -182,7 +184,7 @@ namespace SkimSkript.MainComponents
         {
             Tokens.TryMatchAndRemove(TokenType.DeclarationStart);
 
-            if(IsCollectionDataType(Tokens.PeekType()))
+            if (IsCollectionDataType(Tokens.PeekType()))
                 return GetCollectionDeclaration();
 
             return GetValueTypeVariableDeclaration();
@@ -222,7 +224,7 @@ namespace SkimSkript.MainComponents
         #endregion
 
         #region Control Structure Statements
-        private Node GetIfStatement(bool isElseIf=false)
+        private Node GetIfStatement(bool isElseIf = false)
         {
             /* For this method to even be called the if token will be verified and that's why
              * it can be Try. It is Try because this method is reused for else-if statements.*/
@@ -241,9 +243,9 @@ namespace SkimSkript.MainComponents
             else if (Tokens.TryMatchAndRemove(TokenType.Else))
                 chainedStructure = new ElseNode(GetBlock(), statementEndLexeme);
 
-            return !isElseIf ? 
-                new IfNode(condition, block, chainedStructure, statementEndLexeme) : 
-                new ElseIfNode(condition, block,chainedStructure, statementEndLexeme);
+            return !isElseIf ?
+                new IfNode(condition, block, chainedStructure, statementEndLexeme) :
+                new ElseIfNode(condition, block, chainedStructure, statementEndLexeme);
         }
 
         private Node GetWhileLoop()
@@ -262,7 +264,7 @@ namespace SkimSkript.MainComponents
             var condition = GetExpression();
             Tokens.TryMatchAndRemove(TokenType.RepeatLoopTrail);
             var statementEndLexeme = Tokens.GetLexemeEndIndex();
-            
+
             return new RepeatNode(condition, GetBlock(), statementEndLexeme);
         }
         #endregion
@@ -351,22 +353,22 @@ namespace SkimSkript.MainComponents
 
             switch (tokenType)
             {
-                case TokenType.Integer: 
+                case TokenType.Integer:
                     return new IntValueNode(int.Parse(lexeme));
-                case TokenType.Float: 
+                case TokenType.Float:
                     return new FloatValueNode(float.Parse(lexeme));
-                case TokenType.String: 
+                case TokenType.String:
                     lexeme = lexeme.Trim('"'); // Remove surrounding quotes from string literals
                     return new StringValueNode(in lexeme);
-                case TokenType.ParenthesisOpen: 
+                case TokenType.ParenthesisOpen:
                     return ParseInnerExpression();
-                case TokenType.FunctionCallStartExpression: 
+                case TokenType.FunctionCallStartExpression:
                     return GetFunctionCall();
-                case TokenType.True: 
+                case TokenType.True:
                     return new BoolValueNode(true);
-                case TokenType.False: 
+                case TokenType.False:
                     return new BoolValueNode(false);
-                case TokenType.Subtract: 
+                case TokenType.Subtract:
                     return new MathExpressionNode(MathOperator.Multiply, new IntValueNode(-1), ParseFactor());
                 default:
                     throw Tokens.GetTokenExceptionError(TokenType.Factor, tokenIndexOffset: 1);
@@ -449,7 +451,7 @@ namespace SkimSkript.MainComponents
                 _ => throw Tokens.GetTokenExceptionError(TokenType.DataType, tokenIndexOffset: 1)
             };
 
-        private Node GetIdentifier() => 
+        private Node GetIdentifier() =>
             new IdentifierNode(Tokens.MatchRemoveAndGetLexeme(TokenType.Identifier));
 
         /// <summary>Returns a factor in the form of a variable identfier or a function call.</summary>

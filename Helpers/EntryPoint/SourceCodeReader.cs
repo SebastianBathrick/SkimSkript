@@ -8,7 +8,7 @@ namespace SkimSkript.Helpers.EntryPoint
     internal static class SourceCodeReader
     {
         #region Constants
-        private const string EXPECTED_FILE_EXTENSION = ".skim";
+        private const string EXPECTED_FILE_EXTENSION = ".sk";
         #endregion
 
         #region Public Methods
@@ -26,7 +26,7 @@ namespace SkimSkript.Helpers.EntryPoint
             {
                 Log.Error(
                     "Wrong file extension. Expected: {ExpectedExtension}, " +
-                    "Actual: {ActualExtension} for file: {FilePath}", 
+                    "Actual: {ActualExtension} for file: {FilePath}",
                     EXPECTED_FILE_EXTENSION, fileExtension, filePath
                     );
                 sourceCode = [];
@@ -76,4 +76,4 @@ namespace SkimSkript.Helpers.EntryPoint
         }
         #endregion
     }
-} 
+}

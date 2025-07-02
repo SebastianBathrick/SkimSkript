@@ -1,10 +1,8 @@
-﻿using System.Text;
-
-namespace SkimSkript.ErrorHandling
+﻿namespace SkimSkript.ErrorHandling
 {
     internal abstract class SkimSkriptException : Exception
     {
-        protected readonly object[] _properties;      
+        protected readonly object[] _properties;
 
         public object[] Properties
         {
@@ -22,13 +20,13 @@ namespace SkimSkript.ErrorHandling
 
         public override string Message =>
             base.Message + (TryGetAdditionalContext(out var msg, out _) ? $".\n{msg}" : string.Empty);
-                        
-        public SkimSkriptException(string message, params object[] properties) 
+
+        public SkimSkriptException(string message, params object[] properties)
             : base(message)
         {
             _properties = properties;
         }
-       
+
         protected virtual bool TryGetAdditionalContext(out string message, out object[] properties)
         {
             message = string.Empty;

@@ -65,11 +65,11 @@ namespace SkimSkript.Syntax
 
             ("while",TokenType.WhileLoop),
             ("repeat code while",TokenType.WhileLoop),
-            ("repeat while", TokenType.WhileLoop), 
-            
+            ("repeat while", TokenType.WhileLoop),
+
             ("repeat", TokenType.RepeatLoop),
             ("times", TokenType.RepeatLoopTrail),
-           
+
             ("as follows", TokenType.FunctionImpliedBlock),
 
             ("is", TokenType.Equals),

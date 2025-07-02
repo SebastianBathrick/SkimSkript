@@ -29,11 +29,11 @@
         public bool IsParameters => _parameters != null || _isVariadic;
 
         /// <summary> Number of arguments that need to be sent to call this object. </summary>>
-        public int RequiredArgCount =>  IsParameters ? _parameters!.Length : 0;
-        
+        public int RequiredArgCount => IsParameters ? _parameters!.Length : 0;
+
         #endregion
 
-        public CallableNode(Node identifierNode, Node[]? parameters, Type? returnType=null, bool isVariadic=false)
+        public CallableNode(Node identifierNode, Node[]? parameters, Type? returnType = null, bool isVariadic = false)
         {
             _identifierNode = identifierNode;
             _parameters = parameters;
@@ -44,4 +44,3 @@
         public override string ToString() => $"{_identifierNode} CallableNode";
     }
 }
- 

@@ -17,7 +17,7 @@
     ///<see cref="Scanner"/> should handle each while identifying lexemes.</summary>
     public enum CharType : byte
     {
-        WhiteSpaceOrPunctuation = 0, 
+        WhiteSpaceOrPunctuation = 0,
         Letter,
         Digit,
         Decimal,

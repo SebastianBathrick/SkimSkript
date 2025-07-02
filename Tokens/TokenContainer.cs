@@ -1,5 +1,4 @@
 ﻿using SkimSkript.ErrorHandling;
-using SkimSkript.Helpers.General;
 using SkimSkript.Helpers.LexicalAnalysis;
 using System.Text;
 
@@ -120,10 +119,10 @@ namespace SkimSkript.Tokens
         #endregion
 
         #region Get Lexeme Methods
-        public int GetLexemeStartIndex(int offset = 0) => 
+        public int GetLexemeStartIndex(int offset = 0) =>
             _tokenList[_currentTokenIndex - offset].LexemeStartIndex;
 
-        public int GetLexemeEndIndex(int offset = 1) => 
+        public int GetLexemeEndIndex(int offset = 1) =>
             _tokenList[_currentTokenIndex - offset].LexemeEndIndex;
 
         public string MatchRemoveAndGetLexeme(TokenType tokenType)
@@ -132,9 +131,9 @@ namespace SkimSkript.Tokens
             return GetLexemeFromToken(_currentTokenIndex - 1);
         }
 
-        private string GetLexemeFromToken(int index) => 
+        private string GetLexemeFromToken(int index) =>
             _lexemes.GetLexemesAsString(
-                _tokenList[index].LexemeStartIndex, 
+                _tokenList[index].LexemeStartIndex,
                 _tokenList[index].LexemeEndIndex
                 );
         #endregion
@@ -146,8 +145,8 @@ namespace SkimSkript.Tokens
             params object[] properties
             ) =>
             throw new TokenContainerException(
-                expectedType, 
-                _tokenList[_currentTokenIndex - tokenIndexOffset], 
+                expectedType,
+                _tokenList[_currentTokenIndex - tokenIndexOffset],
                 _lexemes,
                 properties
                 );

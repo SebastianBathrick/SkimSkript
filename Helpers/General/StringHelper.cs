@@ -30,7 +30,7 @@ namespace SkimSkript.Helpers.General
 
             return PASCAL_CASE_SPACING;
         }
-    
+
         private static string GetSpaceBeforeUpper(string input, int index)
         {
             if (index <= 0 || !char.IsUpper(input[index]))

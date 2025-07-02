@@ -4,7 +4,7 @@
     {
         private static Logger? _instance;
 
-        public static Logger Logger => 
+        public static Logger Logger =>
             _instance ?? throw new InvalidOperationException("Static Logger instance is not set");
 
         public static bool IsLoggerSet => _instance != null;
@@ -21,7 +21,7 @@
         /// </summary>
         /// <param name="isLockBehavior">Whether to lock the logger.</param>
         /// <returns>The static instance of the logger.</returns>
-        public static Logger SetLockBehavior(bool isLockBehavior) =>  
+        public static Logger SetLockBehavior(bool isLockBehavior) =>
             Logger.SetLockBehavior(isLockBehavior);
 
         /// <summary>

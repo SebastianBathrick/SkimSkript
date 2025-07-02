@@ -11,7 +11,7 @@
         Divide,
         Modulus,
         Exponent,
-   
+
         Equals = 6, //Marked explicitly to be associated with enum for operators in conditional expressions.
         NotEquals,
         GreaterThan,
@@ -37,7 +37,7 @@
         // Literals
         Integer,
         Float,
-        String,       
+        String,
         True,
         False,
         #endregion
@@ -99,7 +99,7 @@
         // Utility TokenTypes (used for lexing)
         PartialPhrase,
         Undefined,
-        
+
         #endregion
     }
 }

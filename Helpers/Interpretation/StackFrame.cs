@@ -1,6 +1,6 @@
-﻿using SkimSkript.Nodes.Runtime;
-using SkimSkript.ErrorHandling;
+﻿using SkimSkript.ErrorHandling;
 using SkimSkript.Nodes;
+using SkimSkript.Nodes.Runtime;
 
 namespace SkimSkript.Interpretation.Helpers
 {
@@ -11,7 +11,7 @@ namespace SkimSkript.Interpretation.Helpers
     {
         #region Data Members & Properties
         private const int INIT_CAP = 10; //Initial dictionary cap
-       
+
         private int _currBlockLevel = 0;
         private Dictionary<VariableMetadata, VariableNode>? _frameDict;
 

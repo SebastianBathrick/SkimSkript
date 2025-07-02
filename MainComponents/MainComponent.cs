@@ -14,7 +14,7 @@ namespace SkimSkript.MainComponents
     {
         private bool _isDebugging;
         private string _name;
-        
+
         private Stopwatch? _executionTimer;
         private long _executionTimeMs;
 
@@ -35,7 +35,7 @@ namespace SkimSkript.MainComponents
         {
             Log.Info("Executing {ClassName}", _name);
 
-            if(!_isDebugging)
+            if (!_isDebugging)
             {
                 var normReturnData = OnExecute(componentInput);
                 Log.Info("{ClassName} execution completed", _name);

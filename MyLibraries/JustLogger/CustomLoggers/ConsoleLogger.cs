@@ -15,13 +15,13 @@ namespace JustLogger.ConsoleLogging
             var sb = new StringBuilder();
 
             foreach (var segment in segmentedMessage)
-                if(!segment.isProp)
+                if (!segment.isProp)
                     sb.Append(segment.content);
-                else if(int.TryParse(segment.content, out _) || float.TryParse(segment.content, out _))
+                else if (int.TryParse(segment.content, out _) || float.TryParse(segment.content, out _))
                     sb.Append(GetColoredContent(segment.content, NUMBER_COLOR));
                 else
                     sb.Append(GetColoredContent(segment.content, PROPERTY_COLOR));
-            
+
             Console.Write(sb.Append('\n').ToString());
         }
 

@@ -1,7 +1,8 @@
-﻿using SkimSkript.Helpers.EntryPoint;
+﻿using JustLogger;
 using JustLogger.ConsoleLogging;
 using SkimSkript;
-using JustLogger;
+using SkimSkript.Helpers.EntryPoint;
+using SkimSkript.MainComponents;
 
 class Program
 {
@@ -14,13 +15,16 @@ class Program
     #region Data Members
     private static readonly Logger _entryPointLogger = new ConsoleLogger().SetMinimumLogLevel(ENTRY_POINT_LOG_LVL);
     private static List<string>? _sourceCodePaths; // Lazy-initialized list of file paths to process
+    private static MainComponentType[]? _debuggedMainComponents;
     #endregion
 
     #region Properties
     /// <summary>
     /// Gets the list of source code file paths, initializing if null.
     /// </summary>
-    public static List<string> SourceCodePaths => _sourceCodePaths ?? (_sourceCodePaths =[]); 
+    public static List<string> SourceCodePaths => _sourceCodePaths ?? (_sourceCodePaths = []);
+
+    public static MainComponentType[]? DebuggedMainComponents => _debuggedMainComponents;
     #endregion
 
     private static int Main(string[] args)
@@ -28,20 +32,21 @@ class Program
         // Validate that at least one argument was provided
         if (args.Length == 0)
         {
-            _entryPointLogger.Error("Requires at least one file path argument");
+            _entryPointLogger.Error(
+                InterpreterFlags.NoArgsErrorMessage, InterpreterFlags.NoArgsErrorProperties);
             return ERROR_EXIT_CODE;
         }
 
         int exitCode = DEFAULT_EXIT_CODE;
 
-        // Process command-line flags first, add remaining args as file paths if no flags processed
-        if(!InterpreterFlags.TryEvaluateArguments(args, _entryPointLogger))
-            SourceCodePaths.AddRange(args);
+        // Process command-line flags if first argument has flag prefix and exit if an error occurs while dong so
+        if (InterpreterFlags.IsFlag(args) && !InterpreterFlags.TryEvaluateArguments(args, _entryPointLogger))   
+                return ERROR_EXIT_CODE;
 
         // Early exit if no files to process
         if (SourceCodePaths.Count == 0)
             return exitCode;
-            
+
         // Initialize the SkimSkript interpreter core
         var core = new SkimSkriptCore().InitializeLogger(new ConsoleLogger());
 
@@ -53,12 +58,15 @@ class Program
                 continue; // Skip to next file if current one fails to load
 
             // Reset core state for each file to ensure clean execution environment
-            core.Initialize();
-            
+            core.Initialize(DebuggedMainComponents);
+
             // Execute the source code and capture the exit code
             exitCode = core.Execute(sourceCode);
         }
 
         return exitCode; // Last interpreted program's exit code
     }
+
+    public static void SetDebuggedMainComponents(params MainComponentType[] debuggedMainComponents) =>
+        _debuggedMainComponents = debuggedMainComponents;
 }

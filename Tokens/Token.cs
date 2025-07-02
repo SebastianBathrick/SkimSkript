@@ -2,7 +2,7 @@
 {
     /// <summary>Class that represents a single token created during lexical analysis utilized for parsing.</summary>
     public class Token
-    {             
+    {
         private TokenType _type;
         private int _lexemeStartIndex, _lexemeEndIndex;
 

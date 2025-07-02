@@ -1,8 +1,8 @@
-﻿using SkimSkript.MainComponents;
-using SkimSkript.ErrorHandling;
-using SkimSkript.Nodes;
+﻿using JustLogger;
 using JustLogger.ConsoleLogging;
-using JustLogger;
+using SkimSkript.ErrorHandling;
+using SkimSkript.MainComponents;
+using SkimSkript.Nodes;
 
 namespace SkimSkript
 {
@@ -35,7 +35,7 @@ namespace SkimSkript
         /// Components are set to null and must be initialized via <see cref="Initialize"/> before use.
         /// </remarks>
         public SkimSkriptCore()
-        {        
+        {
             _lexer = null;
             _parser = null;
             _interpreter = null;
@@ -56,14 +56,14 @@ namespace SkimSkript
         {
             // Use empty array if no debug components specified
             debuggedComponents ??= [];
-            
+
             // Initialize all core components with optional debugging
             _lexer = new(debuggedComponents);
             _parser = new(debuggedComponents);
             _interpreter = new(debuggedComponents);
 
             // Log successful initialization if logger is available
-            if(Log.IsLoggerSet)
+            if (Log.IsLoggerSet)
                 Log.Info("SkimSkriptCore initialized");
 
             return this;
@@ -110,7 +110,7 @@ namespace SkimSkript
         public int Execute(string[] sourceCode)
         {
             // Validate that all components have been properly initialized
-            if(_lexer == null || _parser == null || _interpreter == null)
+            if (_lexer == null || _parser == null || _interpreter == null)
                 throw new NullReferenceException(
                     "SkimScriptCore instance's Initialize() was not called before Execute()");
 
@@ -130,13 +130,13 @@ namespace SkimSkript
                 // Step 3: Interpretation - Execute the abstract syntax tree
                 return _interpreter.Execute(treeRoot);
             }
-            catch(RuntimeException ex)
+            catch (RuntimeException ex)
             {
                 // Handle runtime errors with detailed error reporting
                 var message = ex.Message;
 
                 // Add statement context if available for better debugging
-                if(ex.StatementNode != null)
+                if (ex.StatementNode != null)
                     message += $"\n{StatementNode.ToString(ex.StatementNode, _lexer.Lexemes)}";
 
                 Log.Error(message, ex.Properties);

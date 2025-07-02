@@ -3,7 +3,7 @@
     /// <summary>Class representing a user-defined function node with an identifier, parameters, return type, 
     /// and a code block.</summary>
     public class FunctionNode : CallableNode
-    {        
+    {
         private Node _block;
 
         public Node Block => _block;

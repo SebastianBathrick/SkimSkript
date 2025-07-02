@@ -9,22 +9,23 @@ namespace SkimSkript.Nodes
         /// <param _name="builtInFunctionId">Enum representing the type/ID for a given built-in-function. This allows for
         /// the associated function identifier to be retrieved from the <see cref="SyntaxSpec">.</param>
         public BuiltInFunctionNode(
-            BuiltInFunctionID builtInFunctionId, 
-            Type? returnType = null, 
-            Node[]? parameters = null, bool isVariadic = false) 
+            BuiltInFunctionID builtInFunctionId,
+            Type? returnType = null,
+            Node[]? parameters = null, bool isVariadic = false)
             : base(
-                  new IdentifierNode(SyntaxSpec.BuiltInFunctionIdentifiers[(byte)builtInFunctionId]), 
-                  parameters, returnType, isVariadic) { } // TODO: Replace hardcoded identifier node
+                  new IdentifierNode(SyntaxSpec.BuiltInFunctionIdentifiers[(byte)builtInFunctionId]),
+                  parameters, returnType, isVariadic)
+        { } // TODO: Replace hardcoded identifier node
 
-        public static BuiltInFunctionNode[] GetFunctionInstances() =>  new BuiltInFunctionNode[] { new PrintNode(), new ReadNode(), new ClearNode() } ;
+        public static BuiltInFunctionNode[] GetFunctionInstances() => new BuiltInFunctionNode[] { new PrintNode(), new ReadNode(), new ClearNode() };
 
         public abstract Node? Call(Node[]? arguments);
 
         protected ValueNode[] ConvertArgumentsToValue(Node[] arguments)
         {
             var valueNodes = new ValueNode[arguments.Length];
-            for(int i = 0; i < arguments.Length; i++)
-                valueNodes[i] = (ValueNode)arguments[i];   
+            for (int i = 0; i < arguments.Length; i++)
+                valueNodes[i] = (ValueNode)arguments[i];
             return valueNodes;
         }
     }

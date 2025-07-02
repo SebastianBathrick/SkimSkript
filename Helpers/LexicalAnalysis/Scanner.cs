@@ -54,7 +54,7 @@ namespace SkimSkript.LexicalAnalysis.Helpers
                     case CharType.Letter: lexemeType = ScanAlphabetic(); break;
                     case CharType.Operator: lexemeType = ScanOperator(); break;
                     case CharType.Delimeter: lexemeType = ScanDelimeter(); break;
-                    case CharType.Comment: SkipCommentChars(); continue;                   
+                    case CharType.Comment: SkipCommentChars(); continue;
                     default: DequeueChar(); continue; //Invalid characters and whitespace is ignored.
                 }
 
@@ -141,7 +141,7 @@ namespace SkimSkript.LexicalAnalysis.Helpers
                 if (IsEndOfLine)
                     throw new LexerException($"String literal missing a closing quote on same line", _lineIndex);
             }
-                
+
             DequeueChar(); //The closing quote is not included for the same reason mentioned above.
             return LexemeType.Textual;
         }

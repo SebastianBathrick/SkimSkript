@@ -1,8 +1,8 @@
 ﻿using SkimSkript.Nodes;
 
 namespace SkimSkript.Interpretation.Helpers
-{ 
-    internal enum BlockExitType { StatementsExhausted, ReturnStatement}
+{
+    internal enum BlockExitType { StatementsExhausted, ReturnStatement }
 
     /// <summary> Contains info about how a block exited and any data being transmitted out of the block. </summary>
     internal class BlockExitData

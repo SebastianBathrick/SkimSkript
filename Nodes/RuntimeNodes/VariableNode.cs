@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace SkimSkript.Nodes.Runtime
+﻿namespace SkimSkript.Nodes.Runtime
 {
     /// <summary>Class representing a node that stores the value of a variable as the interpreted program executes.</summary>
     public class VariableNode : Node
@@ -22,11 +19,11 @@ namespace SkimSkript.Nodes.Runtime
         /// <param _name="dataType">Type representing a child class of <see cref="Node"> associated with 
         /// the variable's type.</param>
         public VariableNode(Node value, Type dataType)
-        {          
+        {
             _dataType = dataType;
             _value = value;
         }
-        
-        public override string ToString() => _value.ToString();            
+
+        public override string ToString() => _value.ToString();
     }
 }

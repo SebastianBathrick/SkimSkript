@@ -3,7 +3,7 @@
     /// <summary>Class representing the declaration of a statically typed variable.</summary>
     internal class VariableDeclarationNode : StatementNode
     {
-        private Node _identifierNode;   
+        private Node _identifierNode;
         private Node _assignedExpression;
         private Type _dataType;
 
