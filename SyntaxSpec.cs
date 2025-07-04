@@ -8,33 +8,21 @@ namespace SkimSkript.Syntax
         public static readonly (string text, TokenType key)[] reservedWords =
         {
             #region Function Related
-            // TODO: Convert function data types to use the same parsing as variables+parameters
+            ("def", TokenType.FunctionDefine), 
+            ("define", TokenType.FunctionDefine),
+            ("function", TokenType.FunctionLabel),
+            ("void", TokenType.FunctionVoid),
 
-            // Function Definitions (Shorthand)
-            ("def", TokenType.FunctionVoidDefine), ("def int", TokenType.FunctionIntDefine),
-            ("def float", TokenType.FunctionFloatDefine), ("def bool", TokenType.FunctionFloatDefine),
-            ("def string", TokenType.FunctionStringDefine),
+            ("reference to",TokenType.PassByReference), 
+            ("reference", TokenType.PassByReference),
+            ("ref",TokenType.PassByReference),
 
-            ("def integer", TokenType.FunctionIntDefine),
-            ("def floating point", TokenType.FunctionFloatDefine), ("def boolean", TokenType.FunctionFloatDefine), 
-
-            // Define (Data Type) Function
-            ("define function", TokenType.FunctionVoidDefine), ("define int function", TokenType.FunctionIntDefine),
-            ("define float function", TokenType.FunctionFloatDefine), ("define bool function", TokenType.FunctionFloatDefine),
-            ("define string function", TokenType.FunctionStringDefine),
-
-            ("define integer function", TokenType.FunctionIntDefine),
-            ("define floating point function", TokenType.FunctionFloatDefine), ("define boolean function", TokenType.FunctionFloatDefine),
-
-            ("reference to",TokenType.PassByReference), ("ref",TokenType.PassByReference),
-            #endregion
-
-            #region Variable Declaration & Initialization
             ("declare", TokenType.DeclarationStart),
+            ("as", TokenType.VariableInitialize),
+
             ("set",TokenType.AssignmentStart),
             ("to",TokenType.AssignmentOperator),
-            ("as", TokenType.VariableInitialize),
-            #endregion
+            
 
             ("int",TokenType.IntegerKeyword),
             ("float",TokenType.FloatKeyword),
@@ -50,16 +38,22 @@ namespace SkimSkript.Syntax
 
 
             ("run",TokenType.FunctionCallStart),
+            ("call", TokenType.FunctionCallStart),
+
             ("value of",TokenType.FunctionCallStartExpression),
+            ("the value of",TokenType.FunctionCallStartExpression),
             ("return",TokenType.Return),
             ("give back", TokenType.Return),
 
-
+            ("perhaps", TokenType.If),
             ("if",TokenType.If),
+
             ("else if",TokenType.ElseIf),
             ("instead if",TokenType.ElseIf),
+            ("instead perhaps", TokenType.ElseIf),
             ("alternatively if",TokenType.ElseIf),
             ("elif", TokenType.ElseIf),
+
             ("else",TokenType.Else),
             ("otherwise", TokenType.Else),
 
@@ -69,8 +63,6 @@ namespace SkimSkript.Syntax
 
             ("repeat", TokenType.RepeatLoop),
             ("times", TokenType.RepeatLoopTrail),
-
-            ("as follows", TokenType.FunctionImpliedBlock),
 
             ("is", TokenType.Equals),
             ("is not", TokenType.NotEquals),
@@ -83,14 +75,24 @@ namespace SkimSkript.Syntax
             ("or just", TokenType.Xor),
             ("then", TokenType.Then),
 
+            ("plus", TokenType.Add),
+            ("minus", TokenType.SubtractUnary),
+            ("divided by", TokenType.Divide),
+            ("modulus", TokenType.Modulus),
+            ("mod", TokenType.Modulus),
+            ("exponent", TokenType.Exponent),
+            ("assert", TokenType.Assertion),
+
             ("remainder after dividing by", TokenType.Modulus),
-            ("assert", TokenType.Assertion)
+
+            ("assert", TokenType.Assertion),
+            ("try", TokenType.Try)
         };
 
         public static readonly Dictionary<string, TokenType> operatorDict = new Dictionary<string, TokenType>
         {
             { "+", TokenType.Add },
-            { "-", TokenType.Subtract },
+            { "-", TokenType.SubtractUnary },
             { "*", TokenType.Multiply },
             { "/", TokenType.Divide },
             { "%", TokenType.Modulus },
@@ -105,14 +107,13 @@ namespace SkimSkript.Syntax
             { "&&", TokenType.And },
             { "^^", TokenType.Xor },
             { "=", TokenType.AssignmentOperator },
-            { "=>", TokenType.FunctionImpliedBlock },
             { "[", TokenType.CollectionOpen },
             { "]", TokenType.CollectionClose },
         };
 
         public static readonly string[] BuiltInFunctionIdentifiers = { "print", "read", "clear", };
 
-        #region Getters
+
         public static string GetReservedWordLexeme(TokenType tokenType)
         {
             foreach (var word in reservedWords)
@@ -149,19 +150,6 @@ namespace SkimSkript.Syntax
                     return op.Key;
             return String.Empty;
         }
-        #endregion
-
-        #region Methods for ErrorHandler
-
-
-        public static bool IsDelimeterType(TokenType tokenType) => tokenType is TokenType.ParenthesisOpen
-            or TokenType.ParenthesisClose or TokenType.BlockOpen or TokenType.BlockClose;
-
-        public static bool IsOperatorTokenType(TokenType tokenType) => tokenType is TokenType.Add
-            or TokenType.Subtract or TokenType.Multiply or TokenType.Divide or TokenType.Modulus
-            or TokenType.Exponent or TokenType.GreaterThan or TokenType.LessThan or TokenType.Equals
-            or TokenType.GreaterThanOrEqual or TokenType.LessThanOrEqual or TokenType.NotEquals
-            or TokenType.And or TokenType.Or or TokenType.Xor;
         #endregion
     }
 

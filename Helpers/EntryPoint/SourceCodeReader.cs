@@ -18,13 +18,13 @@ namespace SkimSkript.Helpers.EntryPoint
         /// <param name="filePath">Path to source code file.</param>
         /// <param name="sourceCode">Output array containing file lines if successful.</param>
         /// <returns>True if source code was successfully read, false otherwise.</returns>
-        public static bool TryGetSourceCode(string filePath, out string[] sourceCode)
+        public static bool TryGetSourceCode(string filePath, Logger errorLogger, out string[] sourceCode)
         {
             string fileExtension = Path.GetExtension(filePath);
 
             if (!string.Equals(fileExtension, EXPECTED_FILE_EXTENSION, StringComparison.OrdinalIgnoreCase))
             {
-                Log.Error(
+                errorLogger.Error(
                     "Wrong file extension. Expected: {ExpectedExtension}, " +
                     "Actual: {ActualExtension} for file: {FilePath}",
                     EXPECTED_FILE_EXTENSION, fileExtension, filePath
@@ -40,35 +40,35 @@ namespace SkimSkript.Helpers.EntryPoint
             }
             catch (FileNotFoundException)
             {
-                Log.Error("File not found: {FilePath}", filePath);
+                errorLogger.Error("File not found: {FilePath}", filePath);
             }
             catch (DirectoryNotFoundException)
             {
-                Log.Error("Directory not found: {FilePath}", filePath);
+                errorLogger.Error("Directory not found: {FilePath}", filePath);
             }
             catch (UnauthorizedAccessException)
             {
-                Log.Error("Access denied: {FilePath}", filePath);
+                errorLogger.Error("Access denied: {FilePath}", filePath);
             }
             catch (PathTooLongException)
             {
-                Log.Error("Path too long: {FilePath}", filePath);
+                errorLogger.Error("Path too long: {FilePath}", filePath);
             }
             catch (NotSupportedException)
             {
-                Log.Error("File format not supported: {FilePath}", filePath);
+                errorLogger.Error("File format not supported: {FilePath}", filePath);
             }
             catch (IOException ex)
             {
-                Log.Error("IO error reading file {FilePath}: {Message}", filePath, ex.Message);
+                errorLogger.Error("IO error reading file {FilePath}: {Message}", filePath, ex.Message);
             }
             catch (OutOfMemoryException)
             {
-                Log.Error("Out of memory reading file: {FilePath}", filePath);
+                errorLogger.Error("Out of memory reading file: {FilePath}", filePath);
             }
             catch (Exception ex)
             {
-                Log.Error("Unexpected error reading file {FilePath}: {Message}", filePath, ex.Message);
+                errorLogger.Error("Unexpected error reading file {FilePath}: {Message}", filePath, ex.Message);
             }
 
             sourceCode = [];

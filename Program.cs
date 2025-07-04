@@ -40,8 +40,14 @@ class Program
         int exitCode = DEFAULT_EXIT_CODE;
 
         // Process command-line flags if first argument has flag prefix and exit if an error occurs while dong so
-        if (ProgramFlags.IsFlag(args) && !ProgramFlags.TryEvaluateArguments(args, _entryPointLogger))   
+        if (ProgramFlags.IsFlag(args))
+        {
+            if(!ProgramFlags.TryEvaluateArguments(args, _entryPointLogger))
                 return ERROR_EXIT_CODE;
+        }
+        else
+            SourceCodePaths.AddRange(args); // Add all arguments as source code paths
+
 
         // Early exit if no files to process
         if (SourceCodePaths.Count == 0)
@@ -54,7 +60,7 @@ class Program
         foreach (var filePath in SourceCodePaths)
         {
             // Attempt to read and validate the source code file
-            if (!SourceCodeReader.TryGetSourceCode(filePath, out var sourceCode))
+            if (!SourceCodeReader.TryGetSourceCode(filePath, _entryPointLogger, out var sourceCode))
                 continue; // Skip to next file if current one fails to load
 
             // Reset core state for each file to ensure clean execution environment

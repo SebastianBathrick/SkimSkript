@@ -56,23 +56,12 @@ namespace SkimSkript.MainComponents
             if (exitData.ExitType == BlockExitType.StatementsExhausted)
                 return DEFAULT_EXIT_CODE;
 
-            if (exitData.ExitType == BlockExitType.ReturnStatement)
-            {
-                // If no data was returned, return 0 as default exit code.
-                if (exitData.ReturnData == null)
-                    return DEFAULT_EXIT_CODE;
+            // Assuming the exit was a top-level return statement...
+            // If no data was returned, return 0 as default exit code
+            if (exitData.ReturnData == null)
+                return DEFAULT_EXIT_CODE;
 
-                // If the returned data is an integer, return it as exit code.
-                if (exitData.ReturnData is ValueNode)
-                    return ((ValueNode)exitData.ReturnData).ToInt();
-
-                // If the returned data is not an integer, print a warning and return an error exit code.
-                Console.Error.WriteLine($"{NON_INT_RETURN_CODE} {exitData.ReturnData.ToString()}");
-
-                return ERROR_EXIT_CODE;
-            }
-
-            return ERROR_EXIT_CODE;
+            return ((ValueNode)exitData.ReturnData).ToInt();
         }
 
         /// <summary> Interprets block, executes its statements, and returns info about how the block exited. </summary>

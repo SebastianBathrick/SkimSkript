@@ -1,1 +1,54 @@
-﻿print("this is a concatenation test " + 5)
+﻿bool isRunning = true
+bool isError # Initialized to false by default
+
+while isRunning
+{
+	PrintOptions()
+	int operation = read("Please select on operation:")
+
+	if operation < 1 or operation >= 5
+		return 0
+
+	float leftOp = read("Please enter the left operand:")
+	float rightOp = read("Please enter the right operand:")
+
+	float result = PerformOperation(operation, leftOp, rightOp)
+
+	if isError i false
+		print("The result of the operation is: " + result "")
+
+	isRunning = read("Would you like to select another operation? (y/n):") is "y"
+
+	isError = false
+	clear()
+}
+
+float PerformOperation(int operation, float leftOp, float rightOp)
+{
+	if operation is 1 
+		return leftOp + rightOp
+
+	if operation is 2 
+		return leftOp - rightOp
+
+	if operation is 3 
+		return leftOp * rightOp
+
+	if rightOp is not 0 
+		return leftOp / rightOp
+		
+	print("Error: Division by zero is not allowed.")
+	isError = true
+	return -1.0 # Return error value
+}
+
+void PrintOptions()
+    print(
+	"Options:" 
+	"1.) Addition"
+	"2.) Substraction"
+	"3.) Multiplication"
+	"4.) Division"
+	"5.) Exit"
+	""
+	)

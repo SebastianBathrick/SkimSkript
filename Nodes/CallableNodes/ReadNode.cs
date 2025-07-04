@@ -1,5 +1,6 @@
 ﻿using SkimSkript.Syntax;
 using System.Text;
+using System.Xml.Linq;
 
 namespace SkimSkript.Nodes
 {
@@ -8,7 +9,7 @@ namespace SkimSkript.Nodes
     {
         StringBuilder? _stringBuilder = new StringBuilder();
 
-        private StringBuilder StringBuilder => _stringBuilder ??= new StringBuilder();
+        private StringBuilder StrBuilder => _stringBuilder ??= new StringBuilder();
 
         public ReadNode() : base(BuiltInFunctionID.Read, typeof(StringValueNode), isVariadic: true) { }
 
@@ -18,13 +19,20 @@ namespace SkimSkript.Nodes
         {
             if (arguments != null)
             {
-                if (StringBuilder.Length != 0)
-                    StringBuilder.Clear();
+                if (StrBuilder.Length != 0)
+                    StrBuilder.Clear();
 
-                foreach (var node in arguments)
-                    StringBuilder.Append(node.ToString()).Append('\n');
+                for(int i = 0; i < arguments.Length; i++)
+                {
+                    StrBuilder.Append(arguments[i].ToString());
 
-                Console.Write(value: StringBuilder.ToString());
+                    if(i < arguments.Length - 1)
+                        StrBuilder.Append("\n");
+                }
+
+                StrBuilder.Append(' '); // So user input isn't squished next to prompt
+
+                Console.Write(value: StrBuilder.ToString());
             }
 
             var inputValue = Console.ReadLine();
