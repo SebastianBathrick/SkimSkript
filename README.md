@@ -236,7 +236,7 @@ A prime example of this occurs during lexical analysis. After scanning the sourc
 ## 3. ) Data Types
 
 - ### 3.1 ) Integers
-	Whole numbers that truncate digits to the right of the decimal point. The data type can be written as ```int``` or ```integer```. Literals can be purely digits or a negative sign followed by digits. Examples: ```29```, ```5```, and ```-300```.
+	Whole numbers that truncate (drops) digits to the right of the decimal point (without rounding.) The data type can be written as ```int``` or ```integer```. Literals can be purely digits or a negative sign followed by digits. Examples: ```29```, ```5```, and ```-300```.
 
 - ### 3.2 ) Floating-Points
 	Numbers with digits to the right of a single decimal point. The data type can be written as ```float``` or ```floating point```. The literals are an optional negative sign followed by one or more digits, a single decimal, and trailing digit(s). Examples: ```1.0```, ```432.992```, and ```-32.12```.
