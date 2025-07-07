@@ -317,7 +317,7 @@ SkimSkript contains scoped variables declared in top-level, function, or control
 		```
  
 	- #### Local Scope
-		Variables declared in a function body are only accessible within that body (the function's block and nested blocks). Similarly, parameters of a function are only accessible within that function's body but, conversely, are declared in the function definition.
+		Variables declared in a function body are only accessible within that body (the function's block and nested blocks). Similarly, parameters of a function are only accessible within that function's body but are declared in the function definition.
 
 		```python
 		# Parameter "rightOperand" can only be used inside the block below
