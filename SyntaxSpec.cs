@@ -86,7 +86,8 @@ namespace SkimSkript.Syntax
             ("remainder after dividing by", TokenType.Modulus),
 
             ("assert", TokenType.Assertion),
-            ("try", TokenType.Try)
+            ("try", TokenType.Try),
+            ("catch", TokenType.Catch)
         };
 
         public static readonly Dictionary<string, TokenType> operatorDict = new Dictionary<string, TokenType>

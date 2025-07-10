@@ -85,7 +85,7 @@ namespace SkimSkript.Interpretation.Helpers
             var variable = GetVariable(identifier);
 
             if (variable == null)
-                throw new RuntimeException("Unknown identifier {Identifier}", identifier);
+                throw new RuntimeException($"Unknown identifier {identifier}");
 
             if (assignNode is not ValueNode valueNode)
                 throw new InvalidDataException($"Cannot assign {assignNode.GetType().Name} to variable {identifier}");

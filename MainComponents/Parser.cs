@@ -336,11 +336,11 @@ namespace SkimSkript.MainComponents
             var tryBlock = GetBlock();
 
             Tokens.Remove(TokenType.Catch);
-            var catchBlock = GetBlock();
 
             // Optional variable declaration of message variable that will contain the exception message
             var messageNode = GetOptionalCatchMessage();
-                    
+            var catchBlock = GetBlock();
+                   
             return new TryCatchNode(tryBlock, catchBlock, messageNode);
         }
         #endregion

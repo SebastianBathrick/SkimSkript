@@ -95,6 +95,6 @@ namespace SkimSkript.Interpretation.Helpers
         }
 
         private RuntimeException UnknownIdentifierError(string identifier) =>
-            new RuntimeException("Unknown identifier {Identifier}", null, identifier);
+            new RuntimeException($"Unknown identifier {identifier}");
     }
 }

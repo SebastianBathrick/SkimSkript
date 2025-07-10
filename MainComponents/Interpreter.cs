@@ -172,6 +172,8 @@ namespace SkimSkript.MainComponents
                     return InterpretReturnStatement(returnNode);
                 case RepeatNode repeatNode:
                     return RunRepeatLoop(repeatNode);
+                case TryCatchNode tryCatchNode:
+                    return RunTryCatch(tryCatchNode);
             }
 
             return null; // Only a single non-return statement was executed, so no exit data.

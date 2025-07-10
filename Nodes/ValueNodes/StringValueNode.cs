@@ -25,7 +25,7 @@ namespace SkimSkript.Nodes
             if (float.TryParse(_value, out float result))
                 return result;
 
-            throw new RuntimeException("{String} string cannot be converted to floating-point", null, _value);
+            throw new RuntimeException($"\"{_value}\" string cannot be converted to floating-point");
         }
 
         public override int ToInt()
@@ -33,7 +33,7 @@ namespace SkimSkript.Nodes
             if (int.TryParse(_value, out int result))
                 return result;
 
-            throw new RuntimeException("{String} string cannot be converted to integer", null, _value);
+            throw new RuntimeException($"\"{_value}\" string cannot be converted to integer");
         }
 
         public override string ToString() => _value;

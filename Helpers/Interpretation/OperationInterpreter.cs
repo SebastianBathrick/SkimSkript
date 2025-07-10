@@ -97,7 +97,7 @@ namespace SkimSkript.Interpretation.Helpers
                 case MathOperator.Multiply: return left * right;
                 case MathOperator.Divide:
                     if (right == 0)
-                        throw new RuntimeException("Integer division by zero. {Left} divided by {Right}", null, left, right);
+                        throw new RuntimeException($"Integer division by zero. {left} divided by {right}");
 
                     return left / right;
                 case MathOperator.Modulus: return left % right;
@@ -132,8 +132,7 @@ namespace SkimSkript.Interpretation.Helpers
                 case MathOperator.Multiply: return left * right;
                 case MathOperator.Divide:
                     if (right == 0)
-                        throw new RuntimeException("Floating-point division by zero. {Left} divided by {Right}",
-                            null, left, right);
+                        throw new RuntimeException($"Floating-point division by zero. {left} divided by {right}");
 
                     return left / right;
                 case MathOperator.Modulus: return left % right;
