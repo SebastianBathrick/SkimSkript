@@ -17,6 +17,10 @@ namespace SkimSkript.Tokens
         #region Properties
         public bool HasTokens => _currentTokenIndex != _tokenList.Count;
 
+        public int Count => _tokenList.Count - _currentTokenIndex + 1;
+
+        public int CurrentTokenIndex => _currentTokenIndex;
+
         public TokenContainer(LexemeContainer lexemeContainer) => _lexemes = lexemeContainer;
         #endregion
 
@@ -35,6 +39,9 @@ namespace SkimSkript.Tokens
             throw GetEndOfFileError();
         }
 
+        public bool PeekIsType(TokenType tokenType) =>
+            PeekType() == tokenType;
+
         public bool TryPeek(out TokenType tokenType)
         {
             tokenType = TokenType.Undefined;
@@ -47,6 +54,9 @@ namespace SkimSkript.Tokens
 
             return false;
         }
+
+        public TokenType PeekAhead(int offset = 1) =>
+            HasTokens ? _tokenList[_currentTokenIndex + offset].Type : TokenType.Undefined;
 
         public bool TryPeekAheadType(out TokenType tokenType, int offset = 1)
         {
@@ -90,7 +100,7 @@ namespace SkimSkript.Tokens
         /// <summary>Checks if the frontmost token is of a given <see cref="TokenType"/>, and if so,
         /// remove said token. Otherwise, if the token is not of that type, throw an exception. </summary>
         public void MatchAndRemove(TokenType tokenType)
-        {
+        {            
             if (_tokenList[_currentTokenIndex].Type != tokenType)
                 throw GetTokenExceptionError(tokenType);
 

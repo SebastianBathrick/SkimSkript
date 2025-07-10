@@ -1,7 +1,6 @@
 ﻿using SkimSkript.Helpers.LexicalAnalysis;
 using SkimSkript.LexicalAnalysis.Helpers;
 using SkimSkript.Tokens;
-using System.Text;
 
 namespace SkimSkript.MainComponents
 {
@@ -18,7 +17,7 @@ namespace SkimSkript.MainComponents
 
         public LexemeContainer Lexemes => _lexemes ?? throw new NullReferenceException("LexemeContainer null");
 
-        public Lexer(IEnumerable<MainComponentType> debuggedTypes) : base(debuggedTypes) { }
+        public Lexer(IEnumerable<MainComponentType> debuggedTypes, IEnumerable<MainComponentType> verboseTypes) : base(debuggedTypes, verboseTypes) { }
 
         protected override void OnConstructor()
         {

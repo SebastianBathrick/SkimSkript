@@ -15,9 +15,7 @@ namespace SkimSkript.ErrorHandling
         }
 
         public RuntimeException(string message, params object[] properties)
-            : base(message, properties)
-        {
-        }
+            : base(message, properties) { }
 
         public RuntimeException SetStatement(StatementNode statementNode)
         {

@@ -14,7 +14,7 @@ while isRunning
 
 	float result = PerformOperation(operation, leftOp, rightOp)
 
-	if isError i false
+	if isError is false
 		print("The result of the operation is: " + result "")
 
 	isRunning = read("Would you like to select another operation? (y/n):") is "y"
@@ -39,7 +39,7 @@ float PerformOperation(int operation, float leftOp, float rightOp)
 		
 	print("Error: Division by zero is not allowed.")
 	isError = true
-	return -1.0 # Return error value
+	return "hello" # Return error value
 }
 
 void PrintOptions()

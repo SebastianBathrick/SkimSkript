@@ -47,7 +47,7 @@ print("Integer declarations without initialization passed!")
 print("Testing float/floating point declarations...")
 # Float declarations - verbose syntax
 declare float floatVar1 as 3.14
-assert is == 3.14
+assert floatVar1 == 3.14
 
 declare floating point floatVar2 as 2.5
 assert floatVar2 == 2.5

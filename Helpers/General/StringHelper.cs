@@ -23,6 +23,7 @@ namespace SkimSkript.Helpers.General
 
             return result.ToString();
         }
+
         private static string GetSpaceBeforeDigit(string input, int index)
         {
             if (index <= 0 || !char.IsDigit(input[index]) || !char.IsLetter(input[index - 1]))

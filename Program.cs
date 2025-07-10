@@ -16,6 +16,7 @@ class Program
     private static readonly Logger _entryPointLogger = new ConsoleLogger().SetMinimumLogLevel(ENTRY_POINT_LOG_LVL);
     private static List<string>? _sourceCodePaths; // Lazy-initialized list of file paths to process
     private static MainComponentType[]? _debuggedMainComponents;
+    private static MainComponentType[]? _verboseMainComponents;
     #endregion
 
     #region Properties
@@ -23,8 +24,6 @@ class Program
     /// Gets the list of source code file paths, initializing if null.
     /// </summary>
     public static List<string> SourceCodePaths => _sourceCodePaths ?? (_sourceCodePaths = []);
-
-    public static MainComponentType[]? DebuggedMainComponents => _debuggedMainComponents;
     #endregion
 
     private static int Main(string[] args)
@@ -64,7 +63,7 @@ class Program
                 continue; // Skip to next file if current one fails to load
 
             // Reset core state for each file to ensure clean execution environment
-            core.Initialize(DebuggedMainComponents);
+            core.Initialize(_debuggedMainComponents, _verboseMainComponents);
 
             // Execute the source code and capture the exit code
             exitCode = core.Execute(sourceCode);
@@ -75,4 +74,7 @@ class Program
 
     public static void SetDebuggedMainComponents(params MainComponentType[] debuggedMainComponents) =>
         _debuggedMainComponents = debuggedMainComponents;
+
+    public static void SetVerboseMainComponents(params MainComponentType[] verboseMainComponents) =>
+        _verboseMainComponents = verboseMainComponents;
 }

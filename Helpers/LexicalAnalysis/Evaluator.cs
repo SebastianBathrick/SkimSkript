@@ -4,8 +4,9 @@ using SkimSkript.Tokens;
 
 namespace SkimSkript.LexicalAnalysis.Helpers
 {
-    /// <summary> Processes lexemes and generates tokens for use in the <see cref="TokenManagement.TokenContainer"/>. It includes 
-    ///  functionality to build a reserved keyword trie, evaluate lexemes, and handle multi-word tokens. </summary>
+    /// <summary> Processes lexemes and generates tokens for use in the <see cref="TokenManagement.TokenContainer"/>.
+    /// It includes functionality to build a reserved keyword trie, evaluate lexemes, and handle multi-word tokens. 
+    /// </summary>
     internal class Evaluator
     {
 
@@ -14,7 +15,9 @@ namespace SkimSkript.LexicalAnalysis.Helpers
 
         protected LexemeContainer Lexemes => _lexemes!;
 
-        /// <summary> Builds reserved words trie. </summary>
+        /// <summary> 
+        /// Builds reserved words trie.
+        /// </summary>
         public Evaluator() => BuildReservedWordsTrie();
 
 
@@ -24,8 +27,10 @@ namespace SkimSkript.LexicalAnalysis.Helpers
             return EvaluateLexemes();
         }
 
-        /// <summary> Iterates through each lexeme and uses their data to create <see cref="Token"/>s 
-        /// to populate an instance of <see cref="TokenManagement.TokenContainer"/>. </summary>
+        /// <summary> 
+        /// Iterates through each lexeme and uses their data to create <see cref="Token"/>s 
+        /// to populate an instance of <see cref="TokenManagement.TokenContainer"/>. 
+        /// </summary>
         private TokenContainer EvaluateLexemes()
         {
             var tokens = new TokenContainer(Lexemes);
@@ -68,7 +73,10 @@ namespace SkimSkript.LexicalAnalysis.Helpers
             return tokens;
         }
 
-        /// <summary> Determines if a lexeme or a continuous group of lexems form a reserved keyword/multi-word-token. </summary>
+        /// <summary> 
+        /// Determines if a lexeme or a continuous group of lexems form a reserved 
+        /// keyword/multi-word-token. 
+        /// </summary>
         private TokenType EvaluateAlphabetic()
         {
             var navNode = _keywordTrieRoot;
@@ -120,7 +128,10 @@ namespace SkimSkript.LexicalAnalysis.Helpers
             return tokenType;
         }
 
-        /// <summary> Constructs trie that stores reserved words and their associated <see cref="TokenType"/>s. </summary>
+        /// <summary>
+        /// Constructs trie that stores reserved words and their associated 
+        /// <see cref="TokenType"/>s. 
+        /// </summary>
         private void BuildReservedWordsTrie()
         {
             var reservedWords = SyntaxSpec.reservedWords;
@@ -131,7 +142,9 @@ namespace SkimSkript.LexicalAnalysis.Helpers
 
                 //For each char in a keyword add a node. Adding a special node if the char's a space.
                 for (int j = 0; j < reservedWords[i].text.Length; j++)
-                    navNode = reservedWords[i].text[j] != ' ' ? navNode.AddChild(reservedWords[i].text[j]) : navNode.AddSpaceChild();
+                    navNode = reservedWords[i].text[j] != ' ' 
+                        ? navNode.AddChild(reservedWords[i].text[j]) 
+                        : navNode.AddSpaceChild();
 
                 //Assign the TokenType to the leaf node containing the last character of the keyword.
                 navNode.AssignTokenType(reservedWords[i].key);

@@ -73,7 +73,6 @@ namespace SkimSkript.Interpretation.Helpers
         }
         #endregion
 
-
         #region Variable Manipulation Methods
         /// <summary> Adds a variable to the most deeply nested scope in the stack frame. </summary>
         public void AddVariable(string identifier, Node value, Type dataType) =>

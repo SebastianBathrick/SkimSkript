@@ -55,19 +55,21 @@ namespace SkimSkript
         /// Creates new instances of Lexer, Parser, and Interpreter with optional debugging support.
         /// Must be called before <see cref="Execute"/>.
         /// </remarks>
-        public SkimSkriptCore Initialize(MainComponentType[]? debuggedComponents = null)
+        public SkimSkriptCore Initialize(MainComponentType[]? debuggedComponents = null, MainComponentType[]? verboseComponents = null)
         {
             // Use empty array if no debug components specified
             debuggedComponents ??= [];
+            verboseComponents ??= [];
+
             _isDebugging = debuggedComponents.Length > 0;
 
             if(_isDebugging)
                 _monitoringLogger.SetMinimumLogLevel(LogLevel.Debug);
 
             // Initialize all core components with optional debugging
-            _lexer = new(debuggedComponents);
-            _parser = new(debuggedComponents);
-            _interpreter = new(debuggedComponents);
+            _lexer = new(debuggedComponents, verboseComponents);
+            _parser = new(debuggedComponents, verboseComponents);
+            _interpreter = new(debuggedComponents, verboseComponents);
 
             return this;
         }
@@ -81,7 +83,7 @@ namespace SkimSkript
         /// <returns>Exit code from the interpreted program execution.</returns>
         /// <remarks>
         /// Performs the complete compilation pipeline: lexical analysis → parsing → interpretation.
-        /// Returns ERROR_EXIT_CODE (-1) on any compilation or runtime errors.
+        /// Returns SOURCE_CODE_ERROR (-1) on any compilation or runtime errors.
         /// </remarks>
         public int Execute(string[] sourceCode)
         {

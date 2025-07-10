@@ -8,31 +8,39 @@ namespace SkimSkript.MainComponents
     /// <summary> 
     /// Responsible for executing the program represented by an Abstract Syntax Tree (AST) generated 
     /// from the parsed source code. It handles function calls, variable management, expressions, and 
-    /// control structures (e.g., if, while) to produce runtime results. 
+    /// control structures (e.g., if, while), and any other statement types to produce runtime results. 
     /// </summary>
     internal class Interpreter : MainComponent<AbstractSyntaxTreeRoot, int>
     {
-        private const string NON_INT_RETURN_CODE = $"Non-integer exit code:";
-
+        #region Constants
+        private const int INTERP_ERROR_EXIT_CODE = -2;
+        private const int SRC_CODE_ERR_EXIT_CODE = -1;
         private const int DEFAULT_EXIT_CODE = 0;
-        private const int ERROR_EXIT_CODE = 1;
+        #endregion
 
         #region Data Members
         private ScopeManager _scope = new();
         private Dictionary<string, CallableNode>? _callableFunctionsDict;
-        private Node[]? _userFunctions;
         private StatementNode? _currentStatementNode;
+        private Node[]? _userFunctions; 
+        private ValueNode? _exitCodeNode;
         #endregion
 
         #region Properties
         public override MainComponentType ComponentType => MainComponentType.Interpreter;
 
+        public int SourceCodeErrorExitCode => SRC_CODE_ERR_EXIT_CODE;
+
+        public int InterpreterErrorExitCode => INTERP_ERROR_EXIT_CODE;
+
         private Dictionary<string, CallableNode> CallableFunctions =>
             _callableFunctionsDict ??= GetFunctionMap(_userFunctions);
+
+        public bool IsStringExitCode() => _exitCodeNode is StringValueNode;
         #endregion
 
-        #region Execution
-        public Interpreter(IEnumerable<MainComponentType> debuggedTypes) : base(debuggedTypes) { }
+        #region Primary Execution
+        public Interpreter(IEnumerable<MainComponentType> debuggedTypes, IEnumerable<MainComponentType> verboseTypes) : base(debuggedTypes, verboseTypes) { }
 
         protected override int OnExecute(AbstractSyntaxTreeRoot treeRoot)
         {
@@ -40,7 +48,7 @@ namespace SkimSkript.MainComponents
             BlockExitData exitData;
             try
             {
-                exitData = InterpretBlock(treeRoot);
+                exitData = RunBlock(treeRoot);
             }
             catch (RuntimeException ex)
             {
@@ -50,22 +58,30 @@ namespace SkimSkript.MainComponents
             }
             catch
             {
-                throw;
+                throw; // Interpreter bug that needs to be fixed
             }
 
             if (exitData.ExitType == BlockExitType.StatementsExhausted)
                 return DEFAULT_EXIT_CODE;
 
             // Assuming the exit was a top-level return statement...
+
             // If no data was returned, return 0 as default exit code
             if (exitData.ReturnData == null)
                 return DEFAULT_EXIT_CODE;
 
-            return ((ValueNode)exitData.ReturnData).ToInt();
+            try
+            {
+                return ((ValueNode)exitData.ReturnData).ToInt();
+            }
+            catch
+            {
+                return SRC_CODE_ERR_EXIT_CODE;
+            }
         }
 
         /// <summary> Interprets block, executes its statements, and returns info about how the block exited. </summary>
-        private BlockExitData InterpretBlock(Node block)
+        private BlockExitData RunBlock(Node block)
         {
             var coercedBlock = (BlockNode)block;
             BlockExitData? exitData = null;
@@ -75,7 +91,7 @@ namespace SkimSkript.MainComponents
                 _scope.EnterScope();
                 foreach (var statement in coercedBlock.Statements!)
                 {
-                    exitData = InterpretStatement(statement);
+                    exitData = RunStatement(statement);
 
                     // If the block is forcefully being exited
                     if (exitData != null && exitData.ExitType != BlockExitType.StatementsExhausted)
@@ -93,14 +109,14 @@ namespace SkimSkript.MainComponents
         /// Interprets user-defined function call by entering function's scope, initializing its parameters
         /// with provided evaluated args, interpreting it's block, and returning any resulting data from the block's exit.
         /// </summary>
-        private Node? InterpretUserFunction(FunctionNode functionNode, Node[]? evaluatedArgs)
+        private Node? RunUserFunction(FunctionNode functionNode, Node[]? evaluatedArgs)
         {
             _scope.EnterFunctionScope();
 
-            InitializeParameters(functionNode.Parameters, evaluatedArgs);
+            EvaluateParameters(functionNode.Parameters, evaluatedArgs);
 
             // TODO: Append return checking to functions in semantic analysis
-            var bodyExitData = InterpretBlock(functionNode.Block);
+            var bodyExitData = RunBlock(functionNode.Block);
 
             _scope.ExitFunctionScope();
 
@@ -112,21 +128,21 @@ namespace SkimSkript.MainComponents
         }
 
         /// <summary> Interprets built-in function call by calling the C# class method with the evaluated call args. </summary>
-        private Node? InterpretBuiltInFunction(BuiltInFunctionNode builtInNode, Node[]? arguments)
+        private Node? RunBuiltInFunction(BuiltInFunctionNode builtInNode, Node[]? arguments)
         {
             var returnValue = builtInNode.Call(arguments);
             return returnValue != null ? returnValue : null;
         }
 
         /// <summary> Adds previously evaluated parameters to current scope. </summary>
-        private void InitializeParameters(Node[]? parameters, Node[]? evaluatedArgs)
+        private void EvaluateParameters(Node[]? parameters, Node[]? evaluatedArgs)
         {
             if (parameters == null)
                 return;
 
             for (int i = 0; i < parameters.Length; i++)
             {
-                var identifier = GetIdentifier(((ParameterNode)parameters[i]).IdentifierNode);
+                var identifier = EvaluateIdentifier(((ParameterNode)parameters[i]).IdentifierNode);
                 _scope.AddVariable(identifier, evaluatedArgs![i], evaluatedArgs![i].GetType());
             }
         }
@@ -134,28 +150,28 @@ namespace SkimSkript.MainComponents
 
         #region Statements
         /// <summary> Interprets a single statement node and returns any exit data if applicable. </summary>
-        private BlockExitData? InterpretStatement(Node node)
+        private BlockExitData? RunStatement(Node node)
         {
             _currentStatementNode = (StatementNode)node;
 
             switch (node)
             {
                 case VariableDeclarationNode varNode:
-                    InterpretVariableDeclaration(varNode); break;
+                    RunVariableDeclaration(varNode); break;
                 case FunctionCallNode functionCallNode:
-                    InterpretFunctionCall(functionCallNode); break;
+                    RunFunctionCall(functionCallNode); break;
                 case AssignmentNode assignmentNode:
-                    AssignValueToVariable(assignmentNode); break;
+                    AssignVariableValue(assignmentNode); break;
                 case AssertionNode assertionNode:
-                    InterpretAssertion(assertionNode); break;
+                    RunAssertion(assertionNode); break;
                 case IfNode ifNode:
-                    return InterpretIfStructure(ifNode);
+                    return RunIfStructure(ifNode);
                 case WhileNode whileNode:
-                    return InterpretWhileStructure(whileNode);
+                    return RunWhileStructure(whileNode);
                 case ReturnNode returnNode:
                     return InterpretReturnStatement(returnNode);
                 case RepeatNode repeatNode:
-                    return InterpretRepeatLoop(repeatNode);
+                    return RunRepeatLoop(repeatNode);
             }
 
             return null; // Only a single non-return statement was executed, so no exit data.
@@ -163,14 +179,15 @@ namespace SkimSkript.MainComponents
 
         #region Function Statements
         /// <summary> Interprets function call by interpreting args, parameters, and the function body. </summary>
-        private Node? InterpretFunctionCall(FunctionCallNode functionCallNode)
+        private Node? RunFunctionCall(FunctionCallNode functionCallNode)
         {
-            var identifier = GetIdentifier(functionCallNode.IdentifierNode);
+            var identifier = EvaluateIdentifier(functionCallNode.IdentifierNode);
 
             //TODO: Handle function not found exception.
             var callableNode = CallableFunctions[identifier];
-            var args = functionCallNode.Arguments;
             var parameters = callableNode.Parameters;
+            var args = functionCallNode.Arguments;
+            
             Node[]? evaluatedArgs = null;
 
             var isVariadic = callableNode.IsVariadic;
@@ -180,9 +197,9 @@ namespace SkimSkript.MainComponents
 
 
             if (callableNode is FunctionNode userFunction)
-                return InterpretUserFunction(userFunction, evaluatedArgs);
+                return RunUserFunction(userFunction, evaluatedArgs);
             else
-                return InterpretBuiltInFunction((BuiltInFunctionNode)callableNode, evaluatedArgs);
+                return RunBuiltInFunction((BuiltInFunctionNode)callableNode, evaluatedArgs);
         }
 
         /// <summary> 
@@ -229,7 +246,7 @@ namespace SkimSkript.MainComponents
                     continue;
                 }
 
-                var varPointer = (ValueNode)_scope.GetVariablePointer(GetIdentifier(argNode.Value));
+                var varPointer = (ValueNode)_scope.GetVariablePointer(EvaluateIdentifier(argNode.Value));
 
                 if (varPointer.GetType() != paramNode.DataType)
                     throw new RuntimeException(
@@ -255,13 +272,13 @@ namespace SkimSkript.MainComponents
         #endregion
 
         #region Control Structures
-        private BlockExitData InterpretWhileStructure(WhileNode whileNode)
+        private BlockExitData RunWhileStructure(WhileNode whileNode)
         {
 
 
             while (CoercionInterpreter.CoerceCondition(EvaluateExpression(whileNode.Condition)))
             {
-                var exitData = InterpretBlock(whileNode.Block);
+                var exitData = RunBlock(whileNode.Block);
 
                 if (exitData.ExitType != BlockExitType.StatementsExhausted)
                     return exitData;
@@ -270,40 +287,40 @@ namespace SkimSkript.MainComponents
             return new BlockExitData(BlockExitType.StatementsExhausted);
         }
 
-        private BlockExitData InterpretIfStructure(IfNode ifNode)
+        private BlockExitData RunIfStructure(IfNode ifNode)
         {
             var evaluatedCondition = EvaluateExpression(ifNode.Condition);
 
             if (CoercionInterpreter.CoerceCondition(evaluatedCondition))
-                return InterpretBlock(ifNode.Block);
+                return RunBlock(ifNode.Block);
             else if (ifNode.ChainedStructure != null)
                 if (ifNode.ChainedStructure is ElseIfNode elseIfNode)
-                    return InterpretElseIfStructure(elseIfNode);
+                    return RunElseIfStructure(elseIfNode);
                 else
-                    return InterpretElseStructure((ElseNode)ifNode.ChainedStructure);
+                    return RunElseStructure((ElseNode)ifNode.ChainedStructure);
 
             return new BlockExitData(BlockExitType.StatementsExhausted);
         }
 
-        private BlockExitData InterpretElseIfStructure(ElseIfNode elseIfNode)
+        private BlockExitData RunElseIfStructure(ElseIfNode elseIfNode)
         {
             var evaluatedCondition = EvaluateExpression(elseIfNode.Condition);
 
             if (CoercionInterpreter.CoerceCondition(evaluatedCondition))
-                return InterpretBlock(elseIfNode.Block);
+                return RunBlock(elseIfNode.Block);
             else if (elseIfNode.ChainedStructure != null)
                 if (elseIfNode.ChainedStructure is ElseIfNode elseIfNodeChained)
-                    return InterpretElseIfStructure(elseIfNodeChained);
+                    return RunElseIfStructure(elseIfNodeChained);
                 else
-                    return InterpretElseStructure((ElseNode)elseIfNode.ChainedStructure);
+                    return RunElseStructure((ElseNode)elseIfNode.ChainedStructure);
 
             return new BlockExitData(BlockExitType.StatementsExhausted);
         }
 
-        private BlockExitData InterpretElseStructure(ElseNode elseNode) =>
-            InterpretBlock(elseNode.Block);
+        private BlockExitData RunElseStructure(ElseNode elseNode) =>
+            RunBlock(elseNode.Block);
 
-        private BlockExitData InterpretRepeatLoop(RepeatNode repeatNode)
+        private BlockExitData RunRepeatLoop(RepeatNode repeatNode)
         {
             var evaluatedCondition = (ValueNode)EvaluateExpression(repeatNode.Condition);
             var targetCount = evaluatedCondition.ToInt();
@@ -311,7 +328,7 @@ namespace SkimSkript.MainComponents
 
             while (iterations++ < targetCount)
             {
-                var exitData = InterpretBlock(repeatNode.Block);
+                var exitData = RunBlock(repeatNode.Block);
 
                 if (exitData.ExitType != BlockExitType.StatementsExhausted)
                     return exitData;
@@ -325,10 +342,10 @@ namespace SkimSkript.MainComponents
 
         #region Variable Statements
         /// <summary> Declares a new variable in the current scope. </summary>
-        private void InterpretVariableDeclaration(VariableDeclarationNode declarationNode)
+        private void RunVariableDeclaration(VariableDeclarationNode declarationNode)
         {
             var dataType = declarationNode.DataType;
-            var identifier = GetIdentifier(declarationNode.IdentifierNode);
+            var identifier = EvaluateIdentifier(declarationNode.IdentifierNode);
 
             // Variable declarations can be assigned any expression type during parsing.
             var initVal = EvaluateExpression(declarationNode.AssignedExpression);
@@ -343,7 +360,7 @@ namespace SkimSkript.MainComponents
             _scope.AddVariable(identifier, coercedInitVal, dataType);
         }
 
-        private void AssignValueToVariable(AssignmentNode assignment)
+        private void AssignVariableValue(AssignmentNode assignment)
         {
             // The expression can be of any ValueNode type, even after evaluation
             var rawAssignVal = EvaluateExpression(assignment.AssignedExpression);
@@ -358,10 +375,10 @@ namespace SkimSkript.MainComponents
         }
         #endregion
 
-        #region Misc. Statements
+        #region Monitoring Statements
         /// <summary>Evaluates an assertionNode statement and ensures the condition associated is true.</summary>
         /// <exception cref="AssertionException"> Thrown if the conditional expression stored in the statement is false. </exception>
-        private void InterpretAssertion(AssertionNode assertionNode)
+        private void RunAssertion(AssertionNode assertionNode)
         {
             var interpretedExpression = EvaluateExpression(assertionNode.Condition);
             var evaluatedCondition = CoercionInterpreter.CoerceLogicOperand(interpretedExpression, out _);
@@ -397,14 +414,37 @@ namespace SkimSkript.MainComponents
                     assertionNode, leftEval, rightEval
                     );
             }
+        }
 
+        private BlockExitData RunTryCatch(TryCatchNode tryCatchNode)
+        {
+            try
+            {
+                return RunBlock(tryCatchNode.TryBlock);
+            }
+            catch(Exception e)
+            {
+                if(tryCatchNode.CatchMessage !=  null)
+                {
+                    var msgVar = (VariableDeclarationNode)tryCatchNode.CatchMessage;
 
+                    RunVariableDeclaration(msgVar);
+                    StringValueNode pointer = (StringValueNode)_scope.GetVariablePointer(msgVar.IdentifierNode.ToString());
+
+                    pointer.AssignValue(new StringValueNode(e.Message));
+                }
+                    
+
+                return RunBlock(tryCatchNode.CatchBlock);
+            }
         }
         #endregion
         #endregion
 
         #region Expressions
-        /// <summary> Evaluates math, comparison, or logic expression.</summary>
+        /// <summary> 
+        /// Evaluates math, comparison, or logic expression.
+        /// </summary>
         private Node EvaluateExpression(Node node)
         {
             if (node is LogicExpressionNode logicNode)
@@ -453,12 +493,14 @@ namespace SkimSkript.MainComponents
             return OperationInterpreter.PerformComparisonOperation(coercedLeft, coercedRight, expression.Operator);
         }
 
-        /// <summary>Processes a factor node and returns its corresponding ValueNode.</summary>
-        /// <returns>A <see cref="ValueNode"/> representing the factor’s computed value.</returns>
-        private Node EvaluateFactor(Node node) =>
+        /// <summary>
+        /// Processes a factor node and returns its corresponding ValueNode.
+        /// </summary>
+        /// <returns>A <see cref="ValueNode"/> representing the factor’s final value.</returns>
+        private Node? EvaluateFactor(Node node) =>
             node switch
             {
-                FunctionCallNode callNode => InterpretFunctionCall(callNode),
+                FunctionCallNode callNode => RunFunctionCall(callNode),
                 IdentifierNode idNode => _scope.GetVariableValueCopy(idNode.ToString()),
                 _ => node
             };
@@ -466,7 +508,7 @@ namespace SkimSkript.MainComponents
 
         #region Helper Methods
         /// <summary>Assigns a value to an existing variable in the current scope.</summary>
-        private string GetIdentifier(Node identifierNode)
+        private string EvaluateIdentifier(Node identifierNode)
         {
             var nodeType = identifierNode.GetType();
             return ((IdentifierNode)identifierNode).Lexeme;
@@ -478,11 +520,11 @@ namespace SkimSkript.MainComponents
             var funcDict = new Dictionary<string, CallableNode>();
 
             foreach (BuiltInFunctionNode function in BuiltInFunctionNode.GetFunctionInstances())
-                funcDict.Add(GetIdentifier(function.IdentfierNode), function);
+                funcDict.Add(EvaluateIdentifier(function.IdentfierNode), function);
 
             if (userDefinedFunctions != null)
                 foreach (FunctionNode function in userDefinedFunctions)
-                    funcDict.Add(GetIdentifier(function.IdentfierNode), function);
+                    funcDict.Add(EvaluateIdentifier(function.IdentfierNode), function);
 
             return funcDict;
         }

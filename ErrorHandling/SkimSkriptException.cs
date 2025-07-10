@@ -22,10 +22,8 @@
             base.Message + (TryGetAdditionalContext(out var msg, out _) ? $".\n{msg}" : string.Empty);
 
         public SkimSkriptException(string message, params object[] properties)
-            : base(message)
-        {
+            : base(message) =>
             _properties = properties;
-        }
 
         protected virtual bool TryGetAdditionalContext(out string message, out object[] properties)
         {

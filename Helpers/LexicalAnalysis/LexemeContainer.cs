@@ -13,6 +13,8 @@ namespace SkimSkript.Helpers.LexicalAnalysis
 
         public bool HasLexemes => _currLexemeIndex < _lexemeList.Count - 1;
 
+        public int Count => _lexemeList.Count - _currLexemeIndex + 1;
+
         public int CurrentLexemeIndex => _currLexemeIndex;
 
         public LexemeContainer(string[] sourceCode) => _sourceCode = sourceCode;
@@ -37,9 +39,9 @@ namespace SkimSkript.Helpers.LexicalAnalysis
             return true;
         }
 
-        public int GetLexemeLineByIndex(int lexemeIndex) => _lexemeList[lexemeIndex].lineIndex;
+        public int GetLineIndexByLexeme(int lexemeIndex) => _lexemeList[lexemeIndex].lineIndex;
 
-        public int GetLexemeColumnByIndex(int lexemeIndex) => _lexemeList[lexemeIndex].startColumn;
+        public int GetColumnIndexByLexeme(int lexemeIndex) => _lexemeList[lexemeIndex].startColumn;
 
         /// <remarks>Used for parsing data type literals.</remarks>
         public string GetLexemesAsString(int startIndex, int endIndex)

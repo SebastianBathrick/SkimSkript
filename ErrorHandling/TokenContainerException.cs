@@ -35,8 +35,8 @@ namespace SkimSkript.ErrorHandling
         {
             var propsList = properties.ToList();
 
-            var line = lexemes.GetLexemeLineByIndex(problemToken.LexemeStartIndex);
-            var column = lexemes.GetLexemeColumnByIndex(problemToken.LexemeEndIndex);
+            var line = lexemes.GetLineIndexByLexeme(problemToken.LexemeStartIndex) + 1;
+            var column = lexemes.GetColumnIndexByLexeme(problemToken.LexemeEndIndex) + 1;
 
             var expectedStr = StringHelper.SplitPascalCaseManual(expectedType.ToString());
             var gotStr = StringHelper.SplitPascalCaseManual(problemToken.Type.ToString());
@@ -48,8 +48,8 @@ namespace SkimSkript.ErrorHandling
         protected override bool TryGetAdditionalContext(out string message, out object[] properties)
         {
             (int start, int end) lineIndexes;
-            lineIndexes.start = _lexemes.GetLexemeLineByIndex(_problemToken.LexemeStartIndex);
-            lineIndexes.end = _lexemes.GetLexemeLineByIndex(_problemToken.LexemeEndIndex);
+            lineIndexes.start = _lexemes.GetLineIndexByLexeme(_problemToken.LexemeStartIndex);
+            lineIndexes.end = _lexemes.GetLineIndexByLexeme(_problemToken.LexemeEndIndex);
 
             var sb = new StringBuilder();
             var propertiesList = new List<object>();

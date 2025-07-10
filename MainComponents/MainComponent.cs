@@ -23,14 +23,16 @@ namespace SkimSkript.MainComponents
 
         public abstract MainComponentType ComponentType { get; }
 
-        public MainComponent(IEnumerable<MainComponentType> debuggedTypes)
+        public MainComponent(IEnumerable<MainComponentType> debuggedTypes, IEnumerable<MainComponentType> verboseTypes)
         {
-            _isDebugging = debuggedTypes.Contains(ComponentType);
+            var isVerbose = verboseTypes.Contains(ComponentType);
+            _isDebugging = debuggedTypes.Contains(ComponentType) || isVerbose;
             _name = GetType().Name;
 
             if (_isDebugging)
             {
-                _logger = new ConsoleLogger().SetMinimumLogLevel(LogLevel.Debug);
+                var logLevel = isVerbose ? LogLevel.Verbose : LogLevel.Debug;
+                _logger = new ConsoleLogger().SetMinimumLogLevel(logLevel);
                 _logger?.Debug("{ClassName} initialized with debug mode: {State}", _name, _isDebugging);
                 _executionTimer = Stopwatch.StartNew();
             }
@@ -72,7 +74,7 @@ namespace SkimSkript.MainComponents
 
         protected abstract Y OnExecute(T componentInput);
 
-        protected virtual void OnConstructor() => _logger?.Debug("No OnConstructor behavior defined");
+        protected virtual void OnConstructor() => _logger?.Debug("{ClassName} no OnConstructor behavior defined", _name);
     }
 
     internal static class GlobalClock

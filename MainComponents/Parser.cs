@@ -1,6 +1,7 @@
 ﻿using SkimSkript.Nodes;
 using SkimSkript.Nodes.StatementNodes;
 using SkimSkript.Tokens;
+using System.ComponentModel.DataAnnotations;
 
 namespace SkimSkript.MainComponents
 {
@@ -24,7 +25,7 @@ namespace SkimSkript.MainComponents
 
         public override MainComponentType ComponentType => MainComponentType.Parser;
 
-        public Parser(MainComponentType[] debuggedTypes) : base(debuggedTypes) { }
+        public Parser(IEnumerable<MainComponentType> debuggedTypes, IEnumerable<MainComponentType> verboseTypes) : base(debuggedTypes, verboseTypes) { }
         #endregion
 
         #region Entry Point
@@ -38,8 +39,12 @@ namespace SkimSkript.MainComponents
             List<Node> statements = new();
             List<Node> functions = new();
 
+            
+
             while (Tokens.HasTokens)
             {
+                _logger?.Verbose("Parsing tokens. {Count} tokens remaining", Tokens.Count);
+
                 if (IsFunctionDefinitionNext())
                     functions.Add(GetFunctionNode()); // Function definitions and bodies    
                 else 
@@ -50,7 +55,7 @@ namespace SkimSkript.MainComponents
         }
         #endregion
 
-        #region Function Definitions & Blocks
+        #region Function Definitions
         /// <summary>
         /// Parses a function definition and body (block) and returns its data in a node. 
         /// </summary>
@@ -80,6 +85,7 @@ namespace SkimSkript.MainComponents
                 parameters.Add(GetParameter());
             }
 
+            _logger?.Verbose("Creating function node. Parsing block");
             return new FunctionNode(identifier, returnType, parameters?.ToArray(), GetBlock());
         }
 
@@ -91,29 +97,23 @@ namespace SkimSkript.MainComponents
 
             return new ParameterNode(isRef, dataType, GetIdentifier());
         }
+        #endregion
 
-        private bool IsFunctionDefinitionNext() 
-        {
-            var tokenType = Tokens.PeekType();
-
-            if()
-
-            // Only other way for token to be function definiton is if it is a data type token
-            if (!IsDataTypeToken(tokenType))
-                return false;
-
-            // At this point the token could still be a data type for a variable declaration.
-            return TryPeekFunctionParenthesis();
-        }
-
+        #region Statements
+        #region Gathering Statements
         private Node GetBlock()
         {
-            //Implicit blocks will only add one statement to the list.
+            _logger?.Verbose("Parsing block that starts with Token at index {Index}", Tokens.CurrentTokenIndex);
+
             var isImplicitBlock = !Tokens.TryMatchAndRemove(TokenType.BlockOpen);
             List<Node>? statements = null;
 
             if (isImplicitBlock)
+            {
+                _logger?.Verbose("No block open. Parsing implicit block");
                 return new BlockNode([GetStatement()]);
+            }
+                
 
             while (!Tokens.TryMatchAndRemove(TokenType.BlockClose))
             {
@@ -123,10 +123,7 @@ namespace SkimSkript.MainComponents
 
             return new BlockNode(statements?.ToArray());
         }
-        #endregion
 
-        #region Statements
-        #region Detection TokenType Methods
         /// <summary>Determines using the front-most token what type of newNode needs to be parsed
         /// next, and then parses that newNode.</summary>
         /// <exception cref="SyntaxError"></exception>
@@ -135,6 +132,8 @@ namespace SkimSkript.MainComponents
             Node newNode;
             int lexemeStartIndex = Tokens.GetLexemeStartIndex();
             var tokenType = Tokens.PeekType();
+
+            _logger?.Verbose("Parsing statement that starts with Token {Type} at index {Index}", tokenType, Tokens.CurrentTokenIndex);
 
             switch (tokenType)
             {
@@ -165,6 +164,9 @@ namespace SkimSkript.MainComponents
                 case TokenType.RepeatLoop:
                     newNode = GetRepeatLoop(); 
                     break;
+                case TokenType.Try:
+                    newNode = GetTryStatement();
+                    break;
                 default:
                     if(IsDataTypeToken(tokenType))
                         newNode = GetVariableDeclaration();
@@ -180,15 +182,6 @@ namespace SkimSkript.MainComponents
                 statementNode.SetLexemeEndIndex(Tokens.GetLexemeEndIndex());
 
             return statementNode;
-        }
-
-        /// <summary>Returns either a function call or a variable assignment statment where the first token is an identifierNode.</summary>
-        private Node GetIdentifierStartStatement()
-        {
-            if (Tokens.TryPeekAheadType(out var tokenType) && tokenType == TokenType.AssignmentOperator)
-                return GetAssignment();
-
-            return GetFunctionCall();
         }
         #endregion
 
@@ -212,6 +205,7 @@ namespace SkimSkript.MainComponents
                 args.Add(new ArgumentNode(isRef, value));
             }
 
+            _logger?.Verbose("Creating function call");
             return new FunctionCallNode(identifier, args?.ToArray());
         }
 
@@ -219,6 +213,7 @@ namespace SkimSkript.MainComponents
         private Node GetReturnStatement()
         {
             Tokens.MatchAndRemove(TokenType.Return);
+            _logger?.Verbose("Creating return statement. Parsing return expression");
             return new ReturnNode(IsExpressionStartingToken() ? GetExpression() : null);
         }
         #endregion
@@ -243,26 +238,23 @@ namespace SkimSkript.MainComponents
         /// <summary> 
         /// Parses a variable or parameter declaration with a value data type. 
         /// </summary>
-        private Node GetValueTypeVariableDeclaration(Node? overrideValue = null, Type? overrideType = null)
+        private Node GetValueTypeVariableDeclaration()
         {
-            Type dataType = overrideType ?? GetValueNodeType();
+            Type dataType = GetValueNodeType();
             var identifierNode = GetIdentifier();
 
             Node? initValue;
 
-            if (overrideValue == null)
-            {
-                /* AssignmentOperator can be used for both initialization and assignment. However VariableInitialize
-                * is only used for initialization which is why the tokens are seperate. */
-                var isInit = Tokens.TryMatchAndRemove([TokenType.VariableInitialize, TokenType.AssignmentOperator]);
 
-                /* If initialized get an condition (that will potetially be coerced runtime by the interpreter).
-                 * Otherwise get a default value node for the data type in the declaration. */
-                initValue = isInit ? GetExpression() : GetValueNodeOfType(dataType);
-            }
-            else
-                initValue = overrideValue;
+            /* AssignmentOperator can be used for both initialization and assignment. However VariableInitialize
+            * is only used for initialization which is why the tokens are seperate. */
+            var isInit = Tokens.TryMatchAndRemove([TokenType.VariableInitialize, TokenType.AssignmentOperator]);
 
+            /* If initialized get an condition (that will potetially be coerced runtime by the interpreter).
+                * Otherwise get a default value node for the data type in the declaration. */
+            initValue = isInit ? GetExpression() : GetValueNodeOfType(dataType);
+
+            _logger?.Verbose("Creating value variable declaration. Is Intialized: {Value}  Data Type: {Value}", isInit, dataType.Name);
             return new VariableDeclarationNode(identifierNode, dataType, initValue);
         }
 
@@ -273,6 +265,7 @@ namespace SkimSkript.MainComponents
             var identifierNode = GetIdentifier();
             Tokens.MatchAndRemove(TokenType.AssignmentOperator);
 
+            _logger?.Verbose("Creating assignment and parsing assigned expression");
             return new AssignmentNode(identifierNode, GetExpression());
         }
         #endregion
@@ -297,6 +290,7 @@ namespace SkimSkript.MainComponents
             else if (Tokens.TryMatchAndRemove(TokenType.Else))
                 chainedStructure = new ElseNode(GetBlock(), statementEndLexeme);
 
+            _logger?.Verbose("Creating if statement. Is Else-If: {Value}     Is Chained Structure: {Value}", isElseIf, chainedStructure != null);
             return !isElseIf ?
                 new IfNode(condition, block, chainedStructure, statementEndLexeme) :
                 new ElseIfNode(condition, block, chainedStructure, statementEndLexeme);
@@ -309,6 +303,7 @@ namespace SkimSkript.MainComponents
             Tokens.TryMatchAndRemove(TokenType.Then);
             var statementEndLexeme = Tokens.GetLexemeEndIndex();
 
+            _logger?.Verbose("Creating while loop. Parsing block");
             return new WhileNode(condition, GetBlock(), statementEndLexeme);
         }
 
@@ -319,41 +314,40 @@ namespace SkimSkript.MainComponents
             Tokens.TryMatchAndRemove(TokenType.RepeatLoopTrail);
             var statementEndLexeme = Tokens.GetLexemeEndIndex();
 
+            _logger?.Verbose("Creating repeat loop. Parsing block");
             return new RepeatNode(condition, GetBlock(), statementEndLexeme);
         }
         #endregion
 
         #region Monitoring Statements
-        /// <summary>
-        /// Parses an assertion newNode with an conditional conditionalExpression.
-        /// </summary>
         private Node GetAssertionStatement()
         {
             Tokens.Remove(TokenType.Assertion);
             var conditionalExpression = GetExpression();
+            _logger?.Verbose("Creating assertion statement");
             return new AssertionNode(conditionalExpression);
         }
 
         private Node GetTryStatement()
         {
+            _logger?.Verbose("Creating try statement. Parsing try block");
+            // "try" --> block --> "catch" --> optional "(" --> optional identifier --> optional ")" --> block
             Tokens.Remove(TokenType.Try);
+            var tryBlock = GetBlock();
 
-                var block = GetBlock();
-                // If it's not an assignment that directly follows then create a message variable (no type token)
-                if (Tokens.TryMatchAndRemove(TokenType.Identifier))
-                    if (Tokens.TryPeekAheadType(out var tokenType)
-                        && Tokens.PeekType() != TokenType.AssignmentOperator)
-                    {
-                    // TODO: The way i did this is straight up wrong and won't work
-                    messageVar = GetValueTypeVariableDeclaration(new StringValueNode(), typeof(StringValueNode));
+            Tokens.Remove(TokenType.Catch);
+            var catchBlock = GetBlock();
 
-                    }
+            // Optional variable declaration of message variable that will contain the exception message
+            var messageNode = GetOptionalCatchMessage();
+                    
+            return new TryCatchNode(tryBlock, catchBlock, messageNode);
         }
         #endregion
         #endregion
 
         #region Expressions
-        #region Expression -> Term -> Factors
+        #region Math, Logic, & Comparisons
         /// <summary>Parses a logical, comparison, and/or arithmetic expressions. Starting with
         /// logical expressions as they are the lowest precedence level.</summary>
         private Node GetExpression() => ParseLogicalExpression();
@@ -400,6 +394,15 @@ namespace SkimSkript.MainComponents
             return leftNode;
         }
 
+        private Node ParseInnerExpression()
+        {
+            var enclosedExpression = GetExpression();
+            Tokens.MatchAndRemove(TokenType.ParenthesisClose);
+            return enclosedExpression;
+        }
+        #endregion
+
+        #region Terms
         private Node ParseTerm()
         {
             var leftFactor = ParseExponentTerm();
@@ -414,6 +417,22 @@ namespace SkimSkript.MainComponents
             return leftFactor;
         }
 
+        private Node ParseExponentTerm()
+        {
+            var baseFactor = ParseFactor();
+
+            while (Tokens.TryPeek(out var tokenType) && tokenType == TokenType.Exponent)
+            {
+                Tokens.Remove();
+                Node exponent = ParseExponentTerm(); // Recursive call for right associativity
+                baseFactor = new MathExpressionNode(MathOperator.Exponent, baseFactor, exponent);
+            }
+
+            return baseFactor;
+        }
+        #endregion
+
+        #region Factors
         private Node ParseFactor()
         {
             var tokenType = Tokens.PeekType();
@@ -448,32 +467,12 @@ namespace SkimSkript.MainComponents
             }
         }
         #endregion
-
-        #region Additional Expression Features
-        private Node ParseInnerExpression()
-        {
-            var enclosedExpression = GetExpression();
-            Tokens.MatchAndRemove(TokenType.ParenthesisClose);
-            return enclosedExpression;
-        }
-
-        private Node ParseExponentTerm()
-        {
-            var baseFactor = ParseFactor();
-
-            while (Tokens.TryPeek(out var tokenType) && tokenType == TokenType.Exponent)
-            {
-                Tokens.Remove();
-                Node exponent = ParseExponentTerm(); // Recursive call for right associativity
-                baseFactor = new MathExpressionNode(MathOperator.Exponent, baseFactor, exponent);
-            }
-
-            return baseFactor;
-        }
-        #endregion
         #endregion
 
         #region Helper Methods
+        #region Type Helper Methods
+        private bool IsCatchMessageNext() => 
+            Tokens.PeekIsType(TokenType.Identifier) && !Tokens.PeekIsType(TokenType.AssignmentOperator);
 
         private bool IsDataTypeToken(TokenType tokenType) =>
             tokenType == TokenType.IntegerKeyword || tokenType == TokenType.FloatKeyword ||
@@ -510,17 +509,97 @@ namespace SkimSkript.MainComponents
                 Type t when t == typeof(StringValueNode) => new StringValueNode(),
                 _ => throw Tokens.GetTokenExceptionError(TokenType.DataTypeKeyword, tokenIndexOffset: 1)
             };
+        #endregion
 
+        #region Identifiers
         private Node GetIdentifier() =>
             new IdentifierNode(Tokens.MatchRemoveAndGetLexeme(TokenType.Identifier));
 
-        /// <summary>Returns a factor in the form of a variable identfier or a function call.</summary>
+        /// <summary>
+        /// Returns a factor in the form of a variable identfier or a function call.
+        /// </summary>
         private Node GetIdentifierFactor()
         {
             if (Tokens.TryPeekAheadType(out TokenType aheadType) && aheadType == TokenType.ParenthesisOpen)
                 return GetFunctionCall();
 
             return new IdentifierNode(Tokens.RemoveAndGetLexeme());
+        }
+
+        /// <summary>
+        /// Returns either a function call or a variable assignment statement where the first token is an identifierNode.
+        /// </summary>
+        private Node GetIdentifierStartStatement()
+        {
+            if (Tokens.TryPeekAheadType(out var tokenType) && tokenType == TokenType.AssignmentOperator)
+                return GetAssignment();
+
+            return GetFunctionCall();
+        }
+        #endregion
+
+        #region Functions
+        private bool IsFunctionDefinitionNext()
+        {
+            var tokenType = Tokens.PeekType();
+
+            // If "void", "def"
+            if (IsFunctionLeadingToken(tokenType))
+            {
+                _logger?.Verbose("Function definition detected. Token: {Token}", tokenType);
+                return true;
+            }
+                
+
+            // Only other way for token to be function definiton is if it is a data type token
+            if (!IsDataTypeToken(tokenType))
+                return false;
+
+            // At this point the token could still be a data type for a variable declaration.
+            if(TryPeekFunctionParenthesis())
+            {
+                _logger?.Verbose("Function definition detected. Token: {Token}", tokenType);
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Peeks ahead to see if there is a open parenthesis (relative to data type unique to function defs)
+        /// </summary>
+        /// <returns></returns>
+        private bool TryPeekFunctionParenthesis()
+        {
+            var ahead = Tokens.PeekAhead();
+
+            if (ahead == TokenType.FunctionLabel)
+                return true;
+
+            ahead = Tokens.PeekAhead(2);
+
+            if (ahead == TokenType.ParenthesisOpen)
+                return true;
+
+            if (ahead != TokenType.Identifier)
+                return false;
+
+            ahead = Tokens.PeekAhead(3);
+
+            return ahead == TokenType.ParenthesisOpen;
+
+
+            // (Offset: 0)(data type) -> (1)(function) -> (2)(identifier) -> (3)(parenthesis)
+            if (Tokens.TryPeekAheadType(out var aheadTokenType, offset: TYPE_START_FUNC_PEEK_OFFSET)
+                && aheadTokenType == TokenType.ParenthesisOpen)
+                return true;
+
+            // (Offset: 0)(data type) -> (1)(identifier) -> (2)(parenthesis)
+            else if (Tokens.TryPeekAheadType(out aheadTokenType, offset: TYPE_START_FUNC_PEEK_OFFSET - 1)
+                && aheadTokenType == TokenType.ParenthesisOpen)
+                return true;
+
+            return false;
         }
 
         private bool IsFunctionLeadingToken(TokenType tokenType)
@@ -536,23 +615,32 @@ namespace SkimSkript.MainComponents
 
             return false; // If not a type above it still could be a data type token
         }
-
-        /// <summary>
-        /// Peeks ahead to see if there is a open parenthesis (relative to data type unique to function defs)
-        /// </summary>
-        /// <returns></returns>
-        private bool TryPeekFunctionParenthesis()
+        #endregion
+        
+        #region  Statements
+        private Node? GetOptionalCatchMessage()
         {
-            // (Offset: 0)(data type) -> (1)(function) -> (2)(identifier) -> (3)(parenthesis)
-            if (Tokens.TryPeekAheadType(out var aheadTokenType, offset: TYPE_START_FUNC_PEEK_OFFSET))
-                return true;
+            // Optional "("
+            Tokens.TryMatchAndRemove(TokenType.ParenthesisOpen);
+            Node? messageNode = null;
 
-            // (Offset: 0)(data type) -> (1)(identifier) -> (2)(parenthesis)
-            else if (Tokens.TryPeekAheadType(out aheadTokenType, offset: TYPE_START_FUNC_PEEK_OFFSET - 1))
-                return true;
+            // Check for a message identifier and make sure it's not a variable assignment
+            if (IsCatchMessageNext())
+            {
+                /* An optional message variable can be created in catch that will be initialized to
+                 * the exception message. */
+                var identifier = GetIdentifier();
+                var valueSource = new StringValueNode();
+                var dataType = valueSource.GetType();
 
-            return false;
+                messageNode = new VariableDeclarationNode(identifier, dataType, valueSource);
+            }
+
+            // Optional ")"
+            Tokens.TryMatchAndRemove(TokenType.ParenthesisClose);
+            return messageNode;
         }
+        #endregion
         #endregion
     }
 }

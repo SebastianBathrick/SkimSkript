@@ -50,6 +50,29 @@ namespace SkimSkript.Helpers.EntryPoint
         private const string DEBUG_INTERPRETER = "interpreter";
         #endregion
 
+        #region Verbose Flag Constants
+        private const string VERBOSE_FLAG_NAME = "verbose";
+        private const string VERBOSE_FLAG_SHORT_NAME = "v";
+        private const string VERBOSE_FLAG_DESC =
+            "Enables interpreter main component verbose messages.";
+
+        private const int VERBOSE_FLAG_MIN_PARAMETERS = 0;
+
+        private const bool VERBOSE_FLAG_IS_VARIADIC = true;
+
+        private const string VERBOSE_FLAG_ADD_INFO_LABEL_1 = "Note";
+        private const string VERBOSE_FLAG_ADD_INFO_VAL_1 =
+            "If no parameter is provided verbose will be enabled for all main components.";
+
+        private const string VERBOSE_FLAG_ADD_INFO_LABEL_2 = "Valid Parameter Values";
+        private const string VERBOSE_FLAG_ADD_INFO_VAL_2 =
+            $"{DEBUG_LEXER}, {DEBUG_PARSER}, and {DEBUG_INTERPRETER}.";
+
+        private const string VERBOSE_FLAG_ADD_INFO_LABEL_3 = "Example";
+        private const string VERBOSE_FLAG_ADD_INFO_VAL_3 =
+            $"--{VERBOSE_FLAG_NAME} <VALID PARAMETER VALUE>";
+        #endregion
+        
         #region Fields
         private static FlagHandler? _handler;
         private static Logger? _logger;
@@ -126,7 +149,23 @@ namespace SkimSkript.Helpers.EntryPoint
                     DEBUG_FLAG_ADD_INFO_LABEL_2, DEBUG_FLAG_ADD_INFO_VAL_2),
                 new AdditionalInfo(
                     DEBUG_FLAG_ADD_INFO_LABEL_3, DEBUG_FLAG_ADD_INFO_VAL_3)
-                )
+                ),
+
+            new Flag()
+            .SetName(VERBOSE_FLAG_NAME)
+            .SetShortName(VERBOSE_FLAG_SHORT_NAME)
+            .SetDescription(VERBOSE_FLAG_DESC)
+            .SetParameterCount(VERBOSE_FLAG_MIN_PARAMETERS)
+            .SetVariadic(VERBOSE_FLAG_IS_VARIADIC)
+            .SetAction((parameters) => VerboseFlagAction(parameters))
+            .AddAdditionalInfo(
+                new AdditionalInfo(
+                    VERBOSE_FLAG_ADD_INFO_LABEL_1, VERBOSE_FLAG_ADD_INFO_VAL_1),
+                new AdditionalInfo(
+                    VERBOSE_FLAG_ADD_INFO_LABEL_2, VERBOSE_FLAG_ADD_INFO_VAL_2),
+                new AdditionalInfo(
+                    VERBOSE_FLAG_ADD_INFO_LABEL_3, VERBOSE_FLAG_ADD_INFO_VAL_3)
+                ),
             ];
 
         private static void FileFlagAction(List<string>? parameters = null)
@@ -135,6 +174,43 @@ namespace SkimSkript.Helpers.EntryPoint
                 throw new ArgumentNullException(nameof(parameters));
 
             Program.SourceCodePaths.AddRange(parameters);
+        }
+
+        private static void VerboseFlagAction(List<string>? parameters = null)
+        {
+            if (parameters == null || parameters.Count == 0)
+            {
+                Program.SetVerboseMainComponents(
+                    MainComponentType.Lexer, 
+                    MainComponentType.Parser, 
+                    MainComponentType.Interpreter
+                    );
+                Logger.Info("Verbose enabled for all main components");
+                return;
+            }
+
+            var verboseList = new List<MainComponentType>();
+
+            foreach (var parameter in parameters)
+                if (parameter == DEBUG_LEXER && !verboseList.Contains(MainComponentType.Lexer))
+                {
+                    verboseList.Add(MainComponentType.Lexer);
+                    Logger.Info("Verbose enabled for lexer");
+                }
+                else if (parameter == DEBUG_PARSER && !verboseList.Contains(MainComponentType.Parser))
+                {
+                    verboseList.Add(MainComponentType.Parser);
+                    Logger.Info("Verbose enabled for parser");
+                }
+                else if (parameter == DEBUG_INTERPRETER && !verboseList.Contains(MainComponentType.Interpreter))
+                {
+                    verboseList.Add(MainComponentType.Interpreter);
+                    Logger.Info("Verbose enabled for interpreter");
+                }
+                else
+                    Logger.Warning("{Parameter} is not a verboseable main component and will be skipped", parameter);
+
+            Program.SetVerboseMainComponents(verboseList.ToArray());
         }
 
         private static void DebugFlagAction(List<string>? parameters = null)
@@ -151,6 +227,7 @@ namespace SkimSkript.Helpers.EntryPoint
             }
 
             var debugList = new List<MainComponentType>();
+
             foreach (var parameter in parameters)
                 if (parameter == DEBUG_LEXER && !debugList.Contains(MainComponentType.Lexer))
                 {
@@ -168,7 +245,7 @@ namespace SkimSkript.Helpers.EntryPoint
                     Logger.Info("Debugging enabled for interpreter");
                 }
                 else
-                    Logger.Warning("{Parameter} is not a debuggable main component and will be skipped");
+                    Logger.Warning("{Parameter} is not a debuggable main component and will be skipped", parameter);
 
             Program.SetDebuggedMainComponents(debugList.ToArray());
         }
