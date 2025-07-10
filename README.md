@@ -649,9 +649,25 @@ SkimSkript offers statically typed support for both user-defined and built-in fu
 		
 		int myInt1 = 1
 		int myInt2 = 2
+  		```
+- ### 6.5 ) Built-In Functions
+	A host of built-in (not user-defined) functions.
+
+	Note: Built-in function identifiers ARE case-sensetive (soon to be changed.)
+	- ### print
+   		Outputs string arguments to the terminal (each argument prints to its own line)
+   		- Parameters: 0 or more string arguments
+     		- Returns: void
+	- ### read
+   		Accepts keyboard input from the terminal, and optionally displays a prompt.
+   		- Parameters: 0 or 1 string argument to display as a prompt
+     		- Returns: string
+       	- ### clear
+      		Clears all lines from the terminal.
+		- Parameters: 0
+  		- Returns: void
 		
-		int sum = value from GetSum(myInt1 myInt2) + 5
-		
-		run IncrementInts(reference to myInt1 reference to myInt2)
-		```
-	**Note:** Function calls can appear **before or after** their definitions. Functions can also be **recursive**, calling themselves within their own body.
+  		
+
+
+
