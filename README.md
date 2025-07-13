@@ -29,6 +29,14 @@
  	- 6.2 [Return Statements](#62--return-statements)
   	- 6.3 [Function Reference+Value Parameters](#63--function-referencevalue-parameters)
   	- 6.4 [Function Calls](#64--function-calls)
+7. [Debugging/Analysis](#7--debugginganalysis)
+	- 7.1 [Assertions](#71--assertions)
+ 	- 7.2 [Try-Catch Statements](#72--try-catch-statements)
+8. [Expressions](#8--expressions)
+	- 8.1 [Operator Precedence](#81--operator-precedence)
+ 	- 8.2 [Operator Aliases](#82--operator-aliases)
+9. [Data Type Conversion](#9--data-type-conversion)
+	- 9.1 [
   
 # Introduction
 
@@ -758,10 +766,10 @@ SkimSkript offers statically typed support for both user-defined and built-in fu
 		| && | and |
 		| ^^ | or just |
 
-   - ## 9. ) Data Type Conversion
-     	SkimSkript includes runtime coercion with quirks to work with its statically-typed features.
-
-     	Note: Casting will be added in the future.
+- ## 9. ) Data Type Conversion
+	SkimSkript includes runtime coercion with quirks to work with its statically-typed features.
+	
+	Note: Casting will be added in the future.
    	- ### 9.1 ) Expression Coercion
   		Coercion can happen within an expression with factors of different types.
 		| Precedence | Data Type |
