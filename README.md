@@ -59,7 +59,7 @@ while(i <= 100)
 
 Maybe you want to mix in a little **Pythonic** syntax:
 ```python
-def int factorial(int n) =>
+def int factorial(int n):
     if n == 0:
 	return 1
     else:
@@ -738,16 +738,103 @@ SkimSkript offers statically typed support for both user-defined and built-in fu
 		| 8 | && | Left to Right
 		| 9 | \|\| | Left to Right
 	- ### 8.2 ) Operator Aliases
- 	 	|  Symbol |  Verbose |
-		| ------------ | ------------ |
+		SkimSkript provides both symbolic and verbose versions of operators for maximum flexibility:
+
+		| Symbol | Verbose |
+		|--------|---------|
 		| + | plus |
 		| - | minus |
-	  	| * | times, multiplied by |
+		| * | times, multiplied by |
 		| / | divided by |
 		| % | modulus, mod, remainder after dividing by |
-	  	| ^ | raised to, to the power of |
-	  	|
-   
+		| ^ | raised to, to the power of |
+		| > | exceeds, greater than |
+		| < | is below, less than |
+		| == | is |
+		| != | is not |
+		| >= | is at least, greater than or equal |
+		| <= | is at most, less than or equal |
+		| \|\| | or |
+		| && | and |
+		| ^^ | or just |
+
+   - ## 9. ) Data Type Conversion
+     	SkimSkript includes runtime coercion with quirks to work with its statically-typed features.
+
+     	Note: Casting will be added in the future.
+   	- ### 9.1 ) Expression Coercion
+  		Coercion can happen within an expression with factors of different types.
+		| Precedence | Data Type |
+		|--------|---------|
+		| 1 | string |
+		| 2 | float/floating point |
+		| 3 | int/integer |
+		| 4 | bool/boolean |
+	- ### 9.2 ) Data Type Conversion
+		 - #### String
+	   		| Target Type | Conversion Handling |
+			|--------|---------|
+			| float/floating point | Converts float literal to string representation. |
+			| int/integer | Converts int literal to string representation. |
+			| bool | If the string is empty ```false```. If not ```true```. |
+		 - #### Floating-Point
+	   		| Target Type | Conversion Handling |
+			|--------|---------|
+			| string | Parses string to be a float literal. Throws exception if invalid format. |
+			| int/integer | Adds decimal to the end of the number represented by int |
+			| bool | ```false``` if float is exactly ```0.0``` or ```-0.0```. ```true``` otherwise. |
+		- #### Integer
+			| Target Type | Conversion Handling |
+			|--------|---------|
+			| string | Parses string to be a int literal. Throws exception if invalid format. |
+			| float | Truncates digits to the right of the decimal and keeps ones on the left |
+			| bool | ```false``` if int is ```0```. ```true``` otherwise. |
+ 		- #### Boolean
+	   		| Target Type | Conversion Handling |
+			|--------|---------|
+			| string | If bool is true ```"true"```. If false ```"false"```. |
+			| float/floating point | If bool is true ```1.0```. If false ```0.0```. |
+			| int/integer | If bool is true ```1```. If false ```0```. |
+
+
+	- ### 9.2 ) Variable Assignment/Initialization Coercion
+		When assigning an expression to a variable the expression will be coerced to match the variable's declared data type.
+		```python
+		# The string literal here will be casted to an integer 1
+		int myInteger = "1"
+	
+		# Here the 3.14 will have the digits after the decimal truncated
+		myInteger = 3.14
+	
+		# Output: 3
+		print(myInteger)
+		```
+  	- ### 9.3 ) Argument Coercion
+  		Pass-by-value arguments get coerced to match the type of their associated parameter.
+		```python
+
+  		# 3.25 is a float literal paired with an integer parameter
+  		# "2" is a string literal paired with an integer parameter as well 
+  		PrintIntegerSum(3.25 "2")
+
+		# 3.25 will be converted to 3
+  		# "2" will be converted to the integer 2
+  		def PrintIntegerSum(int left int right)
+  			# Output: 5
+  			print(left + right)
+  			# Note: You can even see this with print! left + right get converted to a string
+  			# after being evaluated and sent as an argument!
+		```
+  	- ### 9.4 ) Return Coercion
+  		Expressions paired with return statements will be coerced to match the function's return type.
+		```python
+
+		float secretNum = GetMySecretNumber()
+
+  		# String literal "4.234" will be converted to the float 4.234 and returned
+  		def float GetMySecretNumber()
+  			return "4.234"
+  		```
 
   		
 
