@@ -1091,3 +1091,26 @@ The `Interpreter` class executes the AST nodes:
 
 1. Manages variable scopes and values
 2. Executes statements an
+
+## 12. Operator Aliases
+
+SkimSkript provides both symbolic and verbose versions of operators for maximum flexibility:
+
+| Symbol | Verbose |
+|--------|---------|
+| + | plus |
+| - | minus |
+| * | times, multiplied by |
+| / | divided by |
+| % | modulus, mod, remainder after dividing by |
+| ^ | raised to, to the power of |
+| > | exceeds, greater than |
+| < | is below, less than |
+| == | is |
+| != | is not |
+| >= | is at least, greater than or equal |
+| <= | is at most, less than or equal |
+| \|\| | or |
+| && | and |
+| ^^ | or just |
+| = | (assignment operator - no verbose equivalent) |

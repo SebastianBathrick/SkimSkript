@@ -1,0 +1,18 @@
+Declare integer iterator as 1.
+
+Invoke read("Please enter a whole number:")
+
+Define integer function SquareRoot(integer number)
+{
+    Declare integer odd as 1.
+    Declare integer count as 0.
+    
+    Repeat while number is at least 0
+    {
+        Set number to number - odd.
+        Set odd to odd + 2
+        Set count to count + 1
+    }
+
+    Return count minus 1.
+}

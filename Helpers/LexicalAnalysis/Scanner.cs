@@ -96,7 +96,7 @@ namespace SkimSkript.LexicalAnalysis.Helpers
         /// <summary> Scan numeric lexeme starting with a digit char that will represent a float or int literal. </summary>
         private LexemeType ScanNumeric()
         {
-            var lexemeType = LexemeType.Numeric;
+             var lexemeType = LexemeType.Numeric;
 
             //Continue to build lexeme until something other than a digit or a single decimal has been scanned.
             do

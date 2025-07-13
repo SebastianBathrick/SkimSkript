@@ -13,8 +13,6 @@ namespace SkimSkript.MainComponents
 
     internal abstract class MainComponent<T, Y> where T : notnull where Y : notnull
     {
-        private static long _globalElapsedTime = 0;
-
         private bool _isDebugging;
         private string _name;
 

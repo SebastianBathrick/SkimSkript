@@ -38,6 +38,7 @@ namespace SkimSkript.Syntax
 
 
             ("run",TokenType.FunctionCallStart),
+            ("invoke", TokenType.FunctionCallStart),
             ("call", TokenType.FunctionCallStart),
 
             ("value of",TokenType.FunctionCallStartExpression),
@@ -62,14 +63,23 @@ namespace SkimSkript.Syntax
             ("repeat while", TokenType.WhileLoop),
 
             ("repeat", TokenType.RepeatLoop),
-            ("times", TokenType.RepeatLoopTrail),
+            ("passes", TokenType.RepeatLoopTrail),
 
             ("is", TokenType.Equals),
             ("is not", TokenType.NotEquals),
+
             ("is at least", TokenType.GreaterThanOrEqual),
+            ("greater than or equal", TokenType.GreaterThanOrEqual),
+
             ("exceeds", TokenType.GreaterThan),
+            ("greater than", TokenType.GreaterThan),
+
             ("is at most", TokenType.LessThanOrEqual),
+            ("less than or equal", TokenType.LessThanOrEqual),
+
             ("is below", TokenType.LessThan),
+            ("less than", TokenType.LessThan),
+
             ("or", TokenType.Or),
             ("and", TokenType.And),
             ("or just", TokenType.Xor),
@@ -78,9 +88,12 @@ namespace SkimSkript.Syntax
             ("plus", TokenType.Add),
             ("minus", TokenType.SubtractUnary),
             ("divided by", TokenType.Divide),
+            ("times", TokenType.Multiply),
+            ("multiplied by", TokenType.Multiply),
             ("modulus", TokenType.Modulus),
             ("mod", TokenType.Modulus),
-            ("exponent", TokenType.Exponent),
+            ("raised to", TokenType.Exponent),
+            ("to the power of", TokenType.Exponent),
             ("assert", TokenType.Assertion),
 
             ("remainder after dividing by", TokenType.Modulus),

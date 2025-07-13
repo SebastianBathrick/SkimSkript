@@ -587,19 +587,6 @@ namespace SkimSkript.MainComponents
             ahead = Tokens.PeekAhead(3);
 
             return ahead == TokenType.ParenthesisOpen;
-
-
-            // (Offset: 0)(data type) -> (1)(function) -> (2)(identifier) -> (3)(parenthesis)
-            if (Tokens.TryPeekAheadType(out var aheadTokenType, offset: TYPE_START_FUNC_PEEK_OFFSET)
-                && aheadTokenType == TokenType.ParenthesisOpen)
-                return true;
-
-            // (Offset: 0)(data type) -> (1)(identifier) -> (2)(parenthesis)
-            else if (Tokens.TryPeekAheadType(out aheadTokenType, offset: TYPE_START_FUNC_PEEK_OFFSET - 1)
-                && aheadTokenType == TokenType.ParenthesisOpen)
-                return true;
-
-            return false;
         }
 
         private bool IsFunctionLeadingToken(TokenType tokenType)

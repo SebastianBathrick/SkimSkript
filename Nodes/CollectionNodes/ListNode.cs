@@ -1,38 +1,24 @@
-﻿using System.Text;
-
-namespace SkimSkript.Nodes.CollectionNodes
+﻿namespace SkimSkript.Nodes.Composites
 {
-    internal class ListNode : CollectionNode<int> // Specify the type argument for CollectionNode
+    internal class ListNode : CollectionNode
     {
-        private List<Node>? _elements = null!;
+        private List<Node> _elements;
 
-        private List<Node> Elements => _elements ??= new List<Node>();
+        public ListNode(List<Node> elements) =>
+            _elements = elements;
 
-        public ListNode(Type elementDataType) : base(elementDataType) { }
+        public void Add(Node node) =>
+            _elements.Add(node);
 
-        public override int GetCount() => Elements.Count;
+        public Node Get(int index) =>
+            _elements[index];
 
-        public override void AddElement(Node element) => Elements.Add(element);
-
-        public override Node GetElement(int elementId) => Elements[elementId];
-
-        public override void RemoveElement(int elementId) => Elements.RemoveAt(elementId);
-
-        public override bool ContainsElementId(int elementId) => elementId >= 0 && elementId < Elements.Count;
+        public int Count =>
+            _elements.Count;
 
         public override string ToString()
         {
-            var sb = new StringBuilder("[");
-
-            for (int i = 0; i < Elements.Count; i++)
-            {
-                sb.Append(Elements[i].ToString());
-                if (i < Elements.Count - 1)
-                    sb.Append(", ");
-            }
-
-            sb.Append("]");
-            return sb.ToString();
+            throw new NotImplementedException();
         }
     }
 }

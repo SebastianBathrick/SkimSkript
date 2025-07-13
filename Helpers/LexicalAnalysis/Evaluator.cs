@@ -74,7 +74,7 @@ namespace SkimSkript.LexicalAnalysis.Helpers
         }
 
         /// <summary> 
-        /// Determines if a lexeme or a continuous group of lexems form a reserved 
+        /// Determines if a lexeme or a continuous group of lexemes form a reserved 
         /// keyword/multi-word-token. 
         /// </summary>
         private TokenType EvaluateAlphabetic()
