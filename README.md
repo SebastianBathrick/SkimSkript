@@ -33,9 +33,9 @@
 # Introduction
 
 ## What is SkimSkript?
-SkimSkript is an interpreted language designed for beginners. It features flexible, forgiving syntax and enforced typing with runtime coercion, allowing users to write in C-style braces, Python-like keywords, or even natural-language pseudocode. SkimSkript adapts to the programmer — not the other way around.
+SkimSkript is an experimental interpreted language meant to explore different syntactical possibilities. It features flexible, forgiving syntax and enforced typing with runtime coercion, allowing users to write in C-style braces, Python-like keywords, or even natural-language pseudocode. SkimSkript adapts to the programmer — not the other way around.
 
-With support for multiple syntactic styles, it serves as a stepping stone to more advanced languages. Beginners can experiment with static types, recursion, and procedural logic without being boxed into rigid syntax rules or overwhelmed by compiler errors.
+With support for multiple syntactic styles, programmers can experiment with static types, recursion, and procedural logic without being boxed into rigid syntax rules or overwhelmed by compiler errors.
 
 ### Programmer Freedom
 Would you like to stick to something more reminiscent of the **C family of languages**? You can!
@@ -535,6 +535,14 @@ SkimSkript offers statically typed support for both user-defined and built-in fu
 		
 		def floating point function GetFloatValue() { give back 30.0 }
 		```
+  	- #### Implicit Blocks
+  		Functions containing only one statement in their body do not require curly braces.
+		```python
+		def Greet(string name)
+  			print("Hello " + name)
+
+  		def int Sum(int left, int right) return left + right
+  		```
 
 - ### 6.2 ) Return Statements
 	- #### Void Functions
@@ -628,7 +636,7 @@ SkimSkript offers statically typed support for both user-defined and built-in fu
 		}
 		```
 - ### 6.4 ) Function Calls
-	To call a function, use its identifier followed by opening and closing parenthesis. If it has parameters, list the expressions or identifiers you'd like to send as arguments inside the parenthesis. If a parameter is passed by reference, the argument forwarded **must be an identifier** and must be labeled using ```ref``` or ```reference to```.
+	To call a function, use its identifier followed by opening and closing parentheses. If it has parameters, list the expressions or identifiers you'd like to send as arguments inside the parentheses. If a parameter is passed by reference, the argument forwarded **must be an identifier** and must be labeled using ```ref``` or ```reference to```.
 
 	- #### Brief
 		```csharp
@@ -642,7 +650,7 @@ SkimSkript offers statically typed support for both user-defined and built-in fu
 		IncrementInts(ref myInt1 ref myInt2)
 		```	
 	 - #### Verbose
- 		 Optionally when calling a function outside an expression you can use ```run``` before the identifier. Inside an expression you optionally use ```value from```.
+ 		 Optionally, when calling a function outside an expression, you can use ```run``` before the identifier. Inside an expression, you optionally use ```value from```.
     
 		```csharp
 		run PrintString("This is a string argument!")
@@ -653,7 +661,7 @@ SkimSkript offers statically typed support for both user-defined and built-in fu
 - ### 6.5 ) Built-In Functions
 	A host of built-in (not user-defined) functions.
 
-	Note: Built-in function identifiers ARE case-sensetive (soon to be changed.)
+	Note: Built-in function identifiers ARE case-sensitive (soon to be changed.)
 	- ### print
    		Outputs string arguments to the terminal (each argument prints to its own line)
    		- Parameters: 0 or more string arguments
@@ -666,7 +674,81 @@ SkimSkript offers statically typed support for both user-defined and built-in fu
       		Clears all lines from the terminal.
 		- Parameters: 0
   		- Returns: void
-		
+- ## 7. ) Debugging/Analysis
+	Currently, debugging and analysis features are in their early stages and are bound to have significant changes
+	- ### 7.1 ) Assertions
+		Assertions can be written simply by using the keyword ```assert``` followed by a conditional expression.
+		```python
+	 	# Evaluates to true, and control will continue
+	 	assert 3 + 5 == 8
+	
+	 	# Evaluates to false, and control will stop and the terminal will display an error
+	 	assert 3 + 5 == 7 
+	 	```
+  	- ### 7.2 ) Try-Catch Statements
+  	  	Try-catch statements start with a ```try``` and a block where the expected code runs. ```catch``` follows with its block afterwards. 
+
+		Note: As of writing, user-defined exceptions have not been implemented, but are coming soon.
+		```python
+		try
+		{
+			# Throws a parsing exception if anything but a whole number is entered.
+  	
+			int myVariable = read("Please enter a whole number:")
+
+  			# For example, if "hello" was entered, an exception would be thrown,
+  			# because it is meant to be parsed as an integer
+		}
+		catch
+		{
+			print("Error: Only whole numbers can be entered")
+		}
+		```
+		Optionally, by writing an identifier directly after the ```catch``` keyword you can access the exception message using the identifier (it's treated as a variable).
+		```python
+		try
+		{
+  			# Pretend "hello" was entered
+			int myVariable = read("Please enter a whole number:")
+		}
+		catch message
+		{
+  			# Will print "'hello' string cannot be converted to integer"
+			print(message)
+		}
+		```
+  		Implicit blocks also work with try catch statements (i.e. no curly braces are needed for single statement blocks)
+		```
+  		try
+  			int myVariable = read("Please enter a whole number:")
+  		catch message
+  			print(message)
+  		```
+- ## 8. ) Expressions
+	- ### 8.1 ) Operator Precedence
+	 	|  Precedence |  Operators |  Associativity |
+		| ------------ | ------------ | ------------ |	
+		| 1 | () |  N/A |
+		| 2 | - (unary) | Right to Left
+		| 3 | ^ (exponentiation) | Right to Left
+		| 4 |  *, /, % |  Left to Right |
+		| 5 | +, -  | Left to Right  |
+		| 6 | <, <=, >, >=  | Left to Right  |
+		| 7 | ==, !=  | Left to Right  |
+		| 8 | && | Left to Right
+		| 9 | \|\| | Left to Right
+	- ### 8.2 ) Operator Aliases
+ 	 	|  Symbol |  Verbose |
+		| ------------ | ------------ |
+		| + | plus |
+		| - | minus |
+	  	| * | times, multiplied by |
+		| / | divided by |
+		| % | modulus, mod, remainder after dividing by |
+	  	| ^ | raised to, to the power of |
+	  	|
+   
+
   		
 
 
