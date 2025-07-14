@@ -676,17 +676,18 @@ SkimSkript offers statically typed support for both user-defined and built-in fu
 
 	Note: Built-in function identifiers ARE case-sensitive (soon to be changed.)
 	- ### print
-   		Outputs string arguments to the terminal (each argument prints to its own line)
-   		- Parameters: 0 or more string arguments
-     		- Returns: void
+		Outputs string arguments to the terminal (each argument prints to its own line)
+		- Parameters: 0 or more string arguments
+		- Returns: void
 	- ### read
-   		Accepts keyboard input from the terminal, and optionally displays a prompt.
-   		- Parameters: 0 or 1 string argument to display as a prompt
-     		- Returns: string
+		Accepts keyboard input from the terminal, and optionally displays a prompt.
+		- Parameters: 0 or 1 string argument to display as a prompt
+		- Returns: string
        	- ### clear
-      		Clears all lines from the terminal.
+		Clears all lines from the terminal.
 		- Parameters: 0
-  		- Returns: void
+		- Returns: void
+
 - ## 7. ) Debugging/Analysis
 	Currently, debugging and analysis features are in their early stages and are bound to have significant changes
 	- ### 7.1 ) Assertions
