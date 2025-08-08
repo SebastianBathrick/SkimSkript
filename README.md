@@ -58,13 +58,13 @@ int i = 1;
 while(i <= 100)
 {
     if(i % 15 == 0)
-	print("FizzBuzz");
+		print("FizzBuzz");
     else if(i % 3 == 0)
-	print("Fizz");
+		print("Fizz");
     else if(i % 5 == 0)
-	print("Buzz");
+		print("Buzz");
     else
-	print(i);
+		print(i);
 	
  i = i + 1;
 }
@@ -74,11 +74,11 @@ Maybe you want to mix in a little **Pythonic** syntax:
 ```python
 def int factorial(int n):
     if n == 0:
-	return 1
+		return 1
     else:
-	return n * factorial(n - 1)
+		return n * factorial(n - 1)
 
-print(factorial(5))  # Output: 120
+	print(factorial(5))  # Output: 120
 ```
 
 You may want something more **verbose, academic, or closer to written English**. In that case, SkimSkript has got you covered:   
