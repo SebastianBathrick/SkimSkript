@@ -75,9 +75,18 @@ namespace SkimSkript.Interpretation.Helpers
 
         #region Variable Manipulation Methods
         /// <summary> Adds a variable to the most deeply nested scope in the stack frame. </summary>
-        public void AddVariable(string identifier, Node value, Type dataType) =>
-            FrameDictionary.Add((_currBlockLevel, identifier), new VariableNode(value, dataType));
-
+        public void AddVariable(string identifier, Node value, Type dataType)
+        {
+            try
+            {
+                FrameDictionary.Add((_currBlockLevel, identifier), new(value, dataType));
+            }
+            catch(ArgumentException)
+            {
+                throw new RuntimeException($"Variable {identifier} already defined in current scope.");
+            }
+            
+        }
         /// <summary> Updates assignNode of a variable in the current scope. </summary>
         /// <remarks>Maintains the same assignNode node pointer.</remarks>
         public void AssignValueToVariable(string identifier, Node assignNode)
