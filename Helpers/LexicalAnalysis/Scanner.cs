@@ -12,8 +12,6 @@ namespace SkimSkript.LexicalAnalysis.Helpers
         private string[]? _lines;
         private int _lineIndex, _columnIndex;
         private Dictionary<char, CharType> _charTypeDict = FillCharTypeDict();
-        private StringBuilder _lexemeStringBuilder = new StringBuilder();
-
 
         private bool IsEndOfLine => _columnIndex == Lines[_lineIndex].Length;
 
@@ -73,7 +71,7 @@ namespace SkimSkript.LexicalAnalysis.Helpers
             //Continue to build the lexeme until something other than an alpha or digit char has been scanned.
             do
             {
-                _lexemeStringBuilder.Append(DequeueChar());
+                DequeueChar();
 
                 if (IsEndOfLine)
                     break;
@@ -101,7 +99,7 @@ namespace SkimSkript.LexicalAnalysis.Helpers
             //Continue to build lexeme until something other than a digit or a single decimal has been scanned.
             do
             {
-                _lexemeStringBuilder.Append(DequeueChar());
+                DequeueChar();
 
                 if (IsEndOfLine)
                     break;
@@ -121,7 +119,7 @@ namespace SkimSkript.LexicalAnalysis.Helpers
             if (lexemeType == LexemeType.NumericDecimal && GetDequeuedCharType() == CharType.Decimal)
             {
                 //Remove the decimal from the lexeme and change the type back to numeric.
-                _lexemeStringBuilder.Remove(_lexemeStringBuilder.Length - 1, 1);
+                RevertChar();
                 lexemeType = LexemeType.Numeric;
             }
 
@@ -136,7 +134,7 @@ namespace SkimSkript.LexicalAnalysis.Helpers
             //Continue to build lexeme until a closing quote has been scanned.
             while (PeekCharType() != CharType.Quote)
             {
-                _lexemeStringBuilder.Append(DequeueChar());
+                DequeueChar();
 
                 if (IsEndOfLine)
                     throw new LexerException($"String literal missing a closing quote on same line", _lineIndex);
@@ -152,7 +150,7 @@ namespace SkimSkript.LexicalAnalysis.Helpers
             //Continue to build lexeme until something other than an operator has been scanned.
             do
             {
-                _lexemeStringBuilder.Append(DequeueChar());
+                DequeueChar();
             }
             while (!IsEndOfLine && PeekCharType() == CharType.Operator);
 
@@ -162,7 +160,7 @@ namespace SkimSkript.LexicalAnalysis.Helpers
         /// <summary> Scans a valid delimeter composed of a single character meant to represent such. </summary>
         private LexemeType ScanDelimeter()
         {
-            _lexemeStringBuilder.Append(DequeueChar());
+            DequeueChar();
             return LexemeType.Delimeter;
         }
 
@@ -175,11 +173,22 @@ namespace SkimSkript.LexicalAnalysis.Helpers
         #endregion
 
         #region Helper Methods
+        private void RevertChar()
+        {
+            if (_columnIndex - 1 < 0)
+            {
+                _lineIndex -= 1;
+                _columnIndex = Lines[_lineIndex].Length - 1;
+            }
+                
+            _columnIndex--;
+        }
+
         private CharType GetDequeuedCharType() => GetCharType(Lines[_lineIndex][_columnIndex - 1]);
 
         private CharType PeekCharType() => GetCharType(Lines[_lineIndex][_columnIndex]);
 
-        private char DequeueChar() => Lines[_lineIndex][_columnIndex++];
+        private void DequeueChar() => _columnIndex++;
         #endregion
 
         #region Dictionary Methods

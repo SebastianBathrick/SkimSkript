@@ -12,12 +12,12 @@ namespace SkimSkript.MainComponents
         private Evaluator? _evaluator;
         private LexemeContainer? _lexemes;
 
-
         public override MainComponentType ComponentType => MainComponentType.Lexer;
 
         public LexemeContainer Lexemes => _lexemes ?? throw new NullReferenceException("LexemeContainer null");
 
-        public Lexer(IEnumerable<MainComponentType> debuggedTypes, IEnumerable<MainComponentType> verboseTypes) : base(debuggedTypes, verboseTypes) { }
+        public Lexer(IEnumerable<MainComponentType> debuggedTypes, IEnumerable<MainComponentType> verboseTypes) 
+            : base(debuggedTypes, verboseTypes) { }
 
         protected override void OnConstructor()
         {
@@ -33,8 +33,9 @@ namespace SkimSkript.MainComponents
                 throw new NullReferenceException("Lexer not properly initialized");
 
             _lexemes = _scanner.CreateLexemes(linesArray);
-            var tokens = _evaluator.CreateTokens(_lexemes);
-            return tokens;
+            DisplayOutput("Scanner", _lexemes);
+
+            return _evaluator.CreateTokens(_lexemes);
         }
     }
 }

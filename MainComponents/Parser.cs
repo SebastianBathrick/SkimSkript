@@ -1,7 +1,6 @@
 ﻿using SkimSkript.Nodes;
 using SkimSkript.Nodes.StatementNodes;
 using SkimSkript.Tokens;
-using System.ComponentModel.DataAnnotations;
 
 namespace SkimSkript.MainComponents
 {

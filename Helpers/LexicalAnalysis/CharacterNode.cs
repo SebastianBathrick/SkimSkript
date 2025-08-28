@@ -7,6 +7,7 @@ namespace SkimSkript.LexicalAnalysis.Helpers
     public class CharacterNode
     {
         private const int MAX_CHILDREN = 27; //26 for alphabetic chars and 1 extra for whitespace.
+
         private CharacterNode[] _children = new CharacterNode[MAX_CHILDREN];
         private TokenType _tokenType = TokenType.Identifier;
 

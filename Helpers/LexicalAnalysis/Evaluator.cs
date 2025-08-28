@@ -90,7 +90,10 @@ namespace SkimSkript.LexicalAnalysis.Helpers
                 // Continue feeding characters until reaching the end of the lexeme or the search failed
                 while (!isEvaluationComplete && Lexemes.TryGetLexemeChar(out var lexemeChar))
                 {
-                    navNode = navNode!.GetChild(lexemeChar);
+                    if(!char.IsAsciiLetter(lexemeChar))
+                        continue;
+
+                    navNode = navNode?.GetChild(lexemeChar);
 
                     // If null that means there was no node child associated with the char.
                     isEvaluationComplete = navNode == null;

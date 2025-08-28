@@ -2,7 +2,7 @@
   "profiles": {
     "SkimSkript": {
       "commandName": "Project",
-      "commandLineArgs": "--full-help"
+      "commandLineArgs": "-v lexer parser -f C:\\\\\\\\\\\\\\\\Users\\\\\\\\\\\\\\\\sebas\\\\\\\\\\\\\\\\OneDrive\\\\\\\\\\\\\\\\Documents\\\\\\\\\\\\\\\\GitHub\\\\\\\\\\\\\\\\SkimSkript\\\\\\\\\\\\\\\\SkimApps\\\\\\\\\\\\\\\\ReadMe\\\\\\\\\\\\\\\\FactorialPy.sk C:\\\\\\\\Users\\\\\\\\sebas\\\\\\\\OneDrive\\\\\\\\Documents\\\\\\\\GitHub\\\\\\\\SkimSkript\\\\\\\\SkimApps\\\\\\\\ReadMe\\\\\\\\FizzBuzzC.sk C:\\\\Users\\\\sebas\\\\OneDrive\\\\Documents\\\\GitHub\\\\SkimSkript\\\\SkimApps\\\\ReadMe\\\\HelloWorld.sk C:\\Users\\sebas\\OneDrive\\Documents\\GitHub\\SkimSkript\\SkimApps\\ReadMe\\FizzBuzzC.sk"
     }
   }
 }

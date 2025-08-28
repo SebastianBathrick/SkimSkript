@@ -9,8 +9,6 @@ namespace SkimSkript.Interpretation.Helpers
     {
         private readonly BlockExitType _exitType;
         private readonly Node? _returnData = null;
-
-
         public Node? ReturnData => _returnData;
 
         public BlockExitType ExitType => _exitType;

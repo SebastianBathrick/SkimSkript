@@ -1,0 +1,4 @@
+ int myVariable3 as 10
+ declare int myVariable4 = 10
+ integer myVariable5 = 50
+ declare string myVariable6

@@ -13,7 +13,7 @@ namespace SkimSkript.MainComponents
 
     internal abstract class MainComponent<T, Y> where T : notnull where Y : notnull
     {
-        private bool _isDebugging;
+        protected bool _isDebugging;
         private string _name;
 
         protected Logger? _logger;
@@ -65,9 +65,14 @@ namespace SkimSkript.MainComponents
             GlobalClock.AddToGlobalElapsedTime(elapsedTime);
 
             _logger?.Debug("{ClassName} executed in {ExecutionTime} ms", _name, elapsedTime);
-            _logger?.Verbose("Output for {ClassName}: {Output}", _name, debugReturnData);
+            DisplayOutput(_name, debugReturnData);
 
             return debugReturnData;
+        }
+
+        protected void DisplayOutput(string producerName, object output)
+        {
+            _logger?.Verbose("Output for {ClassName}:\n{Output}", producerName, output);
         }
 
         protected abstract Y OnExecute(T componentInput);

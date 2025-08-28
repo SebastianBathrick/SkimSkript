@@ -1,6 +1,7 @@
 Declare integer iterator as 1.
 
-Invoke read("Please enter a whole number:")
+Declare integer number as the value of read("Please enter a whole number:")
+Invoke print(Value of SquareRoot(number))
 
 Define integer function SquareRoot(integer number)
 {
