@@ -1,7 +1,9 @@
-## What is SkimSkript?
+## What is SkimSkript? 			
 SkimSkript is an experimental interpreted language meant to explore different syntactical possibilities. It features flexible, forgiving syntax and enforced typing with runtime coercion, allowing users to write in C-style braces, Python-like keywords, or even natural-language pseudocode. SkimSkript adapts to the programmer — not the other way around.
 
 With support for multiple syntactic styles, programmers can experiment with static types, recursion, and procedural logic without being boxed into rigid syntax rules or overwhelmed by compiler errors.
+
+#### [See More on Wiki](https://github.com/SebastianBathrick/SkimSkript/wiki])
 
 ### Programmer Freedom
 Would you like to stick to something more reminiscent of the **C family of languages**? You can!
