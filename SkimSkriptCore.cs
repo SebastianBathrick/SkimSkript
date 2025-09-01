@@ -7,10 +7,10 @@ using SkimSkript.Nodes;
 namespace SkimSkript
 {
     /// <summary>
-    /// Main compiler class for the SkimSkript source language.
+    /// Main class for the SkimSkript source language.
     /// </summary>
     /// <remarks>
-    /// Handles the complete compilation pipeline: lexical analysis, parsing, and interpretation.
+    /// Handles the complete pipeline: lexical analysis, parsing, and interpretation.
     /// Must be initialized before execution.
     /// </remarks>
     public class SkimSkriptCore
@@ -76,15 +76,10 @@ namespace SkimSkript
         #endregion
 
         #region Execution
-        /// <summary>
-        /// Executes the provided source code by tokenizing, parsing, and interpreting it.
-        /// </summary>
+        /// <summary> Executes the provided source code by tokenizing, parsing, and interpreting it. </summary>
         /// <param name="sourceCode">Array of strings representing the source code to execute. Each string corresponds to a line of code.</param>
         /// <returns>Exit code from the interpreted program execution.</returns>
-        /// <remarks>
-        /// Performs the complete compilation pipeline: lexical analysis → parsing → interpretation.
-        /// Returns SOURCE_CODE_ERROR (-1) on any compilation or runtime errors.
-        /// </remarks>
+        /// <remarks> Returns SOURCE_CODE_ERROR (-1) on any lexer, parser, or runtime errors. </remarks>
         public int Execute(string[] sourceCode)
         {
             // Validate that all components have been properly initialized
