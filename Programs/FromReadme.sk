@@ -32,7 +32,7 @@ Declare int iterator as 1.
 Run print("Please enter a number to find its square root:").
 Declare integer input as value of read().
 
-Invoke print:("Square root" plus value of SquareRoot(input))
+Invoke print:("Square root " plus value of SquareRoot(input))
 
 Define integer function SquareRoot(integer number):
 {
