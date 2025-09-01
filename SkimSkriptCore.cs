@@ -6,13 +6,9 @@ using SkimSkript.Nodes;
 
 namespace SkimSkript
 {
-    /// <summary>
-    /// Main class for the SkimSkript source language.
-    /// </summary>
-    /// <remarks>
-    /// Handles the complete pipeline: lexical analysis, parsing, and interpretation.
-    /// Must be initialized before execution.
-    /// </remarks>
+    /// <summary> Main class for the SkimSkript source language. </summary> 
+    /// <remarks> Handles the complete pipeline: lexical analysis, parsing, and interpretation.
+    /// Must be initialized before execution. </remarks>
     public class SkimSkriptCore
     {
         #region Constants
