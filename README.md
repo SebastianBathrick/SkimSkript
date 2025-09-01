@@ -86,5 +86,4 @@ Encapsulates, abstracts, and performs the lexical analysis previously mentioned 
 Utilizes tokens to build an abstract syntax tree (AST) for interpretation.
 ### Interpreter
 Handles the execution of the program recursively traversing the AST to do so. Examples of what this component is responsible for include scope, coercion, and evaluating expressions, among others.
-## Diagram
 <img width="1520" height="637" alt="InterpreterDesign (6)" src="https://github.com/user-attachments/assets/fa7b5a69-53de-417a-8867-2a8c6d82acc1" />
