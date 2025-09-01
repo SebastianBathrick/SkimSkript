@@ -1,0 +1,210 @@
+print("Starting Scope Tests")
+print("===================")
+
+print("Testing global scope...")
+# Global scope variables
+int globalVar = 10
+string globalString = "global"
+bool globalBool = true
+float globalFloat = 3.14
+
+# Verify global variables are accessible
+assert globalVar == 10
+assert ~~~~~~~~~~~~~~~~~~~~~~ globalString == "global"
+assert globalBool == true
+assert globalFloat == 3.14
+
+print("Global scope tests passed!")
+
+print("Testing function local scope...")
+# Function with local variables
+def TestLocalScope()
+{
+    int localVar = 20
+    string localString = "local"
+    bool localBool = false
+    float localFloat = 2.5
+
+    # Verify local variables are accessible
+    assert localVar == 20
+    assert localString == "local"
+    assert localBool == false
+    assert localFloat == 2.5
+
+    # Verify global variables are accessible from function
+    assert globalVar == 10
+    assert globalString == "global"
+    assert globalBool == true
+    assert globalFloat == 3.14
+}
+
+# Call the function to test local scope
+TestLocalScope()
+
+# Verify local variables are not accessible outside function
+# Note: These would cause errors if uncommented, showing they're not accessible
+# assert localVar == 20
+# assert localString == "local"
+# assert localBool == false
+# assert localFloat == 2.5
+
+print("Function local scope tests passed!")
+
+print("Testing block scope...")
+# Block scope variables
+int blockVar = 30
+    
+if true
+{
+    int innerVar = 40
+    string innerString = "inner"
+    
+    # Verify block variables are accessible
+    assert innerVar == 40
+    assert innerString == "inner"
+    
+    # Verify outer variables are accessible
+    assert blockVar == 30
+    assert globalVar == 10
+}
+
+# Verify inner variables are not accessible outside block
+# Note: These would cause errors if uncommented, showing they're not accessible
+# assert innerVar == 40
+# assert innerString == "inner"
+
+print("Block scope tests passed!")
+
+print("Testing variable shadowing...")
+# Variable shadowing
+int shadowVar = 50
+
+def TestShadowing()
+{
+    int shadowVar = 60  # Shadows global shadowVar
+    
+    # Verify local variable shadows global
+    assert shadowVar == 60
+    
+    # Verify global is still accessible through different name
+    assert globalVar == 10
+}
+
+# Call function to test shadowing
+TestShadowing()
+
+# Verify global variable is unchanged
+assert shadowVar == 50
+
+print("Variable shadowing tests passed!")
+
+print("Testing nested block scopes...")
+# Nested block scopes
+int outerVar = 70
+
+if true
+{
+    int middleVar = 80
+    
+    if true
+    {
+        int innerVar = 90
+        
+        # Verify all levels are accessible
+        assert outerVar == 70
+        assert middleVar == 80
+        assert innerVar == 90
+    }
+    
+    # Verify outer and middle are accessible, inner is not
+    assert outerVar == 70
+    assert middleVar == 80
+    # assert innerVar == 90  # Would cause error
+}
+
+# Verify only outer is accessible
+assert outerVar == 70
+# assert middleVar == 80  # Would cause error
+# assert innerVar == 90  # Would cause error
+
+print("Nested block scope tests passed!")
+
+print("Testing function parameter scope...")
+# Function parameter scope
+def TestParamScope(int paramVar)
+{
+    # Verify parameter is accessible
+    assert paramVar == 100
+    
+    # Verify parameter can be modified
+    paramVar = 200
+    assert paramVar == 200
+    
+    # Verify global is still accessible
+    assert globalVar == 10
+}
+
+# Call function to test parameter scope
+TestParamScope(100)
+
+# Verify parameter is not accessible outside function
+# assert paramVar == 200  # Would cause error
+
+print("Function parameter scope tests passed!")
+
+print("Testing while loop block scope...")
+# While loop block scope
+int loopVar = 300
+
+while loopVar < 303
+{
+    int innerLoopVar = 400
+    
+    # Verify both variables are accessible
+    assert loopVar < 303
+    assert innerLoopVar == 400
+    
+    loopVar = loopVar + 1
+}
+
+# Verify inner variable is not accessible outside loop
+# assert innerLoopVar == 400  # Would cause error
+assert loopVar == 303
+
+print("While loop block scope tests passed!")
+
+print("Testing variable declaration order...")
+# Variable declaration order
+def TestDeclarationOrder()
+{
+    # Verify variables must be declared before use
+    int firstVar = 500
+    assert firstVar == 500
+    
+    int secondVar = 600
+    assert secondVar == 600
+    assert firstVar == 500
+}
+
+TestDeclarationOrder()
+
+print("Variable declaration order tests passed!")
+
+print("Testing global variable modification...")
+# Global variable modification
+int modVar = 700
+
+def ModifyGlobal()
+{
+    modVar = 800
+    assert modVar == 800
+}
+
+ModifyGlobal()
+assert modVar == 800
+
+print("Global variable modification tests passed!")
+
+print("")
+print("All scope tests completed successfully!")
+print("Total test categories: 9") 

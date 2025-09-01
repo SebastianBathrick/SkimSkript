@@ -1,4 +1,6 @@
-﻿namespace SkimSkript.Nodes.ValueNodes
+﻿using SkimSkript.ErrorHandling;
+
+namespace SkimSkript.Nodes
 {
     /// <summary><see cref="ValueNode"/> that stores a string while also defining the different rules 
     /// surrounding the data type's coercion.</summary>
@@ -23,7 +25,7 @@
             if (float.TryParse(_value, out float result))
                 return result;
 
-            throw new System.Exception($"Failed to cast string '{_value}' to float.");
+            throw new RuntimeException($"\"{_value}\" string cannot be converted to floating-point");
         }
 
         public override int ToInt()
@@ -31,7 +33,7 @@
             if (int.TryParse(_value, out int result))
                 return result;
 
-            throw new System.Exception($"Failed to cast string '{_value}' to int.");
+            throw new RuntimeException($"\"{_value}\" string cannot be converted to integer");
         }
 
         public override string ToString() => _value;

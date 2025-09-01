@@ -1,4 +1,4 @@
-﻿namespace SkimSkript.Nodes.ValueNodes
+﻿namespace SkimSkript.Nodes
 {
     /// <summary><see cref="ValueNode"/> that stores a integer while also defining the different rules 
     /// surrounding the data type's coercion.</summary>
@@ -8,7 +8,7 @@
         private int _value;
 
         /// <summary>Creates new instance storing the value of <see cref="IntValueNode.DEFAULT_VALUE"/>.</summary>
-        public IntValueNode() => _value = DEFAULT_VALUE; 
+        public IntValueNode() => _value = DEFAULT_VALUE;
 
         public IntValueNode(int value) => _value = value;
 

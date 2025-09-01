@@ -1,4 +1,4 @@
-﻿using SkimSkript.TokenManagement;
+﻿using SkimSkript.Tokens;
 
 namespace SkimSkript.Nodes
 {
@@ -15,7 +15,7 @@ namespace SkimSkript.Nodes
     }
 
     /// <summary>Enum representing logical operators for combining boolean expressions.</summary>
-    public enum LogicalOperator : byte
+    public enum LogicOperator : byte
     {
         And = TokenType.And,
         Or,

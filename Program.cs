@@ -1,55 +1,80 @@
-﻿using SkimSkript;
+﻿using JustLogger;
+using JustLogger.ConsoleLogging;
+using SkimSkript;
+using SkimSkript.Helpers.EntryPoint;
+using SkimSkript.MainComponents;
 
 class Program
 {
+    #region Constants
+    private const int ERROR_EXIT_CODE = -1;
+    private const int DEFAULT_EXIT_CODE = 0;
+    private const LogLevel ENTRY_POINT_LOG_LVL = LogLevel.Information;
+    #endregion
+
+    #region Data Members
+    private static readonly Logger _entryPointLogger = new ConsoleLogger().SetMinimumLogLevel(ENTRY_POINT_LOG_LVL);
+    private static List<string>? _sourceCodePaths; // Lazy-initialized list of file paths to process
+    private static MainComponentType[]? _debuggedMainComponents;
+    private static MainComponentType[]? _verboseMainComponents;
+    #endregion
+
+    #region Properties
+    /// <summary>
+    /// Gets the list of source code file paths, initializing if null.
+    /// </summary>
+    public static List<string> SourceCodePaths => _sourceCodePaths ?? (_sourceCodePaths = []);
+    #endregion
+
     private static int Main(string[] args)
     {
+        // Validate that at least one argument was provided
         if (args.Length == 0)
         {
-            Console.Error.WriteLine("Error: One or file path arguments required.");
-            return -1;
+            _entryPointLogger.Error(
+                ProgramFlags.NoArgsErrorMessage, ProgramFlags.NoArgsErrorProperties);
+            return ERROR_EXIT_CODE;
         }
 
-        var core = new SkimSkriptCore();
+        int exitCode = DEFAULT_EXIT_CODE;
 
-        foreach(var filepath in args)
+        // Process command-line flags if first argument has flag prefix and exit if an error occurs while dong so
+        if (ProgramFlags.IsFlag(args))
         {
-            try
-            {
-                if(!TryGetFileContents(filepath, out var fileContents))
-                    return -1; // Error already logged in TryGetFileContents
+            if(!ProgramFlags.TryEvaluateArguments(args, _entryPointLogger))
+                return ERROR_EXIT_CODE;
+        }
+        else
+            SourceCodePaths.AddRange(args); // Add all arguments as source code paths
 
-                core.Execute(fileContents!);
-            }
-            catch (Exception ex)
-            {
-                Console.Error.WriteLine($"Error processing file '{filepath}': {ex.Message}");
-                return -1;
-            }
+
+        // Early exit if no files to process
+        if (SourceCodePaths.Count == 0)
+            return exitCode;
+
+        // Initialize the SkimSkript interpreter core
+        var core = new SkimSkriptCore(errorLogger: new ConsoleLogger());
+
+        // Process each source code file sequentially
+        foreach (var filePath in SourceCodePaths)
+        {
+            // Attempt to read and validate the source code file
+            if (!SourceCodeReader.TryGetSourceCode(filePath, _entryPointLogger, out var sourceCode))
+                continue; // Skip to next file if current one fails to load
+
+            // Reset core state for each file to ensure clean execution environment
+            core.Initialize(_debuggedMainComponents, _verboseMainComponents);
+
+            // Execute the source code and capture the exit code
+            exitCode = core.Execute(sourceCode);
         }
 
-        return core.WasExecutionSuccessful ? 0 : -1;
+        return exitCode; // Last interpreted program's exit code
     }
 
-    private static bool TryGetFileContents(string filePath, out string[]? linesOfCode)
-    {
-        linesOfCode = null;
+    public static void SetDebuggedMainComponents(params MainComponentType[] debuggedMainComponents) =>
+        _debuggedMainComponents = debuggedMainComponents;
 
-        if (!File.Exists(filePath))
-        {
-            Console.Error.WriteLine($"Error: File '{filePath}' does not exist.");
-            return false;
-        }
-
-        try
-        {
-            linesOfCode = File.ReadLines(filePath).ToArray();
-            return true;
-        }
-        catch (Exception ex)
-        {
-            Console.Error.WriteLine("Error reading file: " + ex.Message);
-            return false;
-        }
-    }
+    public static void SetVerboseMainComponents(params MainComponentType[] verboseMainComponents) =>
+        _verboseMainComponents = verboseMainComponents;
 }

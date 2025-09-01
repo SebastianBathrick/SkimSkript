@@ -2,7 +2,7 @@
   "profiles": {
     "SkimSkript": {
       "commandName": "Project",
-      "commandLineArgs": "C:\\Users\\Sebastian\\Desktop\\SkimSkript\\SkimPrograms\\UnitTests\\NumericExpressionsTests.skim"
+      "commandLineArgs": "-v lexer parser -f C:\\Users\\sebas\\OneDrive\\Documents\\GitHub\\SkimSkript\\Programs\\FromReadme.sk"
     }
   }
 }

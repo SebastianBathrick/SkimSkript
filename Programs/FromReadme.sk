@@ -1,0 +1,276 @@
+﻿#--[Introduction Examples]------------------------------------------------#
+
+# C-style syntax example
+int i = 1;
+
+while(i <= 100)
+{
+    if(i % 15 == 0)
+		print("FizzBuzz");
+    else if(i % 3 == 0)
+		print("Fizz");
+    else if(i % 5 == 0)
+		print("Buzz");
+    else
+		print(i);
+	
+ i = i + 1;
+}
+
+# Pythonic syntax example
+def int factorial(int n):
+    if n == 0:
+		return 1
+    else:
+		return n * factorial(n - 1)
+
+print(factorial(5))  # Output: 120
+
+# Verbose/natural language syntax example
+Declare int iterator as 1.
+ 
+Run print("Please enter a number to find its square root:").
+Declare integer input as value of read().
+
+Invoke print:("Square root " plus value of SquareRoot(input))
+
+Define integer function SquareRoot(integer number):
+{
+	Declare integer odd as 1. Declare integer count as 0.
+	
+	Repeat while number is at least 0:
+	{
+		 Set number to number minus odd.
+		 Set odd to odd plus 2. 
+		 Set count to count plus 1.
+	}
+
+	Give back count minus 1.
+}
+
+#--[Variable Declarations]--------------------------------------#
+
+# Brief syntax
+float myVariable2 = 10
+
+# Mix syntax
+int myVariable3 as 10
+declare int myVariable4 = 10
+integer myVariable5 = 50
+declare string myVariable6
+
+#--[Whitespace and Lines]----------------------------------------------#
+
+int      myVar =      20
+           myVar =        20
+    if(myVar 
+==        50) {print("My Variable is 50")}
+
+#--[Variable Scopes]-------------------------------------------------#
+
+# Global scope example
+string globalVar = "I can be accessed anywhere after my declaration!"
+ModifyGlobalVar()
+print(globalVar) # Output: I was modified by a function!!!
+		
+def ModifyGlobalVar()
+{
+	globalVar = "I was modified by a function!!!"
+}
+
+# Local scope example
+# Parameter "rightOperand" can only be used inside the block below
+def AddFiveAndPrint(int rightOperand) 
+{
+		#Variable "sum" can be used anywhere in this function after declaration
+		int sum = 5 + rightOperand
+			    
+		if sum < 0
+		print("Sum was negative! Sum: " + sum)
+		else if sum == 0
+		print("Sum was not negative or positive! Sum: " + sum)
+		else
+		print("Sum was positive! Sum: " + sum)
+		print("x" + sum)
+}
+		
+# Neither the parameter or variable above can be used here
+AddFiveAndPrint(20)
+
+#--[Conditional Statements]-------------------------------------------------#
+
+# If statements
+bool myCondition = true
+
+# This can either be the verbose or brief "if." The interpreter will accept either.
+if myCondition is true 
+	print("myCondition is true")
+else
+	print("MyCondition is false")
+
+bool myCondition2 = false
+			
+if myCondition2 is false
+	print("myCondition2 is false")
+otherwise
+	print("MyCondition2 is true")
+
+# Else-if statements
+print("Please pick a number from 0-5:")
+int userSelection = read()
+		
+if userSelection is 0
+	print("You selected 0")
+else if userSelection is 1 then # You can optionally use then at the end of any variant
+	print("You selected 1")
+elif userSelection is 2
+	print("You selected 2")
+instead if userSelection is 3
+	print("You selected 3")
+alternatively if userSelection is 4
+	print("You selected 4")
+otherwise if userSelection is 5
+	print("You selected 5")
+else
+	print("Selection outside of valid range")
+
+#--[Loops]-------------------------------------------------#
+
+# While loops with different syntax options
+int iterator1 = 0
+	
+while iterator1 < 5
+{
+	iterator1 = iterator1 + 1
+	print("iterator1: " + iterator1)
+}
+	
+int iterator2 = 0
+		
+repeat while iterator2 < 5
+{
+	iterator2 = iterator2 + 1
+	print("iterator2: " + iterator2)
+}
+	
+int iterator3 = 0
+		
+repeat code while iterator3 < 5
+{
+	iterator3 = iterator3 + 1
+	print("iterator3: " + iterator3)
+}
+
+#--[Control Structure Blocks]-------------------------------------------------#
+
+# Explicit blocks example
+bool isRunning = true
+		
+while isRunning is true
+{ 
+	#Block with multiple statements
+	print("Hello!")
+	print("Want me to greet you again? y for yes")
+			
+	if read() is not "y"
+	{ 
+		#Block with a single statement
+		isRunning = false
+	}
+}
+
+#--[Function Definitions]-------------------------------------------------#
+
+# Brief syntax
+def NoReturnTypeFunction() { }
+		
+def int IntFunction() { return 1 }
+		
+def float FloatFunction() { return 1.0 }
+		
+def string StringFunction() { return "Hello" }
+		
+def bool BoolFunction() { return true }
+
+# Verbose syntax
+define function NoReturnTypeFunction2() {}
+
+define integer function IntFunction2() { give back 1 }
+
+define floating point function FloatFunction2() { give back 1.0 }
+
+define string function StringFunction2() { give back "Hello" }
+
+define boolean function BoolFunction2() { give back true }
+
+#--[Debugging and Analysis]-------------------------------------------------#
+
+# Assertions
+# Evaluates to true, and control will continue
+assert 3 + 5 == 8
+
+# Evaluates to false, and control will stop and the terminal will display an error
+# assert 3 + 5 == 7 
+
+# Try-Catch Statements
+# Throws a parsing exception if anything but a whole number is entered.
+try
+{
+	int myVariable = read("Please enter a whole number:")
+	# For example, if "hello" was entered, an exception would be thrown,
+	# because it is meant to be parsed as an integer
+}
+catch
+{
+	print("Error: Only whole numbers can be entered")
+}
+
+# Try-Catch with exception message access
+try
+{
+	# Pretend "hello" was entered
+	int myVariable = read("Please enter a whole number:")
+}
+catch message
+{
+	# Will print "'hello' string cannot be converted to integer"
+	print(message)
+}
+
+# Implicit blocks with try-catch
+try
+	int myVariable = read("Please enter a whole number:")
+catch message
+	print(message)
+
+#--[Data Type Conversion]-------------------------------------------------#
+
+# Variable Assignment/Initialization Coercion
+# The string literal here will be casted to an integer 1
+int myInteger = "1"
+
+# Here the 3.14 will have the digits after the decimal truncated
+myInteger = 3.14
+
+# Output: 3
+print(myInteger)
+
+# Argument Coercion
+# 3.25 is a float literal paired with an integer parameter
+# "2" is a string literal paired with an integer parameter as well 
+PrintIntegerSum(3.25 "2")
+
+# 3.25 will be converted to 3
+# "2" will be converted to the integer 2
+def PrintIntegerSum(int left int right)
+	# Output: 5
+	print(left + right)
+	# Note: You can even see this with print! left + right get converted to a string
+	# after being evaluated and sent as an argument!
+
+# Return Coercion
+float secretNum = GetMySecretNumber()
+
+# String literal "4.234" will be converted to the float 4.234 and returned
+def float GetMySecretNumber()
+	return "4.234"

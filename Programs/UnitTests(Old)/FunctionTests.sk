@@ -1,0 +1,354 @@
+print("Starting Function Tests")
+print("=======================")
+
+print("Testing basic void function definitions...")
+# Basic void function - brief syntax
+def BasicVoidFunction()
+{
+    print("Inside BasicVoidFunction")
+}
+
+# Basic void function - verbose syntax
+define function VerboseVoidFunction()
+{
+    print("Inside VerboseVoidFunction")
+}
+
+# Call the functions to verify they work
+BasicVoidFunction()
+VerboseVoidFunction()
+print("Basic void function definitions passed!")
+
+print("Testing functions with return types...")
+# Integer return functions
+def int GetFive()
+{
+    return 5
+}
+
+define integer function GetTen()
+{
+    give back 10
+}
+
+# Test the return values
+print("GetFive() returns: " + GetFive())
+print("GetTen() returns: " + GetTen())
+assert GetFive() == 5
+assert GetTen() == 10
+
+# Float return functions
+def float GetPi()
+{
+    return 3.14
+}
+
+define floating point function GetHalf()
+{
+    give back 0.5
+}
+
+print("GetPi() returns: " + GetPi())
+print("GetHalf() returns: " + GetHalf())
+assert GetPi() == 3.14
+assert GetHalf() == 0.5
+
+# Boolean return functions
+def bool IsTrue()
+{
+    return true
+}
+
+define boolean function IsFalse()
+{
+    give back false
+}
+
+assert IsTrue() == true
+assert IsFalse() == false
+
+# String return functions
+def string GetHello()
+{
+    return "Hello"
+}
+
+define string function GetWorld()
+{
+    give back "World"
+}
+
+assert GetHello() == "Hello"
+assert GetWorld() == "World"
+
+print("Functions with return types passed!")
+
+print("Testing functions with parameters...")
+# Pass-by-value parameters
+def int Add(int a int b)
+{
+    return a + b
+}
+
+def string Concatenate(string first string second)
+{
+    return first + second
+}
+
+def bool IsGreater(int x int y)
+{
+    if x > y
+        return true
+    else
+        return false
+}
+
+print("Add(3, 7) returns: " + Add(3, 7))
+print("Add(10, -5) returns: " + Add(10, (-5)))
+print("Concatenate('Hello', 'World') returns: " + Concatenate("Hello", "World"))
+print("IsGreater(10, 5) returns: " + IsGreater(10, 5))
+print("IsGreater(3, 8) returns: " + IsGreater(3, 8))
+assert Add(3, 7) == 10
+assert Add(10,(-5)) == 5
+assert Concatenate("Hello", "World") == "HelloWorld"
+assert IsGreater(10, 5) == true
+assert IsGreater(3, 8) == false
+
+print("Functions with parameters passed!")
+
+print("Testing pass-by-reference parameters...")
+# Pass-by-reference functions
+def IncrementByOne(ref int value)
+{
+    value = value + 1
+}
+
+def SwapInts(ref int first ref int second)
+{
+    int temp = first
+    first = second
+    second = temp
+}
+
+# Test pass-by-reference
+int testInt = 5
+print("Before IncrementByOne: testInt = " + testInt)
+IncrementByOne(ref testInt)
+print("After IncrementByOne: testInt = " + testInt)
+assert testInt == 6
+
+int val1 = 10
+int val2 = 20
+print("Before SwapInts: val1 = " + val1 + ", val2 = " + val2)
+SwapInts(ref val1 ref val2)
+print("After SwapInts: val1 = " + val1 + ", val2 = " + val2)
+assert val1 == 20
+assert val2 == 10
+
+print("Pass-by-reference parameters passed!")
+
+print("Testing recursive functions...")
+# Recursive factorial function
+def int Factorial(int n)
+{
+    if n == 0
+        return 1
+    else
+        return n * Factorial(n - 1)
+}
+
+# Recursive Fibonacci function
+def int Fibonacci(int n)
+{
+    if n == 0
+        return 0
+    elif n == 1
+        return 1
+    else
+        return Fibonacci(n - 1) + Fibonacci(n - 2)
+}
+
+print("Factorial(5) returns: " + Factorial(5))
+print("Factorial(0) returns: " + Factorial(0))
+print("Factorial(1) returns: " + Factorial(1))
+print("Factorial(4) returns: " + Factorial(4))
+assert Factorial(5) == 120
+assert Factorial(0) == 1
+assert Factorial(1) == 1
+assert Factorial(4) == 24
+
+print("Fibonacci(0) returns: " + Fibonacci(0))
+print("Fibonacci(1) returns: " + Fibonacci(1))
+print("Fibonacci(6) returns: " + Fibonacci(6))
+print("Fibonacci(7) returns: " + Fibonacci(7))
+assert Fibonacci(0) == 0
+assert Fibonacci(1) == 1
+assert Fibonacci(6) == 8
+assert Fibonacci(7) == 13
+
+print("Recursive functions passed!")
+
+print("Testing functions called before definition...")
+# Call functions before they are defined
+print("ForwardDeclaredFunction() returns: " + ForwardDeclaredFunction())
+print("GetMagicNumber() returns: " + GetMagicNumber())
+print("GetMagicNumber() + 10 equals: " + (GetMagicNumber() + 10))
+assert ForwardDeclaredFunction() == 100
+assert GetMagicNumber() + 10 == 52
+
+# Define the functions after calling them
+def int ForwardDeclaredFunction()
+{
+    return 100
+}
+
+def int GetMagicNumber()
+{
+    return 42
+}
+
+print("Functions called before definition passed!")
+
+print("Testing early return statements...")
+# Functions with early returns
+def int EarlyReturnTest(int value)
+{
+    if value < 0
+        return -1
+    
+    if value == 0
+        return 0
+    
+    if value > 100
+        return 100
+    
+    return value
+}
+
+def ProcessValue(int input)
+{
+    print("Processing: " + input)
+    
+    if input < 0
+    {
+        print("Negative value - exiting early")
+        return
+    }
+    
+    print("Value is positive: " + input)
+}
+
+print("EarlyReturnTest(-5) returns: " + EarlyReturnTest(-5))
+print("EarlyReturnTest(0) returns: " + EarlyReturnTest(0))
+print("EarlyReturnTest(150) returns: " + EarlyReturnTest(150))
+print("EarlyReturnTest(25) returns: " + EarlyReturnTest(25))
+assert EarlyReturnTest(-5) == -1
+assert EarlyReturnTest(0) == 0
+assert EarlyReturnTest(150) == 100
+assert EarlyReturnTest(25) == 25
+
+ProcessValue(-10)
+ProcessValue(25)
+
+print("Early return statements passed!")
+
+print("Testing nested function calls...")
+# Functions that call other functions
+def int Double(int x)
+{
+    return x * 2
+}
+
+def int Triple(int x)
+{
+    return x * 3
+}
+
+def int DoubleTriple(int x)
+{
+    return Double(Triple(x))
+}
+
+assert Double(5) == 10
+assert Triple(4) == 12
+assert DoubleTriple(3) == 18
+
+print("Nested function calls passed!")
+
+print("Testing type coercion in returns...")
+# Functions that return values requiring coercion
+def float StringToFloat()
+{
+    return "123.45"
+}
+
+def int FloatToInt()
+{
+    return 99.99
+}
+
+def string IntToString()
+{
+    return 42
+}
+
+print("StringToFloat() returns: " + StringToFloat())
+print("FloatToInt() returns: " + FloatToInt())
+print("IntToString() returns: " + IntToString())
+assert StringToFloat() == 123.45
+assert FloatToInt() == 99
+assert IntToString() == "42"
+
+print("Type coercion in returns passed!")
+
+print("Testing global variable access in functions...")
+# Global variables accessed by functions
+int globalCounter = 0
+string globalMessage = "Global"
+
+def IncrementGlobalCounter()
+{
+    globalCounter = globalCounter + 1
+}
+
+def string GetGlobalMessage()
+{
+    return globalMessage + " Access"
+}
+
+print("Initial globalCounter: " + globalCounter)
+IncrementGlobalCounter()
+print("After first increment: " + globalCounter)
+assert globalCounter == 1
+
+IncrementGlobalCounter()
+print("After second increment: " + globalCounter)
+assert globalCounter == 2
+
+print("GetGlobalMessage() returns: " + GetGlobalMessage())
+assert GetGlobalMessage() == "Global Access"
+
+print("Global variable access in functions passed!")
+
+print("Testing case insensitive keywords...")
+# Case insensitive function keywords
+DEF INT CaseInsensitiveFunction1()
+{
+    RETURN 123
+}
+
+Define Integer Function CaseInsensitiveFunction2()
+{
+    Give Back 456
+}
+
+print("CaseInsensitiveFunction1() returns: " + CaseInsensitiveFunction1())
+print("CaseInsensitiveFunction2() returns: " + CaseInsensitiveFunction2())
+assert CaseInsensitiveFunction1() == 123
+assert CaseInsensitiveFunction2() == 456
+
+print("Case insensitive keywords passed!")
+
+print("")
+print("All function tests completed successfully!")
+print("Total test categories: 11") 

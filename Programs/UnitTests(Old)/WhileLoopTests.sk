@@ -1,0 +1,260 @@
+print("Starting While Loop Tests")
+print("========================")
+
+print("Testing basic while loop syntax...")
+# Basic while loop with different syntax variations
+int counter = 0
+
+# Standard while syntax
+while counter < 5
+{
+    counter = counter + 1
+}
+assert counter == 5
+
+counter = 0
+# Repeat while syntax
+repeat while counter < 5
+{
+    counter = counter + 1
+}
+assert counter == 5
+
+counter = 0
+# Repeat code while syntax
+repeat code while counter < 5
+{
+    counter = counter + 1
+}
+assert counter == 5
+
+print("Basic while loop syntax passed!")
+
+print("Testing while loop with different conditions...")
+# Testing various condition types
+int testNum = 0
+
+# Numeric comparison conditions
+while testNum < 10
+{
+    testNum = testNum + 1
+}
+assert testNum == 10
+
+testNum = 10
+while testNum > 0
+{
+    testNum = testNum - 1
+}
+assert testNum == 0
+
+testNum = 0
+while testNum <= 5
+{
+    testNum = testNum + 1
+}
+assert testNum == 6
+
+testNum = 10
+while testNum >= 5
+{
+    testNum = testNum - 1
+}
+assert testNum == 4
+
+# Boolean conditions
+bool shouldContinue = true
+int boolCounter = 0
+while shouldContinue
+{
+    boolCounter = boolCounter + 1
+    if boolCounter == 5
+        shouldContinue = false
+}
+assert boolCounter == 5
+
+print("While loop conditions passed!")
+
+print("Testing while loop with 'is' keyword variations...")
+# Testing 'is' keyword variations in conditions
+int isCounter = 0
+
+# Basic 'is'
+while isCounter is below 5
+{
+    isCounter = isCounter + 1
+}
+assert isCounter == 5
+
+isCounter = 10
+while isCounter exceeds 5
+{
+    isCounter = isCounter - 1
+}
+assert isCounter == 5
+
+isCounter = 0
+while isCounter is at most 5
+{
+    isCounter = isCounter + 1
+}
+assert isCounter == 6
+
+isCounter = 10
+while isCounter is at least 5
+{
+    isCounter = isCounter - 1
+}
+assert isCounter == 4
+
+print("'is' keyword variations passed!")
+
+print("Testing nested while loops...")
+# Testing nested while loops
+int outer = 0
+int inner = 0
+
+while outer < 3
+{
+    inner = 0
+    while inner < 2
+    {
+        inner = inner + 1
+    }
+    outer = outer + 1
+}
+assert outer == 3
+assert inner == 2
+
+print("Nested while loops passed!")
+
+print("Testing while loops with early exit conditions...")
+# Testing while loops with early exit conditions
+int exitCounter = 0
+bool shouldExit = false
+
+while exitCounter < 10 and shouldExit is not true
+{
+    exitCounter = exitCounter + 1
+    if exitCounter == 5
+        shouldExit = true
+}
+
+assert exitCounter == 5
+
+exitCounter = 0
+while exitCounter < 10
+{
+    exitCounter = exitCounter + 1
+    if exitCounter == 5
+        exitCounter = 10  # Force exit by making condition false
+}
+
+assert exitCounter == 10
+
+print("Early exit conditions passed!")
+
+print("Testing while loops with complex conditions...")
+# Testing complex conditions in while loops
+int a = 0
+int b = 0
+
+while a < 5 and b < 3
+{
+    a = a + 1
+    b = b + 1
+}
+assert a == 3
+assert b == 3
+
+a = 0
+b = 0
+while a < 3 or b < 5
+{
+    a = a + 1
+    b = b + 1
+}
+assert a == 5
+assert b == 5
+
+print("Complex conditions passed!")
+
+print("Testing while loops with arithmetic in conditions...")
+# Testing arithmetic in while conditions
+int sum = 0
+int i = 1
+
+while i * i < 25
+{
+    sum = sum + i
+    i = i + 1
+}
+assert sum == 10  # 1 + 2 + 3 + 4
+assert i == 5
+
+sum = 0
+i = 10
+while i / 2 > 0
+{
+    sum = sum + i
+    i = i - 1
+}
+
+assert sum == 54  # 10 + 9 + 8 + 7 + 6 + 5 + 4 + 3 + 2 + 1
+assert i == 1
+
+print("Arithmetic in conditions passed!")
+
+print("Testing while loops with implicit blocks...")
+# Testing while loops with implicit blocks
+int implicitCounter = 0
+
+while implicitCounter < 5
+    implicitCounter = implicitCounter + 1
+assert implicitCounter == 5
+
+implicitCounter = 0
+repeat while implicitCounter < 5
+    implicitCounter = implicitCounter + 1
+assert implicitCounter == 5
+
+implicitCounter = 0
+repeat code while implicitCounter < 5
+    implicitCounter = implicitCounter + 1
+assert implicitCounter == 5
+
+print("Implicit blocks passed!")
+
+print("Testing while loops with variable modifications...")
+# Testing variable modifications in while loops
+int modCounter = 0
+int multiplier = 2
+
+while modCounter < 10
+{
+    modCounter = modCounter + multiplier
+    multiplier = multiplier * 2
+}
+assert modCounter == 14  # 0 + 2 + 4 + 8
+assert multiplier == 16
+
+print("Variable modifications passed!")
+
+print("Testing while loops with string operations...")
+# Testing while loops with string operations
+string result = ""
+int strCounter = 0
+
+while strCounter < 3
+{
+    result = result + "a"
+    strCounter = strCounter + 1
+}
+assert result == "aaa"
+assert strCounter == 3
+
+print("String operations passed!")
+
+print("")
+print("All while loop tests completed successfully!")
+print("Total test categories: 10") 

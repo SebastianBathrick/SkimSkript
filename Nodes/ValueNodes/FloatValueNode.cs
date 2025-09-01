@@ -1,4 +1,4 @@
-﻿namespace SkimSkript.Nodes.ValueNodes
+﻿namespace SkimSkript.Nodes
 {
     /// <summary><see cref="ValueNode"/> that stores a float while also defining the different rules 
     /// surrounding the data type's coercion.</summary>
