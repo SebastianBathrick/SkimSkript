@@ -3,7 +3,7 @@ SkimSkript is an experimental interpreted language meant to explore different sy
 
 With support for multiple syntactic styles, programmers can experiment with static types, recursion, and procedural logic without being boxed into rigid syntax rules or overwhelmed by compiler errors.
 
-#### [See more in-depth overview on the Wiki](https://github.com/SebastianBathrick/SkimSkript/wiki)
+#### [See a more in-depth overview on the Wiki](https://github.com/SebastianBathrick/SkimSkript/wiki)
 
 ### Programmer Freedom
 Would you like to stick to something more reminiscent of the **C family of languages**? You can!
