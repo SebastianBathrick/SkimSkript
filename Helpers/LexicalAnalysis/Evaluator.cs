@@ -90,8 +90,8 @@ namespace SkimSkript.LexicalAnalysis.Helpers
                 // Continue feeding characters until reaching the end of the lexeme or the search failed
                 while (!isEvaluationComplete && Lexemes.TryGetLexemeChar(out var lexemeChar))
                 {
-                    if(!char.IsAsciiLetter(lexemeChar))
-                        continue;
+                    if(!char.IsAsciiLetter(lexemeChar)) 
+                        continue; // TODO: Find the Scanner bug that causes this case
 
                     navNode = navNode?.GetChild(lexemeChar);
 

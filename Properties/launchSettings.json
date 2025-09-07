@@ -2,7 +2,7 @@
   "profiles": {
     "SkimSkript": {
       "commandName": "Project",
-      "commandLineArgs": "-d -f C:\\Users\\Sebastian\\Desktop\\SkimSkript\\Programs\\FromReadme.sk"
+      "commandLineArgs": "C:\\Users\\Sebastian\\Desktop\\SkimSkript\\Programs\\FromReadme.sk"
     }
   }
 }
