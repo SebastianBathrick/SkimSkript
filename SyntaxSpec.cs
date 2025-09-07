@@ -28,6 +28,7 @@ namespace SkimSkript.Syntax
             ("float",TokenType.FloatKeyword),
             ("bool",TokenType.BoolKeyword),
             ("string",TokenType.StringKeyword),
+            ("str", TokenType.StringKeyword),
 
             ("integer", TokenType.IntegerKeyword),
             ("floating point", TokenType.FloatKeyword),
@@ -98,7 +99,6 @@ namespace SkimSkript.Syntax
 
             ("remainder after dividing by", TokenType.Modulus),
 
-            ("assert", TokenType.Assertion),
             ("try", TokenType.Try),
             ("catch", TokenType.Catch)
         };

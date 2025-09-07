@@ -2,6 +2,7 @@
 
 namespace SkimSkript.Interpretation.Helpers
 {
+    /// <summary> Provides methods for coercing nodes to different types and performing logical operations. </summary>
     internal static class CoercionInterpreter
     {
         private static readonly Type[] _expressionTypePrecidence =

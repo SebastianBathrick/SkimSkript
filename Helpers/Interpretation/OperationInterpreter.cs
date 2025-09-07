@@ -3,6 +3,7 @@ using SkimSkript.Nodes;
 
 namespace SkimSkript.Interpretation.Helpers
 {
+    /// <summary> Provides methods for performing mathematical and comparison operations on nodes. </summary>
     public static class OperationInterpreter
     {
         public static Node PerformMathOperation(Node left, Node right, MathOperator mathOp)
