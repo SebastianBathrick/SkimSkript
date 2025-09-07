@@ -4,13 +4,12 @@ using System.Diagnostics;
 
 namespace SkimSkript.MainComponents
 {
-    public enum MainComponentType
-    {
-        Lexer,
-        Parser,
-        Interpreter
-    }
-
+    /// <summary> Base class for all main components that perform the main functionality of the 
+    /// SkimSkript interpreter (Lexer, Parser, and Interpreter). </summary>
+    /// <remarks> This class features debugging functionality to help with development and debugging. 
+    /// Optionally, execution times, component input, and component output can be displayed in verbose console logs. </remarks>
+    /// <typeparam name="T">The type of the input for the component.</typeparam>
+    /// <typeparam name="Y">The type of the output for the component.</typeparam>
     internal abstract class MainComponent<T, Y> where T : notnull where Y : notnull
     {
         protected bool _isDebugging;
@@ -78,6 +77,13 @@ namespace SkimSkript.MainComponents
         protected abstract Y OnExecute(T componentInput);
 
         protected virtual void OnConstructor() => _logger?.Debug("{ClassName} no OnConstructor behavior defined", _name);
+    }
+
+    public enum MainComponentType
+    {
+        Lexer,
+        Parser,
+        Interpreter
     }
 
     internal static class GlobalClock
