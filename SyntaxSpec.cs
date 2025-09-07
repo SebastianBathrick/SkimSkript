@@ -7,7 +7,6 @@ namespace SkimSkript.Syntax
     {
         public static readonly (string text, TokenType key)[] reservedWords =
         {
-            #region Function Related
             ("def", TokenType.FunctionDefine), 
             ("define", TokenType.FunctionDefine),
             ("function", TokenType.FunctionLabel),
@@ -155,6 +154,7 @@ namespace SkimSkript.Syntax
                 TokenType.ParenthesisClose => ")",
                 TokenType.BlockOpen => "{",
                 TokenType.BlockClose => "}",
+                _ => throw new ArgumentException(nameof(tokenType)),
             };
 
         public static string GetOperatorLexeme(TokenType tokenType)
@@ -164,7 +164,6 @@ namespace SkimSkript.Syntax
                     return op.Key;
             return String.Empty;
         }
-        #endregion
     }
 
     public enum BuiltInFunctionID : byte
