@@ -31,7 +31,7 @@ namespace SkimSkript.Tokens
 
         #region Peek Methods
         /// <summary>Gets the frontmost token's <see cref="TokenType"/>.</summary>
-        public TokenType PeekType()
+        public TokenType PeekType() // TODO: Remove (Obsolete)
         {
             if (HasTokens)
                 return _tokenList[_currentTokenIndex].Type;
@@ -55,8 +55,8 @@ namespace SkimSkript.Tokens
             return false;
         }
 
-        public TokenType PeekAhead(int offset = 1) =>
-            HasTokens ? _tokenList[_currentTokenIndex + offset].Type : TokenType.Undefined;
+        public TokenType Peek(int offset = 0) =>
+            HasTokens ? _tokenList[_currentTokenIndex + offset].Type : throw GetEndOfFileError();
 
         public bool TryPeekAheadType(out TokenType tokenType, int offset = 1)
         {

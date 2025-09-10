@@ -17,6 +17,7 @@ namespace SkimSkript.Syntax
             ("ref",TokenType.PassByReference),
 
             ("declare", TokenType.DeclarationStart),
+            ("let", TokenType.DeclarationStart),
             ("as", TokenType.VariableInitialize),
 
             ("set",TokenType.AssignmentStart),
@@ -133,7 +134,7 @@ namespace SkimSkript.Syntax
                 if (word.key == tokenType)
                     return word.text;
 
-            return String.Empty;
+            return string.Empty;
         }
 
         public static TokenType GetDelimeterType(char lexeme)

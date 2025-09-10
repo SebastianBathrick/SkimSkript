@@ -470,8 +470,11 @@ namespace SkimSkript.MainComponents
 
         #region Helper Methods
         #region Type Helper Methods
+        /// <summary>Returns true if an identifier token is next, and it's not associated with a function
+        /// call or variable assignment.</summary>
         private bool IsCatchMessageNext() => 
-            Tokens.PeekIsType(TokenType.Identifier) && !Tokens.PeekIsType(TokenType.AssignmentOperator);
+            //                                       Assignment: variableIdentifier =                  Function call: functionIdentifier (
+            Tokens.Peek() == TokenType.Identifier && Tokens.Peek(1) != TokenType.AssignmentOperator && Tokens.Peek(1) != TokenType.ParenthesisOpen;
 
         private bool IsDataTypeToken(TokenType tokenType) =>
             tokenType == TokenType.IntegerKeyword || tokenType == TokenType.FloatKeyword ||
@@ -570,12 +573,12 @@ namespace SkimSkript.MainComponents
         /// <returns></returns>
         private bool TryPeekFunctionParenthesis()
         {
-            var ahead = Tokens.PeekAhead();
+            var ahead = Tokens.Peek(1);
 
             if (ahead == TokenType.FunctionLabel)
                 return true;
 
-            ahead = Tokens.PeekAhead(2);
+            ahead = Tokens.Peek(2);
 
             if (ahead == TokenType.ParenthesisOpen)
                 return true;
@@ -583,7 +586,7 @@ namespace SkimSkript.MainComponents
             if (ahead != TokenType.Identifier)
                 return false;
 
-            ahead = Tokens.PeekAhead(3);
+            ahead = Tokens.Peek(3);
 
             return ahead == TokenType.ParenthesisOpen;
         }

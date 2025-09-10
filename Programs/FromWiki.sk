@@ -1,52 +1,68 @@
 ﻿#--[Introduction]--------------------------------------#
 
 # C-style syntax example
-int i = 1;
+#==============================
 
-while(i <= 100)
+int Factorial(int number)
 {
-    if(i % 15 == 0)
-		print("FizzBuzz");
-    else if(i % 3 == 0)
-		print("Fizz");
-    else if(i % 5 == 0)
-		print("Buzz");
-    else
-		print(i);
-	
- i = i + 1;
+	if (number == 0 || number == 1)
+	{
+		return 1;
+	}
+	else
+	{
+		return number * Factorial(number - 1);
+	}
 }
 
+print(Factorial(5))  # Output: 120
+
 # Pythonic syntax example
-def int factorial(int n):
-    if n == 0:
+#==============================
+
+def int factorial(int number):
+	if number == 0 or number == 1:
 		return 1
-    else:
-		return n * factorial(n - 1)
+	else:
+		return number * factorial(number - 1)
 
 print(factorial(5))  # Output: 120
 
-# Verbose/natural language syntax example
-Declare int iterator as 1.
- 
-Run print("Please enter a number to find its square root:").
-Declare integer input as value of read().
+# English-esque syntax example
+#==============================
 
-Invoke print:("Square root " plus value of SquareRoot(input))
+Define integer function f(Integer 'n') :
+If n is 0 or n is 1 then return 1. Otherwise, return n multiplied by the value 
+of f(n-1).
 
-Define integer function SquareRoot(integer number):
-{
-	Declare integer odd as 1. Declare integer count as 0.
-	
-	Repeat while number is at least 0:
-	{
-		 Set number to number minus odd.
-		 Set odd to odd plus 2. 
-		 Set count to count plus 1.
+print(f(5))  # Output: 120
+
+# Mix & match syntax example
+#==============================
+
+declare bool isRunningUser as true
+
+while isRunningUser
+	try {
+		int selectedNum = read("Please enter a whole number:")
+		int resultNum = Fibonacci(selectedNum)
+
+		# Print the result.
+		print("Fibonacci number for " + selectedNum + " is " + resultNum)
+
+		# Ask the user if they want to enter a new number.
+		Set isRunningUser to the value of EnterNewNumber()
 	}
+	raise print("Invalid input. please try again.") 
 
-	Give back count minus 1.
-}
+Define int function Fibonacci(int number):
+	If number is at most 1 then return number. Otherwise, return the value of 
+	Fibonacci(number-1) plus Fibonacci(number-2).
+
+def boolean function EnterNewNumber()
+	give back read("Would you like to enter a new number? (y/n):") is "y"
+
+#==============================
 
 #--[Variable Declarations]--------------------------------------#
 
@@ -233,7 +249,6 @@ try
 }
 catch message
 {
-	# Will print "'hello' string cannot be converted to integer"
 	print(message)
 }
 
