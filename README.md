@@ -97,6 +97,27 @@ dotnet build
 ```
 
 ### Your First Program
+1. Create & open a file called ```HelloWorld.sk```.
+2. Inside the new file, write the following:
+	```python
+	print("Hello World")
+	```
+3. Copy the ```HelloWorld.sk filepath```.
+4. Using the terminal, navigate to the SkimSkript project folder & type:
+	```
+	dontnet run <FILEPATH>
+	```
+	Example:
+	```
+	dotnet run C:\Users\Sebastian\Desktop\SkimSkript\Programs\HelloWorld.sk
+	```
+5. Then the program will execute, and upon successful execution, the terminal will look something like this:
+	```
+	C:\Users\Sebastian\Desktop\SkimSkript> dotnet run 
+	Hello World
+	C:\Users\Sebastian\Desktop\SkimSkript\Programs\HelloWorld.sk
+	```
+ 6. Demo code to experiment with can be found in (Parent Directory)\SkimSkript\\Programs\\[FromWiki.sk](https://github.com/SebastianBathrick/SkimSkript/blob/main/Programs/FromWiki.sk). More info about the demo code & syntax is on the [Wiki](https://github.com/SebastianBathrick/SkimSkript/wiki).
 
 ## Basic Architectural Overview
 ### [SkimSkriptCore Class](https://github.com/SebastianBathrick/SkimSkript/blob/main/SkimSkriptCore.cs)
