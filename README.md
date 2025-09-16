@@ -1,6 +1,6 @@
 # SkimSkript Programming Language Interpreter
 ## What is SkimSkript?
-SkimSkript is an experimental interpreted language meant to explore different syntactical possibilities. It features flexible and forgiving syntax, allowing users to write in C-style braces, Python-like keywords, or even code that is reminiscent of written English. SkimSkript adapts to the programmer.
+SkimSkript is an experimental interpreted language meant to explore different syntactical possibilities. It features flexible and forgiving syntax, allowing users to write in C-style braces, Python-like keywords, or even code that is reminiscent of written English.
 
 SkimSkript's interpreter is entirely written from scratch without the assistance of any third-party libraries or tools, allowing for fine-tuned and unique features not found in other interpreters. With support for multiple syntactic styles, programmers can experiment with reference parameters, recursion, and procedural logic without being boxed into rigid syntax rules or overwhelmed by interpreter/compiler errors.
 
