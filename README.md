@@ -2,12 +2,12 @@
 ## What is SkimSkript?
 SkimSkript is an experimental interpreted language meant to explore different syntactical possibilities. It features flexible and forgiving syntax, allowing users to write in C-style braces, Python-like keywords, or even code that is reminiscent of written English.
 
-SkimSkript's interpreter is entirely written from scratch without the assistance of any third-party libraries or tools, allowing for fine-tuned and unique features not found in other interpreters. With support for multiple syntactic styles, programmers can experiment with reference parameters, recursion, and procedural logic without being boxed into rigid syntax rules or overwhelmed by interpreter/compiler errors.
+SkimSkript's interpreter is entirely written from scratch without the assistance of any third-party libraries or tools, allowing for fine-tuned and unique features not found in other interpreters. With support for multiple syntactic styles, programmers can experiment with procedural logic, static typing, coercion, and more without being boxed into rigid syntax rules or overwhelmed by interpreter/compiler errors.
 
 #### **[Click here to read the Wiki to see in-depth details.](https://github.com/SebastianBathrick/SkimSkript/wiki)**
 
 ## Flexible Syntax
-The language supports syntax similar to C-family languages:
+SkimSkript supports syntax similar to C-family languages:
 ```csharp
 int Factorial(int number)
 {
@@ -84,9 +84,7 @@ def boolean function EnterNewNumber()
 ### Requirements
 * **.NET 8.0 SDK**
 * **Git** (for build info generation)
-* No external dependencies
-Quick Start
-bash
+* **No external dependencies**
 
 ### Interpreter Setup
 ```bash
@@ -104,11 +102,11 @@ dotnet build
 	```
 3. Copy the ```HelloWorld.sk filepath```.
 4. Using the terminal, navigate to the SkimSkript project folder & type:
-	```
-	dontnet run <FILEPATH>
+	```bash
+	dontnet run <.SK FILEPATH>
 	```
 	Example:
-	```
+	```bash
 	dotnet run C:\Users\Sebastian\Desktop\SkimSkript\Programs\HelloWorld.sk
 	```
 5. Then the program will execute, and upon successful execution, the terminal will look something like this:
@@ -135,7 +133,7 @@ Utilizes tokens to build an abstract syntax tree (AST) composed of [Nodes](https
 ### [Interpreter Class](https://github.com/SebastianBathrick/SkimSkript/blob/main/MainComponents/Interpreter.cs)
 Handles the execution of the program by recursively traversing the AST and utilizing its data.
 
-### MainComponent Pipeline Diagram
+## MainComponent Pipeline Diagram
 The following is a diagram of the general architecture of the entire program. 
 <img width="1520" height="380" alt="InterpreterDesign (6)" src="https://github.com/user-attachments/assets/fa7b5a69-53de-417a-8867-2a8c6d82acc1" />
 
