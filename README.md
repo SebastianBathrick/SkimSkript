@@ -117,7 +117,7 @@ dotnet build
 	Hello World
 	C:\Users\Sebastian\Desktop\SkimSkript\Programs\HelloWorld.sk
 	```
- 6. Demo code to experiment with can be found in (Parent Directory)\SkimSkript\\Programs\\[FromWiki.sk](https://github.com/SebastianBathrick/SkimSkript/blob/main/Programs/FromWiki.sk). More info about the demo code & syntax is on the [Wiki](https://github.com/SebastianBathrick/SkimSkript/wiki).
+ 6. Demo code to experiment with can be found in **(PARENT DIRECTORY)\SkimSkript\\Programs\\[FromWiki.sk](https://github.com/SebastianBathrick/SkimSkript/blob/main/Programs/FromWiki.sk)**. More info about the demo code & syntax is on the [Wiki](https://github.com/SebastianBathrick/SkimSkript/wiki).
 
 ## Basic Architectural Overview
 ### [SkimSkriptCore Class](https://github.com/SebastianBathrick/SkimSkript/blob/main/SkimSkriptCore.cs)
