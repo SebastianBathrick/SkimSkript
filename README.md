@@ -1,13 +1,13 @@
 # SkimSkript Programming Language Interpreter
 ## What is SkimSkript?
-SkimSkript is an experimental interpreted language meant to explore different syntactical possibilities. It features flexible, forgiving syntax and enforced typing with runtime coercion, allowing users to write in C-style braces, Python-like keywords, or even code that is reminiscent of written English. SkimSkript adapts to the programmer — not the other way around.
+SkimSkript is an experimental interpreted language meant to explore different syntactical possibilities. It features flexible and forgiving syntax, allowing users to write in C-style braces, Python-like keywords, or even code that is reminiscent of written English. SkimSkript adapts to the programmer.
 
-SkimSkript's <u>interpreter is entirely written from scratch</u> without the assistance of any third-party libraries, allowing for unique features not found in other interpreters. With support for multiple syntactic styles, programmers can experiment with reference parameters, recursion, and procedural logic without being boxed into rigid syntax rules or overwhelmed by interpreter/compiler errors.
+SkimSkript's interpreter is entirely written from scratch without the assistance of any third-party libraries or tools, allowing for fine-tuned and unique features not found in other interpreters. With support for multiple syntactic styles, programmers can experiment with reference parameters, recursion, and procedural logic without being boxed into rigid syntax rules or overwhelmed by interpreter/compiler errors.
 
 #### ***[Click here to read the Wiki to see in-depth details.](https://github.com/SebastianBathrick/SkimSkript/wiki)***
 
-## Programmer Freedom
-**Would you like to stick to something more reminiscent of the <u>***C family of languages***</u>? You can!**
+## Flexible Syntax
+The language supports syntax similar to C-family languages:
 ```csharp
 int Factorial(int number)
 {
@@ -22,7 +22,7 @@ int Factorial(int number)
 }
 ```
 
-***Maybe you want to mix in a little <u>***Pythonic***</u> syntax:***
+You can achieve a Python-like style by utilizing alternate keywords & ignored characters:
 ```python
 def int factorial(int number):
 	if number == 0 or number == 1:
@@ -31,14 +31,14 @@ def int factorial(int number):
 		return number * factorial(number - 1)
 ```
 
-***You may want something more <u>***verbose***</u>, like something similar to a <u>***proof***</u>, or closer to <u>***written English***</u>. In that case, SkimSkript has got you covered:***   
+Code can take the form of pseudo code composed of written English by using [phrases](https://github.com/SebastianBathrick/SkimSkript/wiki/1%E2%80%902:-Comments-&-Syntax-Intricacies#24--keywordsphrases) & [ignored characters](https://github.com/SebastianBathrick/SkimSkript/wiki/1%E2%80%902:-Comments-&-Syntax-Intricacies#21--symbols)
 ```
 Define integer function f(Integer 'n') :
 If n is 0 or n is 1, return 1. Otherwise, return n multiplied by the value 
 of f(n-1).
 ```
 
-***And even better, you can <u>***mix & match syntax***</u> to <u>***tailor your own style***</u>, making your <u>***code truly your own***</u>:***
+Syntactic conventions, like the ones shown above, can be combined to make custom programming styles:
 ```python
 declare bool isRunningUser as true
 
@@ -88,13 +88,15 @@ def boolean function EnterNewNumber()
 Quick Start
 bash
 
+### Interpreter Setup
 ```bash
 git clone https://github.com/SebastianBathrick/SkimSkript.git
 cd SkimSkript
 dotnet restore
 dotnet build
-dotnet run <FILE PATH TO .SK FILE>
 ```
+
+### Your First Program
 
 ## Basic Architectural Overview
 ### [SkimSkriptCore Class](https://github.com/SebastianBathrick/SkimSkript/blob/main/SkimSkriptCore.cs)
