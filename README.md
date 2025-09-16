@@ -1,91 +1,141 @@
-## What is SkimSkript? 			
-SkimSkript is an experimental interpreted language meant to explore different syntactical possibilities. It features flexible, forgiving syntax and enforced typing with runtime coercion, allowing users to write in C-style braces, Python-like keywords, or even natural-language pseudocode. SkimSkript adapts to the programmer — not the other way around.
+# SkimSkript Programming Language Interpreter
+## What is SkimSkript?
+SkimSkript is an experimental interpreted language meant to explore different syntactical possibilities. It features flexible and forgiving syntax, allowing users to write in C-style braces, Python-like keywords, or even code that is reminiscent of written English.
 
-With support for multiple syntactic styles, programmers can experiment with static types, recursion, and procedural logic without being boxed into rigid syntax rules or overwhelmed by compiler errors.
+SkimSkript's interpreter is entirely written from scratch without the assistance of any third-party libraries or tools, allowing for fine-tuned and unique features not found in other interpreters. With support for multiple syntactic styles, programmers can experiment with procedural logic, static typing, coercion, and more without being boxed into rigid syntax rules or overwhelmed by interpreter/compiler errors.
 
-#### [See a more in-depth overview on the Wiki](https://github.com/SebastianBathrick/SkimSkript/wiki)
+#### **[Click here to read the Wiki to see in-depth details.](https://github.com/SebastianBathrick/SkimSkript/wiki)**
 
-### Programmer Freedom
-Would you like to stick to something more reminiscent of the **C family of languages**? You can!
+## Flexible Syntax
+SkimSkript supports syntax similar to C-family languages:
 ```csharp
-int i = 1;
-
-while(i <= 100)
+int Factorial(int number)
 {
-    if(i % 15 == 0)
-		print("FizzBuzz");
-    else if(i % 3 == 0)
-		print("Fizz");
-    else if(i % 5 == 0)
-		print("Buzz");
-    else
-		print(i);
-	
- i = i + 1;
-}
-```
-
-Maybe you want to mix in a little **Pythonic** syntax:
-```python
-def int factorial(int n):
-    if n == 0:
-		return 1
-    else:
-		return n * factorial(n - 1)
-
-	print(factorial(5))  # Output: 120
-```
-
-You may want something more **verbose, academic, or closer to written English**. In that case, SkimSkript has got you covered:   
-```
-Declare int iterator as 1.
- 
-Run print("Please enter a number to find its square root:").
-Declare integer input as value of read().
-
-Invoke print:("Square root" plus value of SquareRoot(input))
-
-Define integer function SquareRoot(integer number):
-{
-	Declare integer odd as 1. Declare integer count as 0.
-	
-	Repeat while number is at least 0:
+	if (number == 0 || number == 1)
 	{
-		 Set number to number minus odd.
-		 Set odd to odd plus 2. 
-		 Set count to count plus 1.
+		return 1;
 	}
-
-	Give back count minus 1.
+	else
+	{
+		return number * Factorial(number - 1);
+    }
 }
 ```
-## What's Done Differently?
-The SkimSkript interpreter utilizes no third-party libraries, so while it possesses the typical lexical analysis, AST parsing, and interpretation that many other tree interpreters have, it also has some quirks that enable its unique syntactic style.
 
-### How Lexeme Analysis Works
-A prime example of this occurs during lexical analysis. After scanning the source code and creating lexemes, the lexer's evaluator feeds alphabetic lexemes into a trie structure. If a single alphabetic lexeme is a partial match for a phrase, the next lexeme is analyzed to check if it is part of that phrase as well. If a group of lexemes reaches a trie node containing a token type, those lexemes are grouped as a single token (assuming the following word does not continue a phrase). However, if a partial match does not result in a full match with subsequent lexemes, the system will backtrack, mark the first lexeme as an identifier, and initiate a new trie search with the second lexeme.
+You can achieve a Python-like style by utilizing alternate keywords & ignored characters:
+```python
+def int factorial(int number):
+	if number == 0 or number == 1:
+		return 1
+	else:
+		return number * factorial(number - 1)
+```
 
-1. _**First Search (at Trie Root):**_
-> 
->"instead" (**Partial Match**) --> "else" (**STOP Invalid Phrase**) --> "if" (**Not Reached**)
-> 
-2. _**Store First Lexeme:**_
-> 
->"instead" becomes **Token of type Identifier**
-> 
-2. _**Second Search (at Trie Root):**_
->
->"else" (**Partial Match**) --> "If" (**Full Match**)
-> 
-3. _**Store Full Phrase:**_
-> 
->"else" & "if" becomes **Token of type ElseIf**
+Code can take the form of pseudo code composed of written English by using [phrases](https://github.com/SebastianBathrick/SkimSkript/wiki/1%E2%80%902:-Comments-&-Syntax-Intricacies#24--keywordsphrases) & [ignored characters](https://github.com/SebastianBathrick/SkimSkript/wiki/1%E2%80%902:-Comments-&-Syntax-Intricacies#21--symbols)
+```
+Define integer function f(Integer 'n') :
+If n is 0 or n is 1, return 1. Otherwise, return n multiplied by the value 
+of f(n-1).
+```
 
-## Architecture Overview
-### Lexer
-Encapsulates, abstracts, and performs the lexical analysis previously mentioned to convert source code to tokens for parsing.
-### Parser
-Utilizes tokens to build an abstract syntax tree (AST) for interpretation.
-### Interpreter
-Handles the execution of the program recursively traversing the AST to do so. Examples of what this component is responsible for include scope, coercion, and evaluating expressions, among others.
-<img width="1520" height="637" alt="InterpreterDesign (6)" src="https://github.com/user-attachments/assets/fa7b5a69-53de-417a-8867-2a8c6d82acc1" />
+Syntactic conventions, like the ones shown above, can be combined to make custom programming styles:
+```python
+declare bool isRunningUser as true
+
+while isRunningUser
+	try {
+		int selectedNum = read("Please enter a whole number:")
+		int resultNum = Fibonacci(selectedNum)
+
+		# Print the result.
+		print("Fibonacci number for " + selectedNum + " is " + resultNum)
+
+		# Ask the user if they want to enter a new number.
+		Set isRunningUser to the value of EnterNewNumber()
+	}
+	raise print("Invalid input. please try again.") 
+
+Define int function Fibonacci(int number):
+	If the number is at most 1, then return the number. Otherwise, return the value of 
+	Fibonacci(number-1) plus Fibonacci(number-2).
+
+def boolean function EnterNewNumber()
+	give back read("Would you like to enter a new number? (y/n):") is "y"
+```
+## Features
+|   |   |   |   |   |
+|:---:|:---:|:---:|:---:|:---:|
+| Comments | Alt. Syntaxes | Flexible Whitespace | Optional Symbols | Static Typing |
+| Integers | Floating-Points | Booleans | Strings | Runtime Coercion |
+| String Concatenation | Variable Declarations | Variable Initialization | Variable Assignments | Top-level Scope |
+| Local Scope | Block Scope | If Statements | Else-If Statements | Else Statements |
+| While Loops | Single Statement Blocks | Void Functions | Value-Returning Functions | Value + Reference Parameters |
+| I/O Built-in Functions | Recursion | Assertions | Try-Catch Statements | Exceptions |
+| Comparison Operators | Logical Operators | Arithmetic Operators | Operator Precedence | Nested Expressions |
+### Features Coming Soon
+- Arrays
+- Casting
+- File I/O
+- Structs
+- User-Defined Exceptions
+- More Flexible Identifiers
+
+## Quick Start
+### Requirements
+* **.NET 8.0 SDK**
+* **Git** (for build info generation)
+* **No external dependencies**
+
+### Interpreter Setup
+```bash
+git clone https://github.com/SebastianBathrick/SkimSkript.git
+cd SkimSkript
+dotnet restore
+dotnet build
+```
+
+### Your First Program
+1. Create & open a file called ```HelloWorld.sk```.
+2. Inside the new file, write the following:
+	```python
+	print("Hello World")
+	```
+3. Copy the ```HelloWorld.sk filepath```.
+4. Using the terminal, navigate to the SkimSkript project folder & type:
+	```bash
+	dontnet run <.SK FILEPATH>
+	```
+	Example:
+	```bash
+	dotnet run C:\Users\Sebastian\Desktop\SkimSkript\Programs\HelloWorld.sk
+	```
+5. Then the program will execute, and upon successful execution, the terminal will look something like this:
+	```
+	C:\Users\Sebastian\Desktop\SkimSkript> dotnet run 
+	Hello World
+	C:\Users\Sebastian\Desktop\SkimSkript\Programs\HelloWorld.sk
+	```
+ 6. Demo code to experiment with can be found in **(PARENT DIRECTORY)\SkimSkript\\Programs\\[FromWiki.sk](https://github.com/SebastianBathrick/SkimSkript/blob/main/Programs/FromWiki.sk)**. More info about the demo code & syntax is on the [Wiki](https://github.com/SebastianBathrick/SkimSkript/wiki).
+ 7. For extra information about flags and execution settings, use the ```--help``` flag as an argument.
+
+## Basic Architectural Overview
+### [SkimSkriptCore Class](https://github.com/SebastianBathrick/SkimSkript/blob/main/SkimSkriptCore.cs)
+Instantiates, caches, and exchanges data between the Lexer, Parser, and Interpreter to form a MainComponent pipeline. In essence, it's the orchestrator for each step from source code to execution.
+
+### [MainComponent](https://github.com/SebastianBathrick/SkimSkript/blob/main/MainComponents/MainComponent.cs)
+Base class for all primary components that perform the main functionality of the SkimSkript interpreter (Lexer, Parser, and Interpreter classes). This class features functionality to aid in the development and debugging of the SkimSkript interpreter, including features like displaying MainComponent inputs, outputs, and execution times in the terminal. Use <u>**--help**</u> as a command-line flag/argument for more information about MainComponent debugging.
+
+### [Lexer Class](https://github.com/SebastianBathrick/SkimSkript/blob/main/MainComponents/Lexer.cs)
+Performs lexical analysis to convert source code to [Tokens](https://github.com/SebastianBathrick/SkimSkript/blob/main/Tokens/Token.cs) and caches them in a [TokenContainer](https://github.com/SebastianBathrick/SkimSkript/blob/main/Tokens/TokenContainer.cs) that will be sent to the Parser.
+
+### [Parser Class](https://github.com/SebastianBathrick/SkimSkript/blob/main/MainComponents/Parser.cs)
+Utilizes tokens to build an abstract syntax tree (AST) composed of [Nodes](https://github.com/SebastianBathrick/SkimSkript/blob/main/Nodes/Node.cs) for interpretation. 
+
+### [Interpreter Class](https://github.com/SebastianBathrick/SkimSkript/blob/main/MainComponents/Interpreter.cs)
+Handles the execution of the program by recursively traversing the AST and utilizing its data.
+
+## MainComponent Pipeline Diagram
+The following is a diagram of the general architecture of the entire program. 
+<img width="1520" height="380" alt="InterpreterDesign (6)" src="https://github.com/user-attachments/assets/fa7b5a69-53de-417a-8867-2a8c6d82acc1" />
+
+#### [**You can read more about the interpreter's architecture here.**](https://github.com/SebastianBathrick/SkimSkript/wiki/*-Architectural-Overview)
