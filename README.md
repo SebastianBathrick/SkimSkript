@@ -4,7 +4,7 @@ SkimSkript is an experimental interpreted language meant to explore different sy
 
 SkimSkript's interpreter is entirely written from scratch without the assistance of any third-party libraries or tools, allowing for fine-tuned and unique features not found in other interpreters. With support for multiple syntactic styles, programmers can experiment with reference parameters, recursion, and procedural logic without being boxed into rigid syntax rules or overwhelmed by interpreter/compiler errors.
 
-#### ***[Click here to read the Wiki to see in-depth details.](https://github.com/SebastianBathrick/SkimSkript/wiki)***
+#### **[Click here to read the Wiki to see in-depth details.](https://github.com/SebastianBathrick/SkimSkript/wiki)**
 
 ## Flexible Syntax
 The language supports syntax similar to C-family languages:
@@ -139,4 +139,4 @@ Handles the execution of the program by recursively traversing the AST and utili
 The following is a diagram of the general architecture of the entire program. 
 <img width="1520" height="380" alt="InterpreterDesign (6)" src="https://github.com/user-attachments/assets/fa7b5a69-53de-417a-8867-2a8c6d82acc1" />
 
-#### [***You can read more about the interpreter's architecture here.***](https://github.com/SebastianBathrick/SkimSkript/wiki/*-Architectural-Overview)
+#### [**You can read more about the interpreter's architecture here.**](https://github.com/SebastianBathrick/SkimSkript/wiki/*-Architectural-Overview)
