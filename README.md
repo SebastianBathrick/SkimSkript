@@ -62,3 +62,34 @@ Define int function Fibonacci(int number):
 def boolean function EnterNewNumber()
 	give back read("Would you like to enter a new number? (y/n):") is "y"
 ```
+## Features
+|   |   |   |   |   |   |   |
+|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| Comments | Alt. Syntaxes | Flexible Whitespace | Optional Symbols | Static Typing | Integers | Floating-Points |
+| Booleans | Strings | Runtime Coercion | String Concatenation | Variable Declarations | Variable Initialization | Variable Assignments |
+| Top-level Scope | Local Scope | Block Scope | If Statements | Else-If Statements | Else Statements | While Loops |
+| Single Statement Blocks | Void Functions | Value-Returning Functions | Value + Reference Parameters | I/O Built-in Functions | Recursion | Assertions |
+| Try-Catch Statements | Exceptions | Comparison Operators | Logical Operators | Arithmetic Operators | Operator Precedence | Nested Expressions |
+### Features Coming Soon
+- Arrays
+- Casting
+- File I/O
+- Structs
+- User-Defined Exceptions
+- More Flexible Identifiers
+
+## Quick Start
+### Requirements
+* **.NET 8.0 SDK**
+* **Git** (for build info generation)
+* No external dependencies
+Quick Start
+bash
+
+```bash
+git clone https://github.com/SebastianBathrick/SkimSkript.git
+cd SkimSkript
+dotnet restore
+dotnet build
+dotnet run
+```
