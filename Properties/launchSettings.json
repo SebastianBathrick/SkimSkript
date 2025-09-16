@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "SkimSkript": {
-      "commandName": "Project",
-      "commandLineArgs": "-d -f C:\\Users\\Sebastian\\Desktop\\SkimSkript\\Programs\\FromWiki.sk"
-    }
-  }
-}
