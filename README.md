@@ -1,12 +1,11 @@
-# SkimSkript Programming Language Interpreter
-## What is SkimSkript?
+# What is SkimSkript?
 SkimSkript is an experimental interpreted language meant to explore different syntactical possibilities. It features flexible and forgiving syntax, allowing users to write in C-style braces, Python-like keywords, or even code that is reminiscent of written English.
 
 SkimSkript's interpreter is entirely written from scratch without the assistance of any third-party libraries or tools, allowing for fine-tuned and unique features not found in other interpreters. With support for multiple syntactic styles, programmers can experiment with procedural logic, static typing, coercion, and more without being boxed into rigid syntax rules or overwhelmed by interpreter/compiler errors.
 
 #### **[Click here to read the Wiki to see in-depth details.](https://github.com/SebastianBathrick/SkimSkript/wiki)**
 
-## Flexible Syntax
+# Flexible Syntax
 SkimSkript supports syntax similar to C-family languages:
 ```csharp
 int Factorial(int number)
@@ -62,7 +61,7 @@ Define int function Fibonacci(int number):
 def boolean function EnterNewNumber()
 	give back read("Would you like to enter a new number? (y/n):") is "y"
 ```
-## Features
+# Features
 |   |   |   |   |   |
 |:---:|:---:|:---:|:---:|:---:|
 | Comments | Alt. Syntaxes | Flexible Whitespace | Optional Symbols | Static Typing |
@@ -80,13 +79,12 @@ def boolean function EnterNewNumber()
 - User-Defined Exceptions
 - More Flexible Identifiers
 
-## Quick Start
+# Quick Start
+## Project Setup
 ### Requirements
-* **.NET 8.0 SDK**
-* **Git** (for build info generation)
-* **No external dependencies**
-
-### Interpreter Setup
+- **.NET 8.0 SDK**
+- **Git** (for build info generation)
+- * **No external dependencies**
 ```bash
 git clone https://github.com/SebastianBathrick/SkimSkript.git
 cd SkimSkript
@@ -94,31 +92,33 @@ dotnet restore
 dotnet build
 ```
 
-### Your First Program
+## Your First Program
 1. Create & open a file called ```HelloWorld.sk```.
+
 2. Inside the new file, write the following:
 	```python
 	print("Hello World")
 	```
+ 
 3. Copy the ```HelloWorld.sk filepath```.
+
 4. Using the terminal, navigate to the SkimSkript project folder & type:
 	```bash
 	dontnet run <.SK FILEPATH>
 	```
-	Example:
-	```bash
-	dotnet run C:\Users\Sebastian\Desktop\SkimSkript\Programs\HelloWorld.sk
-	```
+ 
 5. Then the program will execute, and upon successful execution, the terminal will look something like this:
 	```
 	C:\Users\Sebastian\Desktop\SkimSkript> dotnet run 
 	Hello World
 	C:\Users\Sebastian\Desktop\SkimSkript\Programs\HelloWorld.sk
 	```
- 6. Demo code to experiment with can be found in **(PARENT DIRECTORY)\SkimSkript\\Programs\\[FromWiki.sk](https://github.com/SebastianBathrick/SkimSkript/blob/main/Programs/FromWiki.sk)**. More info about the demo code & syntax is on the [Wiki](https://github.com/SebastianBathrick/SkimSkript/wiki).
+ 
+ 6. Demo code to experiment with can be found in **(PARENT DIRECTORY)\SkimSkript\\Programs\\[FromWiki.sk](https://github.com/SebastianBathrick/SkimSkript/blob/main/Programs/FromWiki.sk)**. The demo code is from examples directly from the wiki, so info about the code & syntax is on the [Wiki](https://github.com/SebastianBathrick/SkimSkript/wiki).
+
  7. For extra information about flags and execution settings, use the ```--help``` flag as an argument.
 
-## Basic Architectural Overview
+# Basic Architectural Overview
 ### [SkimSkriptCore Class](https://github.com/SebastianBathrick/SkimSkript/blob/main/SkimSkriptCore.cs)
 Instantiates, caches, and exchanges data between the Lexer, Parser, and Interpreter to form a MainComponent pipeline. In essence, it's the orchestrator for each step from source code to execution.
 
