@@ -38,7 +38,7 @@ of f(n-1).
 ```
 
 Syntactic conventions, like the ones shown above, can be combined to make custom programming styles:
-```python
+```
 declare bool isRunningUser as true
 
 while isRunningUser
