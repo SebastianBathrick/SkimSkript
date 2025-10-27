@@ -55,7 +55,10 @@ while isRunningUser
 	raise print("Invalid input. please try again.") 
 
 Define int function Fibonacci(int number):
-	If the number is at most 1, then return the number. Otherwise, return the value of 
+
+	If the number is at most 1, then return the number. 
+
+    Otherwise, return the value of 
 	Fibonacci(number-1) plus Fibonacci(number-2).
 
 def boolean function EnterNewNumber()
