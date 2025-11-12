@@ -3,95 +3,94 @@ using SkimSkript.Helpers.LexicalAnalysis;
 using SkimSkript.Tokens;
 using System.Text;
 
-namespace SkimSkript.ErrorHandling
+namespace SkimSkript.ErrorHandling;
+
+internal class TokenContainerException : SkimSkriptException
 {
-    internal class TokenContainerException : SkimSkriptException
+    private const string MESSAGE = "Expected {TokenType} but got {TokenType}";
+
+    private readonly LexemeContainer _lexemes;
+    private readonly Token _problemToken;
+
+    public override string Message => "[L{Line}:C{Column}] " + base.Message;
+
+    public TokenContainerException(
+        TokenType expectedType,
+        Token problemToken,
+        LexemeContainer lexemes,
+        params object[] properties
+        )
+        : base(MESSAGE, GetProperties(properties, expectedType, problemToken, lexemes))
     {
-        private const string MESSAGE = "Expected {TokenType} but got {TokenType}";
+        _problemToken = problemToken;
+        _lexemes = lexemes;
+    }
 
-        private LexemeContainer _lexemes;
-        private Token _problemToken;
+    private static object[] GetProperties(
+        object[] properties,
+        TokenType expectedType,
+        Token problemToken,
+        LexemeContainer lexemes
+        )
+    {
+        var propsList = properties.ToList();
 
-        public override string Message => "[L{Line}:C{Column}] " + base.Message;
+        var line = lexemes.GetLineIndexByLexeme(problemToken.LexemeStartIndex) + 1;
+        var column = lexemes.GetColumnIndexByLexeme(problemToken.LexemeEndIndex) + 1;
 
-        public TokenContainerException(
-            TokenType expectedType,
-            Token problemToken,
-            LexemeContainer lexemes,
-            params object[] properties
-            )
-            : base(MESSAGE, GetProperties(properties, expectedType, problemToken, lexemes))
+        var expectedStr = StringHelper.SplitPascalCaseManual(expectedType.ToString());
+        var gotStr = StringHelper.SplitPascalCaseManual(problemToken.Type.ToString());
+
+        propsList.AddRange([line, column, expectedStr.ToLower(), gotStr.ToLower()]);
+        return propsList.ToArray();
+    }
+
+    protected override bool TryGetAdditionalContext(out string message, out object[] properties)
+    {
+        (int start, int end) lineIndexes;
+        lineIndexes.start = _lexemes.GetLineIndexByLexeme(_problemToken.LexemeStartIndex);
+        lineIndexes.end = _lexemes.GetLineIndexByLexeme(_problemToken.LexemeEndIndex);
+
+        var sb = new StringBuilder();
+        var propertiesList = new List<object>();
+
+        for (var i = lineIndexes.start; i <= lineIndexes.end; i++)
         {
-            _problemToken = problemToken;
-            _lexemes = lexemes;
-        }
+            sb.Append($"Line {(i + 1).ToString("D3")} | ");
+            var list = _lexemes.GetLexemeIndexesOnLine(i);
 
-        private static object[] GetProperties(
-            object[] properties,
-            TokenType expectedType,
-            Token problemToken,
-            LexemeContainer lexemes
-            )
-        {
-            var propsList = properties.ToList();
+            var errorUnderline = new StringBuilder(new string(' ', sb.Length));
 
-            var line = lexemes.GetLineIndexByLexeme(problemToken.LexemeStartIndex) + 1;
-            var column = lexemes.GetColumnIndexByLexeme(problemToken.LexemeEndIndex) + 1;
-
-            var expectedStr = StringHelper.SplitPascalCaseManual(expectedType.ToString());
-            var gotStr = StringHelper.SplitPascalCaseManual(problemToken.Type.ToString());
-
-            propsList.AddRange([line, column, expectedStr.ToLower(), gotStr.ToLower()]);
-            return propsList.ToArray();
-        }
-
-        protected override bool TryGetAdditionalContext(out string message, out object[] properties)
-        {
-            (int start, int end) lineIndexes;
-            lineIndexes.start = _lexemes.GetLineIndexByLexeme(_problemToken.LexemeStartIndex);
-            lineIndexes.end = _lexemes.GetLineIndexByLexeme(_problemToken.LexemeEndIndex);
-
-            var sb = new StringBuilder();
-            var propertiesList = new List<object>();
-
-            for (int i = lineIndexes.start; i <= lineIndexes.end; i++)
+            for (var j = 0; j < list.Count; j++)
             {
-                sb.Append($"Line {(i + 1).ToString("D3")} | ");
-                var list = _lexemes.GetLexemeIndexesOnLine(i);
+                var lexemeStr = _lexemes.GetLexemeSpan(list[j]).ToString();
+                var underlineChar = ' ';
 
-                var errorUnderline = new StringBuilder(new string(' ', sb.Length));
-
-                for (int j = 0; j < list.Count; j++)
+                if (list[j] >= _problemToken.LexemeStartIndex && list[j] <= _problemToken.LexemeEndIndex)
                 {
-                    var lexemeStr = _lexemes.GetLexemeSpan(list[j]).ToString();
-                    char underlineChar = ' ';
-
-                    if (list[j] >= _problemToken.LexemeStartIndex && list[j] <= _problemToken.LexemeEndIndex)
-                    {
-                        sb.Append("{Placeholder}");
-                        propertiesList.Add(lexemeStr);
-                        underlineChar = '^';
-                    }
-                    else
-                        sb.Append(lexemeStr.ToString());
-
-                    sb.Append(' ');
-                    errorUnderline.Append(new string(underlineChar, lexemeStr.Length)).Append(' ');
+                    sb.Append("{Placeholder}");
+                    propertiesList.Add(lexemeStr);
+                    underlineChar = '^';
                 }
+                else
+                    sb.Append(lexemeStr.ToString());
 
-                sb.AppendLine();
-                var underline = errorUnderline.ToString();
-
-                if (!string.IsNullOrWhiteSpace(underline))
-                {
-                    sb.AppendLine("{Underline}");
-                    propertiesList.Add(underline);
-                }
+                sb.Append(' ');
+                errorUnderline.Append(new string(underlineChar, lexemeStr.Length)).Append(' ');
             }
 
-            message = sb.ToString();
-            properties = propertiesList.ToArray();
-            return true;
+            sb.AppendLine();
+            var underline = errorUnderline.ToString();
+
+            if (!string.IsNullOrWhiteSpace(underline))
+            {
+                sb.AppendLine("{Underline}");
+                propertiesList.Add(underline);
+            }
         }
+
+        message = sb.ToString();
+        properties = propertiesList.ToArray();
+        return true;
     }
 }

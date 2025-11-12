@@ -1,21 +1,17 @@
-﻿namespace SkimSkript.Nodes
+﻿namespace SkimSkript.Nodes.StatementNodes;
+
+/// <summary>Class representing a return statement where a function ceases to execute and returns control to the caller.</summary>
+/// <remarks>Optionally an expression can be stored to represent a return value.</remarks>
+internal class ReturnNode : StatementNode
 {
-    /// <summary>Class representing a return statement where a function ceases to execute and returns control to the caller.</summary>
-    /// <remarks>Optionally an expression can be stored to represent a return value.</remarks>
-    internal class ReturnNode : StatementNode
-    {
-        private Node? _expression;
+    private readonly Node? _expression;
 
-        public bool IsExpression => _expression != null;
+    public bool IsExpression => _expression != null;
 
-        public Node? Expression => _expression;
+    public Node? Expression => _expression;
 
-        public ReturnNode(Node? expression)
-        {
-            _expression = expression;
-        }
+    public ReturnNode(Node? expression) => _expression = expression;
 
-        public override string ToString() =>
-            $"return {_expression?.ToString()}";
-    }
+    public override string ToString() =>
+        $"return {_expression?.ToString()}";
 }

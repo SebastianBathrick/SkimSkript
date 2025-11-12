@@ -1,7 +1,6 @@
-﻿namespace SkimSkript.Nodes
+﻿namespace SkimSkript.Nodes.StatementNodes;
+
+internal class ElseNode : ControlStructNode
 {
-    internal class ElseNode : ControlStructNode
-    {
-        public ElseNode(Node block, int endLexemeIndex) : base(block, endLexemeIndex) { }
-    }
+    public ElseNode(Node block, int endLexemeIndex) : base(block, endLexemeIndex) { }
 }

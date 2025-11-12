@@ -1,7 +1,6 @@
-﻿namespace SkimSkript.Nodes.Composites
-{
-    internal abstract class CollectionNode : Node
-    {
+﻿namespace SkimSkript.Nodes.CollectionNodes;
 
-    }
+internal abstract class CollectionNode : Node
+{
+
 }

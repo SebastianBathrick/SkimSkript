@@ -1,16 +1,15 @@
-﻿namespace SkimSkript.Nodes.StatementNodes
+﻿namespace SkimSkript.Nodes.StatementNodes;
+
+internal class ConditionStructNode : ControlStructNode
 {
-    internal class ConditionStructNode : ControlStructNode
+    private readonly Node _condition;
+
+    public Node Condition => _condition;
+
+    public ConditionStructNode(Node condition, Node block, int endLexemeIndex) : base(block, endLexemeIndex)
     {
-        private Node _condition;
-
-        public Node Condition => _condition;
-
-        public ConditionStructNode(Node condition, Node block, int endLexemeIndex) : base(block, endLexemeIndex)
-        {
-            SetLexemeEndIndex(endLexemeIndex);
-            _condition = condition;
-        }
-
+        SetLexemeEndIndex(endLexemeIndex);
+        _condition = condition;
     }
+
 }

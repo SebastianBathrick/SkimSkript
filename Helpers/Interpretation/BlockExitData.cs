@@ -1,24 +1,23 @@
 ﻿using SkimSkript.Nodes;
 
-namespace SkimSkript.Interpretation.Helpers
+namespace SkimSkript.Helpers.Interpretation;
+
+internal enum BlockExitType { StatementsExhausted, ReturnStatement }
+
+/// <summary> Contains info about how a block exited and any data being transmitted out of the block. </summary>
+internal class BlockExitData
 {
-    internal enum BlockExitType { StatementsExhausted, ReturnStatement }
+    private readonly BlockExitType _exitType;
+    private readonly Node? _returnData = null;
+    public Node? ReturnData => _returnData;
 
-    /// <summary> Contains info about how a block exited and any data being transmitted out of the block. </summary>
-    internal class BlockExitData
+    public BlockExitType ExitType => _exitType;
+
+    public BlockExitData(BlockExitType exitType, Node? returnData)
     {
-        private readonly BlockExitType _exitType;
-        private readonly Node? _returnData = null;
-        public Node? ReturnData => _returnData;
-
-        public BlockExitType ExitType => _exitType;
-
-        public BlockExitData(BlockExitType exitType, Node? returnData)
-        {
-            _exitType = exitType;
-            _returnData = returnData;
-        }
-
-        public BlockExitData(BlockExitType exitType) => _exitType = exitType;
+        _exitType = exitType;
+        _returnData = returnData;
     }
+
+    public BlockExitData(BlockExitType exitType) => _exitType = exitType;
 }

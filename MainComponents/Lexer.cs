@@ -2,40 +2,39 @@
 using SkimSkript.LexicalAnalysis.Helpers;
 using SkimSkript.Tokens;
 
-namespace SkimSkript.MainComponents
+namespace SkimSkript.MainComponents;
+
+/// <summary>Coordinates lexeme scanning and evaluation to produce tokens.
+/// Populates a <see cref="TokenManagement.TokenContainer"/> using input lines.</summary>
+internal class Lexer : MainComponent<string[], TokenContainer>
 {
-    /// <summary>Coordinates lexeme scanning and evaluation to produce tokens.
-    /// Populates a <see cref="TokenManagement.TokenContainer"/> using input lines.</summary>
-    internal class Lexer : MainComponent<string[], TokenContainer>
+    private Scanner? _scanner;
+    private Evaluator? _evaluator;
+    private LexemeContainer? _lexemes;
+
+    public override MainComponentType ComponentType => MainComponentType.Lexer;
+
+    public LexemeContainer Lexemes => _lexemes ?? throw new NullReferenceException("LexemeContainer null");
+
+    public Lexer(IEnumerable<MainComponentType> debuggedTypes, IEnumerable<MainComponentType> verboseTypes)
+        : base(debuggedTypes, verboseTypes) { }
+
+    protected override void OnConstructor()
     {
-        private Scanner? _scanner;
-        private Evaluator? _evaluator;
-        private LexemeContainer? _lexemes;
+        _scanner = new Scanner();
+        _evaluator = new Evaluator();
+    }
 
-        public override MainComponentType ComponentType => MainComponentType.Lexer;
+    /// <summary>Constructor that performs lexical analysis using lines of code in the source language.</summary>
+    /// <param _name="linesArray">Lines of code in the source language.</param>
+    protected override TokenContainer OnExecute(string[] linesArray)
+    {
+        if (_scanner == null || _evaluator == null)
+            throw new NullReferenceException("Lexer not properly initialized");
 
-        public LexemeContainer Lexemes => _lexemes ?? throw new NullReferenceException("LexemeContainer null");
+        _lexemes = _scanner.CreateLexemes(linesArray);
+        DisplayOutput("Scanner", _lexemes);
 
-        public Lexer(IEnumerable<MainComponentType> debuggedTypes, IEnumerable<MainComponentType> verboseTypes) 
-            : base(debuggedTypes, verboseTypes) { }
-
-        protected override void OnConstructor()
-        {
-            _scanner = new Scanner();
-            _evaluator = new Evaluator();
-        }
-
-        /// <summary>Constructor that performs lexical analysis using lines of code in the source language.</summary>
-        /// <param _name="linesArray">Lines of code in the source language.</param>
-        protected override TokenContainer OnExecute(string[] linesArray)
-        {
-            if (_scanner == null || _evaluator == null)
-                throw new NullReferenceException("Lexer not properly initialized");
-
-            _lexemes = _scanner.CreateLexemes(linesArray);
-            DisplayOutput("Scanner", _lexemes);
-
-            return _evaluator.CreateTokens(_lexemes);
-        }
+        return _evaluator.CreateTokens(_lexemes);
     }
 }
