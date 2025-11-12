@@ -1,45 +1,44 @@
 ﻿using SkimSkript.Helpers.LexicalAnalysis;
 using System.Text;
 
-namespace SkimSkript.Nodes
+namespace SkimSkript.Nodes.StatementNodes;
+
+
+/// <summary>Abstract class that is meant to be the parent of all nodes that represent 
+/// statements supported by the source language.</summary>
+internal abstract class StatementNode : Node
 {
+    private int _lexemeStartIndex, _lexemeEndIndex;
+    private bool _isEndLexeme = false;
 
-    /// <summary>Abstract class that is meant to be the parent of all nodes that represent 
-    /// statements supported by the source language.</summary>
-    internal abstract class StatementNode : Node
+    public bool IsEndLexeme => _isEndLexeme;
+
+    public StatementNode SetLexemeStartIndex(int lexemeStartIndex)
     {
-        private int _lexemeStartIndex, _lexemeEndIndex;
-        private bool _isEndLexeme = false;
+        _lexemeStartIndex = lexemeStartIndex;
+        return this;
+    }
 
-        public bool IsEndLexeme => _isEndLexeme;
+    public StatementNode SetLexemeEndIndex(int lexemeEndIndex)
+    {
+        _lexemeEndIndex = lexemeEndIndex;
+        _isEndLexeme = true;
+        return this;
+    }
 
-        public StatementNode SetLexemeStartIndex(int lexemeStartIndex)
-        {
-            _lexemeStartIndex = lexemeStartIndex;
-            return this;
-        }
+    public static string ToString(StatementNode statementNode, LexemeContainer lexemeContainer)
+    {
+        var lines = lexemeContainer
+            .GetLabeledLines(
+                statementNode._lexemeStartIndex,
+                statementNode._lexemeEndIndex
+            );
 
-        public StatementNode SetLexemeEndIndex(int lexemeEndIndex)
-        {
-            _lexemeEndIndex = lexemeEndIndex;
-            _isEndLexeme = true;
-            return this;
-        }
+        var sb = new StringBuilder();
 
-        public static string ToString(StatementNode statementNode, LexemeContainer lexemeContainer)
-        {
-            string[] lines = lexemeContainer
-                .GetLabeledLines(
-                    statementNode._lexemeStartIndex,
-                    statementNode._lexemeEndIndex
-                );
+        foreach (var line in lines)
+            sb.AppendLine(line);
 
-            var sb = new StringBuilder();
-
-            foreach (var line in lines)
-                sb.AppendLine(line);
-
-            return sb.ToString();
-        }
+        return sb.ToString();
     }
 }

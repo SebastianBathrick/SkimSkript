@@ -1,12 +1,9 @@
-﻿using SkimSkript.Nodes.StatementNodes;
+﻿namespace SkimSkript.Nodes.StatementNodes;
 
-namespace SkimSkript.Nodes
+/// <summary>Class representing a while loop control structure.</summary>
+internal class WhileNode : ConditionStructNode
 {
-    /// <summary>Class representing a while loop control structure.</summary>
-    internal class WhileNode : ConditionStructNode
-    {
-        public WhileNode(Node condition, Node block, int endLexemeIndex) : base(condition, block, endLexemeIndex) { }
+    public WhileNode(Node condition, Node block, int endLexemeIndex) : base(condition, block, endLexemeIndex) { }
 
-        public override string ToString() => $"while{base.ToString()}";
-    }
+    public override string ToString() => $"while{base.ToString()}";
 }

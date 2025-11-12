@@ -2,108 +2,100 @@
 using SkimSkript.Nodes;
 using SkimSkript.Nodes.Runtime;
 
-namespace SkimSkript.Interpretation.Helpers
+namespace SkimSkript.Helpers.Interpretation;
+
+using VariableMetadata = (int level, string identifier);
+
+/// <summary> Container for a top-level scope or function's scope. </summary>
+public class StackFrame
 {
-    using VariableMetadata = (int level, string identifier);
+    #region Data Members & Properties
+    private const int INIT_CAP = 10; //Initial dictionary cap
 
-    /// <summary> Container for a top-level scope or function's scope. </summary>
-    public class StackFrame
+    private int _currBlockLevel = 0;
+    private Dictionary<VariableMetadata, VariableNode>? _frameDict;
+
+    private Dictionary<VariableMetadata, VariableNode> FrameDictionary => _frameDict ??= new(INIT_CAP);
+    #endregion
+
+    #region Scope Management
+    public void EnterScope() => _currBlockLevel++;
+
+    public void ExitScope()
     {
-        #region Data Members & Properties
-        private const int INIT_CAP = 10; //Initial dictionary cap
+        if (_frameDict == null)
+            return;
 
-        private int _currBlockLevel = 0;
-        private Dictionary<VariableMetadata, VariableNode>? _frameDict;
+        foreach (var item in _frameDict)
+            if (item.Key.level == _currBlockLevel)
+                _frameDict.Remove(item.Key);
 
-        private Dictionary<VariableMetadata, VariableNode> FrameDictionary => _frameDict ??= new(INIT_CAP);
-        #endregion
+        _currBlockLevel--;
+    }
+    #endregion
 
-        #region Scope Management
-        public void EnterScope() => _currBlockLevel++;
+    #region Variable Getter Methods
+    public Node? GetVariablePointer(string identifier)
+    {
+        var variable = GetVariable(identifier);
+        return variable?.Value;
+    }
 
-        public void ExitScope()
+    public Node? GetVariableValueCopy(string identifier)
+    {
+        var variable = GetVariable(identifier);
+        return variable?.Value is ValueNode pointer ? pointer.Copy() : (Node?)null;
+    }
+
+    public Type? GetVariableDataType(string identifier)
+    {
+        var variable = GetVariable(identifier);
+        return variable?.DataType;
+    }
+
+    /// <summary> Search from the lowest to highest depths to get variable associated with identifier </summary>
+    /// <exception cref="UnknownIdentifierError"> Given identifier was not found in stack frame.</exception>
+    private VariableNode? GetVariable(string identifier)
+    {
+        // TODO: Refactor to increase efficiency
+        for (var i = _currBlockLevel; i >= 0; i--)
+            if (FrameDictionary.TryGetValue((i, identifier), out var var))
+                return var;
+
+        return null;
+    }
+    #endregion
+
+    #region Variable Manipulation Methods
+    /// <summary> Adds a variable to the most deeply nested scope in the stack frame. </summary>
+    public void AddVariable(string identifier, Node value, Type dataType)
+    {
+        try
         {
-            if (_frameDict == null)
-                return;
-
-            foreach (var item in _frameDict)
-                if (item.Key.level == _currBlockLevel)
-                    _frameDict.Remove(item.Key);
-
-            _currBlockLevel--;
+            FrameDictionary.Add((_currBlockLevel, identifier), new(value, dataType));
         }
-        #endregion
-
-        #region Variable Getter Methods
-        public Node? GetVariablePointer(string identifier)
+        catch (ArgumentException)
         {
-            var variable = GetVariable(identifier);
-            return variable?.Value;
+            throw new RuntimeException($"Variable {identifier} already defined in current scope.");
         }
-
-        public Node? GetVariableValueCopy(string identifier)
-        {
-            var variable = GetVariable(identifier);
-            if (variable?.Value is ValueNode pointer)
-            {
-                return pointer.Copy();
-            }
-
-            return null;
-        }
-
-        public Type? GetVariableDataType(string identifier)
-        {
-            var variable = GetVariable(identifier);
-            return variable?.DataType;
-        }
-
-        /// <summary> Search from the lowest to highest depths to get variable associated with identifier </summary>
-        /// <exception cref="UnknownIdentifierError"> Given identifier was not found in stack frame.</exception>
-        private VariableNode? GetVariable(string identifier)
-        {
-            // TODO: Refactor to increase efficiency
-            for (int i = _currBlockLevel; i >= 0; i--)
-            {
-                if (FrameDictionary.TryGetValue((i, identifier), out VariableNode? var))
-                    return var;
-            }
-
-            return null;
-        }
-        #endregion
-
-        #region Variable Manipulation Methods
-        /// <summary> Adds a variable to the most deeply nested scope in the stack frame. </summary>
-        public void AddVariable(string identifier, Node value, Type dataType)
-        {
-            try
-            {
-                FrameDictionary.Add((_currBlockLevel, identifier), new(value, dataType));
-            }
-            catch(ArgumentException)
-            {
-                throw new RuntimeException($"Variable {identifier} already defined in current scope.");
-            }
-            
-        }
-        /// <summary> Updates assignNode of a variable in the current scope. </summary>
-        /// <remarks>Maintains the same assignNode node pointer.</remarks>
-        public void AssignValueToVariable(string identifier, Node assignNode)
-        {
-            var variable = GetVariable(identifier);
-
-            if (variable == null)
-                throw new RuntimeException($"Unknown identifier {identifier}");
-
-            if (assignNode is not ValueNode valueNode)
-                throw new InvalidDataException($"Cannot assign {assignNode.GetType().Name} to variable {identifier}");
-
-            var pointer = (ValueNode)variable.Value;
-
-            pointer.AssignValue(valueNode);
-        }
-        #endregion
 
     }
+    /// <summary> Updates assignNode of a variable in the current scope. </summary>
+    /// <remarks>Maintains the same assignNode node pointer.</remarks>
+    public void AssignValueToVariable(string identifier, Node assignNode)
+    {
+        var variable = GetVariable(identifier);
+
+        if (variable == null)
+            throw new RuntimeException($"Unknown identifier {identifier}");
+
+        if (assignNode is not ValueNode valueNode)
+            throw new InvalidDataException($"Cannot assign {assignNode.GetType().Name} to variable {identifier}");
+
+        var pointer = (ValueNode)variable.Value;
+
+        pointer.AssignValue(valueNode);
+    }
+    #endregion
+
 }

@@ -1,8 +1,7 @@
-﻿namespace SkimSkript.Nodes
+﻿namespace SkimSkript.Nodes.ExpressionNodes;
+
+public class MathExpressionNode : ExpressionNode<MathOperator>
 {
-    public class MathExpressionNode : ExpressionNode<MathOperator>
-    {
-        public MathExpressionNode(MathOperator operatorType, Node leftOperand, Node rightOperand)
-            : base(operatorType, leftOperand, rightOperand) { }
-    }
+    public MathExpressionNode(MathOperator operatorType, Node leftOperand, Node rightOperand)
+        : base(operatorType, leftOperand, rightOperand) { }
 }

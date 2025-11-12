@@ -9,8 +9,8 @@ public static class BuildInfo
     public static string GetVersion()
     {
         var assembly = Assembly.GetExecutingAssembly();
-        string version = GetVersionNumber(assembly);
-        string buildDate = GetBuildDate(assembly);
+        var version = GetVersionNumber(assembly);
+        var buildDate = GetBuildDate(assembly);
 
         return $"{version} - {buildDate}";
     }
@@ -23,11 +23,11 @@ public static class BuildInfo
     {
         var assembly = Assembly.GetExecutingAssembly();
 
-        string product = GetProduct(assembly);
-        string version = GetVersionNumber(assembly);
-        string commitHash = GetCommitHash(assembly);
-        string buildDate = GetBuildDate(assembly);
-        string author = GetAuthor(assembly);
+        var product = GetProduct(assembly);
+        var version = GetVersionNumber(assembly);
+        var commitHash = GetCommitHash(assembly);
+        var buildDate = GetBuildDate(assembly);
+        var author = GetAuthor(assembly);
 
         return $"{product} v{version}\n" +
                $"Built on {buildDate}\n" +
@@ -38,22 +38,15 @@ public static class BuildInfo
 
 
     // Helper methods
-    private static string GetVersionNumber(Assembly assembly)
-    {
-        return assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion?.Split('+')[0]
+    private static string GetVersionNumber(Assembly assembly) => assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion?.Split('+')[0]
             ?? assembly.GetName().Version?.ToString()
             ?? "Unknown";
-    }
 
     private static string GetCommitHash(Assembly assembly)
     {
-        string? fullVersion = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
+        var fullVersion = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
 
-        if (fullVersion?.Contains('+') == true)
-        {
-            return fullVersion.Split('+')[1];
-        }
-        return "Unknown";
+        return fullVersion?.Contains('+') == true ? fullVersion.Split('+')[1] : "Unknown";
     }
 
     private static string GetBuildDate(Assembly assembly)
@@ -74,25 +67,16 @@ public static class BuildInfo
         return "Unknown";
     }
 
-    private static string GetProduct(Assembly assembly)
-    {
-        return assembly.GetCustomAttribute<AssemblyProductAttribute>()?.Product
+    private static string GetProduct(Assembly assembly) => assembly.GetCustomAttribute<AssemblyProductAttribute>()?.Product
             ?? assembly.GetCustomAttribute<AssemblyTitleAttribute>()?.Title
             ?? Path.GetFileNameWithoutExtension(assembly.Location)
             ?? "Unknown Application";
-    }
 
-    private static string GetAuthor(Assembly assembly)
-    {
-        return assembly.GetCustomAttribute<AssemblyCompanyAttribute>()?.Company
+    private static string GetAuthor(Assembly assembly) => assembly.GetCustomAttribute<AssemblyCompanyAttribute>()?.Company
             ?? "Unknown";
-    }
 
-    private static string GetCopyright(Assembly assembly)
-    {
-        return assembly.GetCustomAttribute<AssemblyCopyrightAttribute>()?.Copyright
+    private static string GetCopyright(Assembly assembly) => assembly.GetCustomAttribute<AssemblyCopyrightAttribute>()?.Copyright
             ?? "";
-    }
 
     private static string GetDescription(Assembly assembly) =>
         assembly.GetCustomAttribute<AssemblyDescriptionAttribute>()?.Description

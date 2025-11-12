@@ -36,12 +36,12 @@ class Program
             return ERROR_EXIT_CODE;
         }
 
-        int exitCode = DEFAULT_EXIT_CODE;
+        var exitCode = DEFAULT_EXIT_CODE;
 
         // Process command-line flags if first argument has flag prefix and exit if an error occurs while dong so
         if (ProgramFlags.IsFlag(args))
         {
-            if(!ProgramFlags.TryEvaluateArguments(args, _entryPointLogger))
+            if (!ProgramFlags.TryEvaluateArguments(args, _entryPointLogger))
                 return ERROR_EXIT_CODE;
         }
         else
