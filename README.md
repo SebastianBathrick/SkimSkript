@@ -74,13 +74,6 @@ def boolean function EnterNewNumber()
 | While Loops | Single Statement Blocks | Void Functions | Value-Returning Functions | Value + Reference Parameters |
 | I/O Built-in Functions | Recursion | Assertions | Try-Catch Statements | Exceptions |
 | Comparison Operators | Logical Operators | Arithmetic Operators | Operator Precedence | Nested Expressions |
-### Features Coming Soon
-- Arrays
-- Casting
-- File I/O
-- Structs
-- User-Defined Exceptions
-- More Flexible Identifiers
 
 # Quick Start
 ## Project Setup
