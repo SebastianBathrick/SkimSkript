@@ -129,8 +129,8 @@ Utilizes tokens to build an abstract syntax tree (AST) composed of [Nodes](https
 ### [Interpreter Class](https://github.com/SebastianBathrick/SkimSkript/blob/main/MainComponents/Interpreter.cs)
 Handles the execution of the program by recursively traversing the AST and utilizing its data.
 
-## MainComponent Pipeline Diagram
+## Pipeline Architecture Diagram
 The following is a diagram of the general architecture of the entire program. 
-<img width="1520" height="380" alt="InterpreterDesign (6)" src="https://github.com/user-attachments/assets/fa7b5a69-53de-417a-8867-2a8c6d82acc1" />
+<img alt="InterpreterDesign" src="PipelineArchitectureDiagram.svg" />
 
 #### [**You can read more about the interpreter's architecture here.**](https://github.com/SebastianBathrick/SkimSkript/wiki/*-Architectural-Overview)
