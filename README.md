@@ -81,7 +81,7 @@ def boolean function EnterNewNumber()
 - **.NET 8.0 SDK**
 - **Git**
 - **No external dependencies**
-```bash
+```powershell
 git clone https://github.com/SebastianBathrick/SkimSkript.git
 cd SkimSkript
 dotnet restore
@@ -99,15 +99,14 @@ dotnet build
 3. Copy the ```HelloWorld.sk filepath```.
 
 4. Using the terminal, navigate to the SkimSkript project folder & type:
-	```bash
+	```powershell
 	dotnet run <.SK FILEPATH>
 	```
  
 5. Then the program will execute, and upon successful execution, the terminal will look something like this:
-	```
-	C:\Users\Sebastian\Desktop\SkimSkript> dotnet run 
+	```powershell
+	PS C:\Users\Sebastian\Tutorial\SkimSkript> dotnet run -- ..\HelloWorld.sk
 	Hello World
-	C:\Users\Sebastian\Desktop\SkimSkript\Programs\HelloWorld.sk
 	```
  
  6. Demo code to experiment with can be found in **(PARENT DIRECTORY)\SkimSkript\\Programs\\[FromWiki.sk](https://github.com/SebastianBathrick/SkimSkript/blob/main/Programs/FromWiki.sk)**. The demo code is from examples directly from the wiki, so info about the code & syntax is on the [Wiki](https://github.com/SebastianBathrick/SkimSkript/wiki).
