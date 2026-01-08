@@ -100,7 +100,7 @@ dotnet build
 
 4. Using the terminal, navigate to the SkimSkript project folder & type:
 	```bash
-	dontnet run <.SK FILEPATH>
+	dotnet run <.SK FILEPATH>
 	```
  
 5. Then the program will execute, and upon successful execution, the terminal will look something like this:
