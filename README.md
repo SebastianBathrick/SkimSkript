@@ -80,7 +80,7 @@ def boolean function EnterNewNumber()
 ### Requirements
 - **.NET 8.0 SDK**
 - **Git**
-- * **No external dependencies**
+- **No external dependencies**
 ```bash
 git clone https://github.com/SebastianBathrick/SkimSkript.git
 cd SkimSkript
